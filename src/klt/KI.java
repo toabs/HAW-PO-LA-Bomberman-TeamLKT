@@ -3,7 +3,6 @@
  */
 package klt;
 
-import org.rlcommunity.rlglue.codec.AgentInterface;
 import org.rlcommunity.rlglue.codec.LocalGlue;
 import org.rlcommunity.rlglue.codec.RLGlue;
 import org.rlcommunity.rlglue.codec.types.Observation_action;
@@ -14,7 +13,7 @@ import Core.User;
 
 /* ************************************************************** */
 /**
- * @author ToRoSaR
+ * @author LarsE
  * 13.10.2014
  */
 /* *********************************************************** */
@@ -69,18 +68,29 @@ public abstract class KI extends User
         
         return action;
     }
-
+    
     /* ************************************************************** */
     /**
      * resetMove
      * @see Core.User#resetMove()
-     */
-    /************************************************************* */
+    */ /************************************************************* */
     @Override
     public void resetMove()
     {
+        // TODO Auto-generated method stub
+        
+    }
+
+    /* ************************************************************** */
+    /**
+     * gameOver
+     * @see Core.User#gameOver(boolean)
+    */ /************************************************************* */
+    @Override
+    public void gameOver(boolean won)
+    {
         //not used by KI
         RLGlue.RL_cleanup();
-        firstStep = true;
+        firstStep = true;     
     }
 }
