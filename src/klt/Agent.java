@@ -22,10 +22,11 @@ import java.util.*;
 /* *********************************************************** */
 public abstract class Agent implements AgentInterface
 {
-    //The set of observation, saving a Map of Rewards indexed by the Action
+    //The set of observation, saving a Map of Values indexed by the Action
     //Example 
     protected HashMap<Observation, HashMap<Integer, Integer>> observationStorage; 
     private String saveFilePath;
+    protected Random randGenerator = new Random();
     
     @SuppressWarnings("unchecked")
     Agent(String saveFilePath) throws IOException, ClassNotFoundException
@@ -55,6 +56,7 @@ public abstract class Agent implements AgentInterface
     @Override
     public void agent_cleanup()
     {
+        System.out.println("Reset");
         //save progress
         try
         {

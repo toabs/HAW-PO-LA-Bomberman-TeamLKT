@@ -4,6 +4,8 @@
 package klt;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 import org.rlcommunity.rlglue.codec.types.Action;
 import org.rlcommunity.rlglue.codec.types.Observation;
@@ -15,7 +17,9 @@ import org.rlcommunity.rlglue.codec.types.Observation;
  */
 /* *********************************************************** */
 public class Agent_Follower extends Agent
-{
+{    
+    Integer lastAction;
+    Observation lastObs;
     /* ************************************************************** */
     /**
      * Agent_Follower
@@ -85,8 +89,67 @@ public class Agent_Follower extends Agent
     @Override
     public Action agent_start(Observation arg0)
     {
-        // TODO Auto-generated method stub
-        return null;
+        Action returnAction = new Action(1, 0, 0);
+        returnAction.intArray[0] = this.getBestAction(arg0);
+        
+        lastObs = arg0;
+        lastAction = returnAction.intArray[0];
+        
+        return returnAction;
+    }
+    
+    /* ************************************************************** */
+    /**
+     * getBestAction
+     * @param currentObs
+     * @return
+    */ /************************************************************* */
+    private int getBestAction(Observation currentObs)
+    {
+        int currentAction = 0;
+        int bestValue = 0;
+        ArrayList<Integer> bestActions = new ArrayList<Integer>();
+        int bestActionCount = 0;
+        
+        if (this.observationStorage.containsValue(currentObs))
+        {
+            //determine highest value
+            for(int i = 0; i < 5; i++)
+            { 
+                if (this.observationStorage.get(currentObs).get(i) > bestValue)
+                {
+                    bestValue = this.observationStorage.get(currentObs).get(i);
+                }
+            }
+            
+            //get Actions with that value (must be at least one)
+            for(int i = 0; i < 5; i++)
+            { 
+                if (this.observationStorage.get(currentObs).get(i) == bestValue)
+                {
+                    bestActions.add(i);
+                }
+            }
+            
+            
+            bestActionCount = bestActions.size();
+            
+            if (bestActionCount <= 1)
+            {
+                currentAction = bestActions.get(0);
+            }
+            else
+            {
+                //there is more than one best action
+                currentAction = bestActions.get(this.randGenerator.nextInt(bestActionCount));
+            }               
+        }
+        else
+        {
+            currentAction = this.randGenerator.nextInt(5);
+        }
+        
+        return currentAction;
     }
 
     /* ************************************************************** */
@@ -97,8 +160,28 @@ public class Agent_Follower extends Agent
     @Override
     public Action agent_step(double arg0, Observation arg1)
     {
-        // TODO Auto-generated method stub
-        return null;
+        if (this.observationStorage.containsKey(lastObs))
+        {
+            this.observationStorage.get(lastObs).put(lastAction, new Integer((int) arg0));
+        }
+        else
+        {
+            //add the unknown observation
+            this.observationStorage.put(lastObs, new HashMap<Integer, Integer>());
+            
+            for(int i = 0; i < 5; i++)
+            {
+                this.observationStorage.get(lastObs).put(i, new Integer((i == lastAction) ? (int) arg0 : 0));
+            }
+        }
+        
+        Action returnAction = new Action(1, 0, 0);
+        returnAction.intArray[0] = this.getBestAction(arg1);
+        
+        lastObs = arg1;
+        lastAction = returnAction.intArray[0];
+        
+        return returnAction;
     }
 
 }

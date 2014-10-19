@@ -39,7 +39,7 @@ public class KI_Factory
     {
         try
         {
-            return new KI(id, new Agent_Follower(null), new Environment_Follower());
+            return new KI(id, new Agent_Follower("KI_Follower.rgo"), new Environment_Follower());
         } catch (Exception e)
         {
             System.out.println("Exception at KI-Creation: " + e.getMessage());

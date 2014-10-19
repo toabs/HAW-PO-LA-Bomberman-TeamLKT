@@ -51,9 +51,10 @@ public class KI extends User
         
         int action = 0;
         
+        currentEnvironment.setPlayboard(playboard, this.getId());
+        
         if (firstStep) 
-        {
-            currentEnvironment.setPlayboard(playboard, this.getId());
+        {            
             RLGlue.RL_init();
             firstResponse = RLGlue.RL_start();
             action = firstResponse.a.intArray[0];
