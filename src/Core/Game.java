@@ -11,38 +11,38 @@ import java.util.Set;
 
 public class Game {
 	
-	private final int PLAYER_ID_INIT = 1;
 	private final int PLAYER_RANGE = 1;
 	private final int MIN_FIELD = 0;
 	private final int INDEX_0 = 0;
 	
 	private Playboard playboard;
 	private Map<User, Player> users = new HashMap<>();
+	private List<User> usersList;
 	private int maxBoardIndex;
 	private LinkedList<Field> starting_fields = new LinkedList<>();
 	private Set<Field> explodedFields = new HashSet<>();
 	private int bombCounter;
 	private int explosionRadius;
-	private int maxSteps;
 	private int boardSize;
 	private boolean gameOver = false;
+	private int maxSteps;
 	
 
-	public Game(Set<User> users, int boardSize, int bombCounter, int explosionArea, int maxSteps) {
+	public Game(List<User> usersList, int boardSize, int bombCounter, int explosionArea, int maxSteps) {
 		this.boardSize = boardSize;		
 		this.maxBoardIndex = boardSize - PLAYER_RANGE;		
 		this.bombCounter = bombCounter;
 		this.explosionRadius = explosionArea;
-		this.maxSteps = maxSteps;		
+		this.maxSteps = maxSteps;
+		this.usersList = usersList;		
 		initializeBoard();
-		initializePlayers(users);
+		initializePlayers();
 	}
 	
-	private void initializePlayers(Set<User> users) {
+	private void initializePlayers() {
 		initializeStartingFields();		
-		int i = PLAYER_ID_INIT;
-		for (User user : users) {			
-			this.users.put(user, new Player(i++, starting_fields.pop()));
+		for (User user : usersList) {			
+			this.users.put(user, new Player(user.getId(), starting_fields.pop()));
 		}
 		playboard.setPlayers(new HashSet<Player>(this.users.values()));
 	}
@@ -70,6 +70,10 @@ public class Game {
 		this.playboard = new Playboard(board, maxSteps);
 	}
 	
+	public int getMaxSteps() {
+		return maxSteps;
+	}
+
 	public int getBombCounter() {
 		return bombCounter;
 	}
@@ -77,17 +81,15 @@ public class Game {
 	public int getExplosionRadius() {
 		return explosionRadius;
 	}
-
-	public int getMaxSteps() {
-		return maxSteps;
-	}
 	
 	public int getBoardSize() {
 		return boardSize;
 	}
 	
-	public Set<User> getUsers(){
-		return users.keySet();
+	public List<User> getUsers(){
+		List<User> usersList = new ArrayList<>();
+		usersList.addAll(users.keySet());
+		return usersList;
 	}
 	
 	public Playboard getPlayboard() {
@@ -118,11 +120,17 @@ public class Game {
 			}
 		}
 		if (playersAlive.size() == 1 && !gameOver) {
-			playersAlive.get(INDEX_0).won();
+			User player = playersAlive.get(INDEX_0);
+			player.won();
+			player.gameOver(true);			
 			gameOver = true;
-		} else if (playersAlive.size() < 1 && !gameOver) {
+		} else if (playersAlive.size() == 0 && !gameOver || playboard.getStepsLeft() == 0) {
+			for (User user : usersList) {
+				user.gameOver(false);
+			}
 			gameOver = true;
-		}		
+		}
+		playboard.decreaseStepsLeft();
 	}
 
 	private void playerActions() {
@@ -130,7 +138,7 @@ public class Game {
 			Player player = entry.getValue();
 			User user = entry.getKey();
 			Field field = player.getField();
-			switch (user.getAction(playboard)) {
+			switch (user.getAction(playboard.clone())) {
 			case 1:
 				if (field.getY() - PLAYER_RANGE >= MIN_FIELD) {
 					setPlayerPosition(field.getX(), field.getY() - PLAYER_RANGE, player);
