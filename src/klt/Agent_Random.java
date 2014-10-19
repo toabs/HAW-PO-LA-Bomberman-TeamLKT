@@ -3,9 +3,9 @@
  */
 package klt;
 
+import java.io.IOException;
 import java.util.Random;
 
-import org.rlcommunity.rlglue.codec.AgentInterface;
 import org.rlcommunity.rlglue.codec.types.Action;
 import org.rlcommunity.rlglue.codec.types.Observation;
 
@@ -23,12 +23,26 @@ public class Agent_Random extends Agent
     
     /* ************************************************************** */
     /**
+     * Agent_Random
+     * @param saveFilePath
+     * @throws IOException
+     * @throws ClassNotFoundException
+    */ /************************************************************* */
+    Agent_Random(String saveFilePath) throws IOException,
+            ClassNotFoundException
+    {
+        super(saveFilePath);
+    }
+    
+    /* ************************************************************** */
+    /**
      * agent_start
      * @see org.rlcommunity.rlglue.codec.AgentInterface#agent_start(org.rlcommunity.rlglue.codec.types.Observation)
     */ /************************************************************* */
     @Override
     public Action agent_start(Observation arg0)
     {
+        System.out.println("agent_start");
         //Random action
         int randomAction = randGenerator.nextInt(6);
         
@@ -63,6 +77,7 @@ public class Agent_Random extends Agent
     @Override
     public void agent_cleanup()
     {
+        System.out.println("agent cleanup");
         // TODO Auto-generated method stub        
     }
 
@@ -74,7 +89,7 @@ public class Agent_Random extends Agent
     @Override
     public void agent_end(double arg0)
     {
-        // TODO Auto-generated method stub        
+        System.out.println("agent_end");
     }
 
     /* ************************************************************** */
@@ -85,7 +100,7 @@ public class Agent_Random extends Agent
     @Override
     public void agent_init(String arg0)
     {
-        // TODO Auto-generated method stub
+        System.out.println("agent_init");
     }
 
     /* ************************************************************** */
