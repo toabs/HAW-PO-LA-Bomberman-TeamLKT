@@ -17,7 +17,7 @@ import Core.User;
  * 13.10.2014
  */
 /* *********************************************************** */
-public abstract class KI extends User
+public class KI extends User
 {
     private boolean firstStep = true;
     private Environment currentEnvironment;
@@ -61,7 +61,6 @@ public abstract class KI extends User
         } 
         else
         {
-            System.out.println("test");
             stepResponse = RLGlue.RL_step();
             action = stepResponse.a.intArray[0];
         }
