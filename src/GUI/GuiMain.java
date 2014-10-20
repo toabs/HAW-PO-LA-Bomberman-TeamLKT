@@ -3,6 +3,8 @@ package GUI;
 import java.util.ArrayList;
 import java.util.List;
 
+import klt.KI_Factory;
+
 import Core.Game;
 import Core.Human;
 import Core.User;
@@ -12,7 +14,7 @@ public class GuiMain {
 		
 		List<User> users = new ArrayList<>();		
 		users.add(new Human(1));
-		users.add(new Human(2));
+		users.add(KI_Factory.getKI_Follower(2));
 		int boardsize = 15;
 		int bombCounter = 8;
 		int explosionArea = 4;
