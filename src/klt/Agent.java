@@ -4,7 +4,6 @@
 package klt;
 
 import org.rlcommunity.rlglue.codec.AgentInterface;
-import org.rlcommunity.rlglue.codec.types.Observation;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -24,7 +23,7 @@ public abstract class Agent implements AgentInterface
 {
     //The set of observation, saving a Map of Values indexed by the Action
     //Example 
-    protected HashMap<Observation, HashMap<Integer, Integer>> observationStorage; 
+    protected HashMap<String, HashMap<Integer, Integer>> observationStorage; 
     private String saveFilePath;
     protected Random randGenerator = new Random();
     
@@ -39,12 +38,12 @@ public abstract class Agent implements AgentInterface
         {
             FileInputStream fin = new FileInputStream(saveFilePath);
             ObjectInputStream ois = new ObjectInputStream(fin);
-            this.observationStorage = (HashMap<Observation, HashMap<Integer, Integer>>) ois.readObject();
+            this.observationStorage = (HashMap<String, HashMap<Integer, Integer>>) ois.readObject();
             ois.close();
         }
         else
         {
-            this.observationStorage = new HashMap<Observation, HashMap<Integer, Integer>>();
+            this.observationStorage = new HashMap<String, HashMap<Integer, Integer>>();
         }
     }
     
@@ -56,7 +55,7 @@ public abstract class Agent implements AgentInterface
     @Override
     public void agent_cleanup()
     {
-        System.out.println("Reset");
+        System.out.println("Cleanup Called");
         //save progress
         try
         {

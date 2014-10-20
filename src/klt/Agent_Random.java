@@ -4,7 +4,6 @@
 package klt;
 
 import java.io.IOException;
-import java.util.Random;
 
 import org.rlcommunity.rlglue.codec.types.Action;
 import org.rlcommunity.rlglue.codec.types.Observation;
@@ -17,7 +16,6 @@ import org.rlcommunity.rlglue.codec.types.Observation;
 /* *********************************************************** */
 public class Agent_Random extends Agent
 {
-    Random randGenerator = new Random();
     Action lastAction;
     Observation lastObservation;
     
@@ -42,9 +40,8 @@ public class Agent_Random extends Agent
     @Override
     public Action agent_start(Observation arg0)
     {
-        System.out.println("agent_start");
         //Random action
-        int randomAction = randGenerator.nextInt(6);
+        int randomAction = randGenerator.nextInt(5);
         
         Action returnAction = new Action(1, 0, 0);
         returnAction.intArray[0] = randomAction;
