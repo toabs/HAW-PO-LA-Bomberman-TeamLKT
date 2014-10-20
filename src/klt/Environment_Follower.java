@@ -26,7 +26,7 @@ public class Environment_Follower extends Environment
     private final int freeDirections = (int) Math.pow(2, 4); //4 direction, blocked, not blocked
     private final int oppenentDirections = 9; //equal, top, left, topleft, ...
     private double maxDistanceToOpponent = 0; //to be calculated
-    private final int numIntegers = 3;
+    private final int numIntegers = 2;
     private final int numDoubles = 1;
     
     private double lastDistance = 0;
@@ -41,8 +41,7 @@ public class Environment_Follower extends Environment
     @Override
     public void env_cleanup()
     {
-        // TODO Auto-generated method stub
-        
+        System.out.println("Env_cleanup called!");        
     }
 
     /* ************************************************************** */
@@ -103,7 +102,7 @@ public class Environment_Follower extends Environment
         this.lastDistance = distanceToOpponent;
         this.lastX = currentPlayer.getX();
         this.lastY = currentPlayer.getY();
-                
+        
         return result;
     }
 
@@ -130,13 +129,13 @@ public class Environment_Follower extends Environment
         
         System.out.println("Distance: " + distanceToOpponent);
         
-        if (lastDistance < distanceToOpponent)
+        if (lastDistance > distanceToOpponent)
         {
             theReward = 1; 
             System.out.println("+");
         } 
         
-        if (lastDistance > distanceToOpponent)
+        if (lastDistance < distanceToOpponent)
         {
             theReward = -1;
             System.out.println("-");

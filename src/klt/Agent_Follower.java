@@ -35,18 +35,6 @@ public class Agent_Follower extends Agent
 
     /* ************************************************************** */
     /**
-     * agent_cleanup
-     * @see org.rlcommunity.rlglue.codec.AgentInterface#agent_cleanup()
-    */ /************************************************************* */
-    @Override
-    public void agent_cleanup()
-    {
-        // TODO Auto-generated method stub
-        
-    }
-
-    /* ************************************************************** */
-    /**
      * agent_end
      * @see org.rlcommunity.rlglue.codec.AgentInterface#agent_end(double)
     */ /************************************************************* */
@@ -107,30 +95,29 @@ public class Agent_Follower extends Agent
     private int getBestAction(Observation currentObs)
     {
         int currentAction = 0;
-        int bestValue = 0;
+        int bestValue = -9999999;
         ArrayList<Integer> bestActions = new ArrayList<Integer>();
         int bestActionCount = 0;
         
-        if (this.observationStorage.containsValue(currentObs))
+        if (this.observationStorage.containsKey(currentObs.toString()))
         {
             //determine highest value
             for(int i = 0; i < 5; i++)
             { 
-                if (this.observationStorage.get(currentObs).get(i) > bestValue)
+                if (this.observationStorage.get(currentObs.toString()).get(i) > bestValue)
                 {
-                    bestValue = this.observationStorage.get(currentObs).get(i);
+                    bestValue = this.observationStorage.get(currentObs.toString()).get(i);
                 }
             }
             
             //get Actions with that value (must be at least one)
             for(int i = 0; i < 5; i++)
             { 
-                if (this.observationStorage.get(currentObs).get(i) == bestValue)
+                if (this.observationStorage.get(currentObs.toString()).get(i) == bestValue)
                 {
                     bestActions.add(i);
                 }
-            }
-            
+            }            
             
             bestActionCount = bestActions.size();
             
@@ -160,21 +147,23 @@ public class Agent_Follower extends Agent
     @Override
     public Action agent_step(double arg0, Observation arg1)
     {
-        if (this.observationStorage.containsKey(lastObs))
+        //distribute reward
+        if (this.observationStorage.containsKey(lastObs.toString()))
         {
-            this.observationStorage.get(lastObs).put(lastAction, new Integer((int) arg0));
+            this.observationStorage.get(lastObs.toString()).put(lastAction, new Integer((int) arg0));
         }
         else
         {
             //add the unknown observation
-            this.observationStorage.put(lastObs, new HashMap<Integer, Integer>());
+            this.observationStorage.put(lastObs.toString(), new HashMap<Integer, Integer>());
             
             for(int i = 0; i < 5; i++)
             {
-                this.observationStorage.get(lastObs).put(i, new Integer((i == lastAction) ? (int) arg0 : 0));
+                this.observationStorage.get(lastObs.toString()).put(i, new Integer((i == lastAction) ? (int) arg0 : 0));
             }
         }
         
+        //calculate next action
         Action returnAction = new Action(1, 0, 0);
         returnAction.intArray[0] = this.getBestAction(arg1);
         
