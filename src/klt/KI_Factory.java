@@ -28,7 +28,16 @@ public class KI_Factory
             return null;
         }
     }
-    
+
+    public static KI getKI_Escape(int id){
+        try{
+            return new KI(id, new Agent_Follower("KI_Escape"+id+".rgo"), new Environment_Escape());
+        } catch (Exception e){
+            System.out.println("Exception at KI-Creation: " + e.getMessage());
+            e.printStackTrace();
+            return null;
+        }
+    }
     /* ************************************************************** */
     /**
      * getKI_Random
