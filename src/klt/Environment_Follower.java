@@ -160,7 +160,7 @@ public class Environment_Follower extends Environment
      * determineCurrentPlayer
      * @return
     */ /************************************************************* */
-    private Player determineCurrentPlayer() {
+Player determineCurrentPlayer() {
         Iterator<Player> it = board.getPlayers().iterator();
 
         Player thisplayer = null;
@@ -199,7 +199,7 @@ public class Environment_Follower extends Environment
      * determinefreeDirections
      * @return
     */ /************************************************************* */
-    private int determinefreeDirections() {
+int determinefreeDirections() {
         Player currentPlayer = determineCurrentPlayer();
         
         int result = 1;
@@ -222,7 +222,7 @@ public class Environment_Follower extends Environment
      * determineOppenentDirection
      * @return
     */ /************************************************************* */
-    private int determineOppenentDirection() {
+int determineOppenentDirection() {
         Player cP = determineCurrentPlayer();
         Player oP = determineOppenentPlayer();
         
@@ -252,7 +252,7 @@ public class Environment_Follower extends Environment
      * determineDistanceToOpponent
      * @return
     */ /************************************************************* */
-    private double determineDistanceToOpponent()
+double determineDistanceToOpponent()
     {     
         Player cP = determineCurrentPlayer();
         Player oP = determineOppenentPlayer();
