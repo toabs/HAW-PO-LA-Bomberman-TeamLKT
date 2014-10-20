@@ -13,7 +13,6 @@ import org.rlcommunity.rlglue.codec.types.Action;
 import org.rlcommunity.rlglue.codec.types.Observation;
 import org.rlcommunity.rlglue.codec.types.Reward_observation_terminal;
 
-import Core.Playboard;
 import Core.Player;
 
 /* ************************************************************** */
@@ -32,7 +31,6 @@ public class Environment_Random extends Environment
     @Override
     public String env_init()
     {
-        System.out.println("env_init");
         TaskSpecVRLGLUE3 theTaskSpecObject = new TaskSpecVRLGLUE3();
         theTaskSpecObject.addDiscreteAction(new IntRange(0, 5));
         int fieldcount = 25; //random number, to be replaced
@@ -54,7 +52,6 @@ public class Environment_Random extends Environment
     @Override
     public Observation env_start()
     {
-        System.out.println("env_start");
         Observation returnObservation=new Observation(1,0,0);
         returnObservation.intArray[0]=0;
         return returnObservation;
@@ -68,7 +65,6 @@ public class Environment_Random extends Environment
     @Override
     public Reward_observation_terminal env_step(Action arg0)
     {
-        System.out.println("env_step");
         boolean episodeOver=false;
         double theReward=0.0d;
         
@@ -81,7 +77,7 @@ public class Environment_Random extends Environment
             if(thisplayer.getId() == this.userID)
                 break;
         }
-        
+       
         episodeOver = !thisplayer.isAlive();
 
         Observation returnObservation=new Observation(1,0,0);
@@ -100,7 +96,7 @@ public class Environment_Random extends Environment
     @Override
     public void env_cleanup()
     {
-        System.out.println("env_cleanup");       
+        //todo      
     }
 
     /* ************************************************************** */

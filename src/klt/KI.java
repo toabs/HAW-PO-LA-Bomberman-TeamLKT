@@ -77,8 +77,7 @@ public class KI extends User
     @Override
     public void resetMove()
     {
-        // TODO Auto-generated method stub
-        
+        // TODO Auto-generated method stub        
     }
 
     /* ************************************************************** */
