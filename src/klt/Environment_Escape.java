@@ -239,29 +239,16 @@ double determineDistanceToOpponent()
 
         System.out.println("Distance: " + distanceToOpponent);
 
-        if (distanceToOpponent >= 5 && distanceToOpponent <= 10)
+        if (lastDistance > distanceToOpponent)
         {
-            theReward = 2;
-            System.out.println("+!");
-        }
-        if (lastDistance > distanceToOpponent && distanceToOpponent > 10)
-        {
-            theReward = 1;
-            System.out.println("+");
-        }
-        if (lastDistance < distanceToOpponent && distanceToOpponent > 10){
             theReward = -1;
-            System.out.println("-");
+            System.out.println("11+");
         }
 
-        if (5 > distanceToOpponent)
+        if (lastDistance < distanceToOpponent)
         {
-            theReward = -1;
-            System.out.println("-");
-            if(lastDistance < distanceToOpponent){
-                theReward = 1;
-                System.out.println("-+");
-            }
+            theReward = 1;
+            System.out.println("11-");
         }
 
         //negative reward if not moved

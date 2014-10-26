@@ -31,7 +31,7 @@ public class KI_Factory
 
     public static KI getKI_Escape(int id){
         try{
-            return new KI(id, new Agent_Follower("KI_Escape"+id+".rgo"), new Environment_Escape());
+            return new KI(id, new Agent_Follower("KI_Escape.rgo"), new Environment_Escape());
         } catch (Exception e){
             System.out.println("Exception at KI-Creation: " + e.getMessage());
             e.printStackTrace();
@@ -52,6 +52,7 @@ public class KI_Factory
         } catch (Exception e)
         {
             System.out.println("Exception at KI-Creation: " + e.getMessage());
+            e.printStackTrace();
             return null;
         }
     }
