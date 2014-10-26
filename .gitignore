@@ -1,8 +1,9 @@
-.settings
+*.settings
 bin
-.DS_Store
-.idea
+*.DS_Store
+*.idea
 out
-.classpath
-.project
-.iml
+*.classpath
+*.project
+*.iml
+*.rgo
