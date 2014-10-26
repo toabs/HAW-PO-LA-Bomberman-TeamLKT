@@ -11,12 +11,14 @@ public class Bomb extends PlayboardObject {
 	
 	private int counter;
 	private int explosionRadius;
+	private int playerId;
 	private boolean exploded = false;
 	
 
 
-	public Bomb(int counter, Field field, int explosionRadius) {	
+	public Bomb(int counter, Field field, int explosionRadius, int playerId) {	
 		super(field);
+		this.playerId = playerId;
 		this.counter = counter;
 		this.explosionRadius = explosionRadius;
 	}
@@ -34,6 +36,10 @@ public class Bomb extends PlayboardObject {
 
 	public int getExplosionRadius() {
 		return explosionRadius;
+	}
+	
+	public int getPlayerId() {
+		return playerId;
 	}
 
 	public boolean isExploded() {
