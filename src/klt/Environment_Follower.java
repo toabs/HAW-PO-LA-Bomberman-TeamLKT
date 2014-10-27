@@ -127,24 +127,24 @@ public class Environment_Follower extends Environment
         currentObs.intArray[1] = opponentDirection;
         currentObs.doubleArray[0] = distanceToOpponent; 
         
-        System.out.println("Distance: " + distanceToOpponent);
+        //System.out.println("Distance: " + distanceToOpponent);
         
         if (lastDistance > distanceToOpponent)
         {
             theReward = 1; 
-            System.out.println("+");
+            //System.out.println("+");
         } 
         
         if (lastDistance < distanceToOpponent)
         {
             theReward = -1;
-            System.out.println("-");
+            //System.out.println("-");
         }
         
         //negative reward if not moved
         if (lastX == currentPlayer.getX() && lastY == currentPlayer.getY() && lastDistance != 0)
         {
-            System.out.println("--");
+            //System.out.println("--");
             theReward = -2;
         }
         

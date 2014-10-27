@@ -124,6 +124,7 @@ public class KI extends User
         //not used by KI
         //RLGlue.RL_cleanup();
         this.currentEnvironment.env_cleanup();
+        this.currentAgent.agent_end(1);
         this.currentAgent.agent_cleanup();
         firstStep = true;     
     }

@@ -14,9 +14,13 @@ public class Agent_SARSA extends Agent{
 
     private List<Pair<Pair<String,Integer>,Double>> episode;
     private String lastObservation;
+    private int episodeCounter = 30;
     private Integer lastAction;
     private double alpha = 0.2; //Lernrate
     private double gamma = 0.8; //Discountrate
+    private double epsilon = 0.95; //exploration rate
+    private final int INITIALQVALUE = 5; //initial q values
+    private final int NUMBEROFACTIONS = 5;
 
     public Agent_SARSA(String saveFilePath) throws IOException, ClassNotFoundException {
         super(saveFilePath);
@@ -45,6 +49,10 @@ public class Agent_SARSA extends Agent{
         Action returnAction = new Action(1, 0, 0);
         returnAction.intArray[0] = this.getBestAction(observation);
 
+        if (this.randGenerator.nextInt(100) < epsilon){
+            returnAction.intArray[0] = this.randGenerator.nextInt(NUMBEROFACTIONS);
+        }
+
         lastAction = returnAction.intArray[0];
         return returnAction;
     }
@@ -66,64 +74,27 @@ public class Agent_SARSA extends Agent{
 
                 for(int j = 0; j < 5; j++)
                 {
-                    this.observationStorage.get(key).put(i, new Integer((i == lastAction) ? episode.get(i).second().intValue() : 0));
+                    this.observationStorage.get(key).put(j, new Integer((j == lastAction) ? episode.get(i).second().intValue() : INITIALQVALUE));
                 }
             }
         }
-        this.observationStorage.get(episode.get(episode.size()-1).first().first()).put(lastAction, new Integer((int) episode.get(episode.size()-1).second().doubleValue()));
+        if(observationStorage.containsKey(episode.get(episode.size()-1).first().first())) {
+            this.observationStorage.get(episode.get(episode.size() - 1).first().first()).put(lastAction, new Integer((int) episode.get(episode.size() - 1).second().doubleValue()));
+        }else{
+            this.observationStorage.put(episode.get(episode.size()-1).first().first(), new HashMap<Integer, Integer>());
 
+            for(int j = 0; j < 5; j++)
+            {
+                this.observationStorage.get(episode.get(episode.size()-1).first().first()).put(j, new Integer((int)((j == lastAction) ? episode.get(episode.size() - 1).second().doubleValue() : INITIALQVALUE)));
+            }
+        }
+        epsilon = (epsilon <= 0.125) ? epsilon = 0.125 : epsilon-0.001;
+        System.out.println(epsilon);
         episode = new ArrayList<Pair<Pair<String, Integer>,Double>>();
     }
 
     @Override
     public String agent_message(String s) {
         return null;
-    }
-
-    private int getBestAction(Observation currentObs)
-    {
-        int currentAction = 0;
-        int bestValue = -9999999;
-        ArrayList<Integer> bestActions = new ArrayList<Integer>();
-        int bestActionCount = 0;
-
-        if (this.observationStorage.containsKey(currentObs.toString()))
-        {
-            //determine highest value
-            for(int i = 0; i < 5; i++)
-            {
-                if (this.observationStorage.get(currentObs.toString()).get(i) > bestValue)
-                {
-                    bestValue = this.observationStorage.get(currentObs.toString()).get(i);
-                }
-            }
-
-            //get Actions with that value (must be at least one)
-            for(int i = 0; i < 5; i++)
-            {
-                if (this.observationStorage.get(currentObs.toString()).get(i) == bestValue)
-                {
-                    bestActions.add(i);
-                }
-            }
-
-            bestActionCount = bestActions.size();
-
-            if (bestActionCount <= 1)
-            {
-                currentAction = bestActions.get(0);
-            }
-            else
-            {
-                //there is more than one best action
-                currentAction = bestActions.get(this.randGenerator.nextInt(bestActionCount));
-            }
-        }
-        else
-        {
-            currentAction = this.randGenerator.nextInt(5);
-        }
-
-        return currentAction;
     }
 }

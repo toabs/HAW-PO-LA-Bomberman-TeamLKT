@@ -76,4 +76,23 @@ public class KI_Factory
             return null;
         }
     }
+    
+    /* ************************************************************** */
+    /**
+     * getKI_SARSA_Follower
+     * @param id
+     * @return
+    */ /************************************************************* */
+    public static KI getKI_SARSA_Follower(int id)
+    {
+        try
+        {
+            return new KI(id, new Agent_SARSA("KI_FollowerSARSA.rgo"), new Environment_Follower());
+        } catch (Exception e)
+        {
+            System.out.println("Exception at KI-Creation: " + e.getMessage());
+            e.printStackTrace();
+            return null;
+        }
+    }
 }

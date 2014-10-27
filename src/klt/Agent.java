@@ -4,6 +4,7 @@
 package klt;
 
 import org.rlcommunity.rlglue.codec.AgentInterface;
+import org.rlcommunity.rlglue.codec.types.Observation;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -45,6 +46,59 @@ public abstract class Agent implements AgentInterface
         {
             this.observationStorage = new HashMap<String, HashMap<Integer, Integer>>();
         }
+    }
+
+    /* ************************************************************** */
+    /**
+     * getBestAction
+     * @param currentObs
+     * @return
+     */ /************************************************************* */
+    protected int getBestAction(Observation currentObs)
+    {
+        int currentAction = 0;
+        int bestValue = -9999999;
+        ArrayList<Integer> bestActions = new ArrayList<Integer>();
+        int bestActionCount = 0;
+
+        if (this.observationStorage.containsKey(currentObs.toString()))
+        {
+            //determine highest value
+            for(int i = 0; i < 5; i++)
+            {
+                if (this.observationStorage.get(currentObs.toString()).get(i) > bestValue)
+                {
+                    bestValue = this.observationStorage.get(currentObs.toString()).get(i);
+                }
+            }
+
+            //get Actions with that value (must be at least one)
+            for(int i = 0; i < 5; i++)
+            {
+                if (this.observationStorage.get(currentObs.toString()).get(i) == bestValue)
+                {
+                    bestActions.add(i);
+                }
+            }
+
+            bestActionCount = bestActions.size();
+
+            if (bestActionCount <= 1)
+            {
+                currentAction = bestActions.get(0);
+            }
+            else
+            {
+                //there is more than one best action
+                currentAction = bestActions.get(this.randGenerator.nextInt(bestActionCount));
+            }
+        }
+        else
+        {
+            currentAction = this.randGenerator.nextInt(5);
+        }
+
+        return currentAction;
     }
     
     /* ************************************************************** */
