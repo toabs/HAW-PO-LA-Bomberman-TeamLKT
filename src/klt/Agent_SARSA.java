@@ -14,9 +14,12 @@ public class Agent_SARSA extends Agent{
 
     private List<Pair<Pair<String,Integer>,Double>> episode;
     private String lastObservation;
+    private int episodeCounter = 30;
     private Integer lastAction;
     private double alpha = 0.2; //Lernrate
     private double gamma = 0.8; //Discountrate
+    private double epsilon = 0.6; //exploration rate
+    private final int INITIALQVALUE = 5; //initial q values
 
     public Agent_SARSA(String saveFilePath) throws IOException, ClassNotFoundException {
         super(saveFilePath);
@@ -43,6 +46,9 @@ public class Agent_SARSA extends Agent{
         lastObservation = observation.toString();
 
         Action returnAction = new Action(1, 0, 0);
+        if (episodeCounter < 30){
+            System.out.println("hi\n");
+        }
         returnAction.intArray[0] = this.getBestAction(observation);
 
         lastAction = returnAction.intArray[0];
@@ -66,7 +72,7 @@ public class Agent_SARSA extends Agent{
 
                 for(int j = 0; j < 5; j++)
                 {
-                    this.observationStorage.get(key).put(i, new Integer((i == lastAction) ? episode.get(i).second().intValue() : 0));
+                    this.observationStorage.get(key).put(j, new Integer((j == lastAction) ? episode.get(i).second().intValue() : INITIALQVALUE));
                 }
             }
         }
@@ -78,52 +84,5 @@ public class Agent_SARSA extends Agent{
     @Override
     public String agent_message(String s) {
         return null;
-    }
-
-    private int getBestAction(Observation currentObs)
-    {
-        int currentAction = 0;
-        int bestValue = -9999999;
-        ArrayList<Integer> bestActions = new ArrayList<Integer>();
-        int bestActionCount = 0;
-
-        if (this.observationStorage.containsKey(currentObs.toString()))
-        {
-            //determine highest value
-            for(int i = 0; i < 5; i++)
-            {
-                if (this.observationStorage.get(currentObs.toString()).get(i) > bestValue)
-                {
-                    bestValue = this.observationStorage.get(currentObs.toString()).get(i);
-                }
-            }
-
-            //get Actions with that value (must be at least one)
-            for(int i = 0; i < 5; i++)
-            {
-                if (this.observationStorage.get(currentObs.toString()).get(i) == bestValue)
-                {
-                    bestActions.add(i);
-                }
-            }
-
-            bestActionCount = bestActions.size();
-
-            if (bestActionCount <= 1)
-            {
-                currentAction = bestActions.get(0);
-            }
-            else
-            {
-                //there is more than one best action
-                currentAction = bestActions.get(this.randGenerator.nextInt(bestActionCount));
-            }
-        }
-        else
-        {
-            currentAction = this.randGenerator.nextInt(5);
-        }
-
-        return currentAction;
     }
 }
