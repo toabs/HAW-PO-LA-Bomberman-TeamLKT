@@ -18,8 +18,9 @@ public class Agent_SARSA extends Agent{
     private Integer lastAction;
     private double alpha = 0.2; //Lernrate
     private double gamma = 0.8; //Discountrate
-    private double epsilon = 0.6; //exploration rate
+    private double epsilon = 0.95; //exploration rate
     private final int INITIALQVALUE = 5; //initial q values
+    private final int NUMBEROFACTIONS = 5;
 
     public Agent_SARSA(String saveFilePath) throws IOException, ClassNotFoundException {
         super(saveFilePath);
@@ -46,10 +47,11 @@ public class Agent_SARSA extends Agent{
         lastObservation = observation.toString();
 
         Action returnAction = new Action(1, 0, 0);
-        if (episodeCounter < 30){
-            System.out.println("hi\n");
-        }
         returnAction.intArray[0] = this.getBestAction(observation);
+
+        if (this.randGenerator.nextInt(100) < epsilon){
+            returnAction.intArray[0] = this.randGenerator.nextInt(NUMBEROFACTIONS);
+        }
 
         lastAction = returnAction.intArray[0];
         return returnAction;
@@ -76,8 +78,18 @@ public class Agent_SARSA extends Agent{
                 }
             }
         }
-        this.observationStorage.get(episode.get(episode.size()-1).first().first()).put(lastAction, new Integer((int) episode.get(episode.size()-1).second().doubleValue()));
+        if(observationStorage.containsKey(episode.get(episode.size()-1).first().first())) {
+            this.observationStorage.get(episode.get(episode.size() - 1).first().first()).put(lastAction, new Integer((int) episode.get(episode.size() - 1).second().doubleValue()));
+        }else{
+            this.observationStorage.put(episode.get(episode.size()-1).first().first(), new HashMap<Integer, Integer>());
 
+            for(int j = 0; j < 5; j++)
+            {
+                this.observationStorage.get(episode.get(episode.size()-1).first().first()).put(j, new Integer((int)((j == lastAction) ? episode.get(episode.size() - 1).second().doubleValue() : INITIALQVALUE)));
+            }
+        }
+        epsilon = (epsilon <= 0.125) ? epsilon = 0.125 : epsilon-0.001;
+        System.out.println(epsilon);
         episode = new ArrayList<Pair<Pair<String, Integer>,Double>>();
     }
 
