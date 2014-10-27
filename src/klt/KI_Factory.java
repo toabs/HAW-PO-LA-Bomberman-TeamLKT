@@ -38,6 +38,7 @@ public class KI_Factory
             return null;
         }
     }
+    
     /* ************************************************************** */
     /**
      * getKI_Random
@@ -49,6 +50,25 @@ public class KI_Factory
         try
         {
             return new KI(id, new Agent_Follower("KI_Follower.rgo"), new Environment_Follower());
+        } catch (Exception e)
+        {
+            System.out.println("Exception at KI-Creation: " + e.getMessage());
+            e.printStackTrace();
+            return null;
+        }
+    }
+    
+    /* ************************************************************** */
+    /**
+     * getKI_Random
+     * @param id
+     * @return
+    */ /************************************************************* */
+    public static KI getKI_Avoidbomb_Zone(int id)
+    {
+        try
+        {
+            return new KI(id, new Agent_Avoidbomb_Zone("KI_Avoidbomb_Zone.rgo"), new Environment_Avoidbomb_Zone());
         } catch (Exception e)
         {
             System.out.println("Exception at KI-Creation: " + e.getMessage());
