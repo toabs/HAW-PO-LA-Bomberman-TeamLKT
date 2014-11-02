@@ -147,6 +147,11 @@ public class Environment_Follower extends Environment
             //System.out.println("--");
             theReward = -2;
         }
+
+        //great reward for reached enemy
+        if (distanceToOpponent < 1){
+            theReward = 200;
+        }
         
         this.lastDistance = distanceToOpponent;
         this.lastX = currentPlayer.getX();
