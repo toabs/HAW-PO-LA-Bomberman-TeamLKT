@@ -34,6 +34,10 @@ public class Agent_SARSALambda extends Agent {
         this(saveFilePath, 1);
     }
 
+    public Agent_SARSALambda(String saveFilePath, boolean trainingMode) throws IOException, ClassNotFoundException {
+        this(saveFilePath, 0.9, trainingMode);
+    }
+
     public Agent_SARSALambda(String saveFilePath, double explorationRate) throws IOException, ClassNotFoundException {
         this(saveFilePath, explorationRate, true);
     }

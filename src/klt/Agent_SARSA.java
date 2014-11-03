@@ -25,7 +25,11 @@ public class Agent_SARSA extends Agent{
     private final int NUMBEROFACTIONS = 5;
 
     public Agent_SARSA(String saveFilePath) throws IOException, ClassNotFoundException {
-        this(saveFilePath, 0.8, true);
+        this(saveFilePath, 0.8);
+    }
+
+    public Agent_SARSA(String saveFilePath, boolean trainingMode) throws IOException, ClassNotFoundException {
+        this(saveFilePath, 0.8, trainingMode);
     }
 
     public Agent_SARSA(String saveFilePath, double explorationRate) throws IOException, ClassNotFoundException {
