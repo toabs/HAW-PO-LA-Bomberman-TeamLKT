@@ -367,19 +367,19 @@ public class Environment_Avoidbomb_Zone extends Environment
         this.currentDanger = dangerCurrent;
         
         //watch top
-        currentBombCounter = getMinBombCounter(cP.getX() -1, cP.getY() - 2, 3, 2, dangerAnalysis);
+        currentBombCounter = getMinBombCounter(cP.getX() -1, cP.getY() + 3, 3, 3, dangerAnalysis);
         dangerTop = evaluateBombCounter(currentBombCounter);
         
         //watch bot
-        currentBombCounter = getMinBombCounter(cP.getX(), cP.getY() - 1, 3, 2, dangerAnalysis);
+        currentBombCounter = getMinBombCounter(cP.getX() - 1, cP.getY() + 1, 3, 3, dangerAnalysis);
         dangerBot = evaluateBombCounter(currentBombCounter);
         
         //watch left
-        currentBombCounter = getMinBombCounter(cP.getX() -2, cP.getY() - 1, 2, 3, dangerAnalysis);
+        currentBombCounter = getMinBombCounter(cP.getX() -3, cP.getY() - 1, 3, 3, dangerAnalysis);
         dangerLeft = evaluateBombCounter(currentBombCounter);
         
         //watch right
-        currentBombCounter = getMinBombCounter(cP.getX() +1, cP.getY() -1, 2, 3, dangerAnalysis);
+        currentBombCounter = getMinBombCounter(cP.getX() +1, cP.getY() -1, 3, 3, dangerAnalysis);
         dangerRight = evaluateBombCounter(currentBombCounter);
 
         
