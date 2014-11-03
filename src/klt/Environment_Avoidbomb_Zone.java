@@ -140,31 +140,31 @@ public class Environment_Avoidbomb_Zone extends Environment
         
         if (lastDistance > distanceToOpponent)
         {
-            theReward = 1; 
+            theReward = 100; 
             System.out.println("+");
         } 
         
         if (lastDistance < distanceToOpponent)
         {
-            theReward = -1;
+            theReward = -100;
             System.out.println("-");
         }
         
         if (currentDanger < lastDanger)
         {
-            theReward += 2;
+            theReward += 200;
         }
         
         if (lastDanger != 0 && (currentDanger > lastDanger))
         {
-            theReward -= 2;
+            theReward -= 200;
         }
         
         //negative reward if not moved
         if (lastX == currentPlayer.getX() && lastY == currentPlayer.getY() && lastDistance != 0)
         {
             System.out.println("--");
-            theReward = -2;
+            theReward = -500;
         }        
         
         this.lastDistance = distanceToOpponent;
@@ -350,16 +350,15 @@ public class Environment_Avoidbomb_Zone extends Environment
         determineBombZones(dangerAnalysis);
         
         //print out dangerAnalysis
-        /*
+        
         for(int i = 0; i < board.getBoard().length; i++)
         {
             for (int n = 0; n < board.getBoard()[0].length; n++)
             {
-                System.out.print(dangerAnalysis[n][i] + 1);
+                System.out.print("[" + dangerAnalysis[n][i] + 1 + "]");
             }
             System.out.println("");
         }
-        */
         
         //current Position
         currentBombCounter = dangerAnalysis[cP.getY()][cP.getY()];

@@ -68,7 +68,7 @@ public class KI_Factory
     {
         try
         {
-            return new KI(id, new Agent_Avoidbomb_Zone("KI_Avoidbomb_Zone.rgo"), new Environment_Avoidbomb_Zone());
+            return new KI(id, new Agent_SARSA("KI_FollowerSARSA.rgo"), new Environment_Avoidbomb_Zone());
         } catch (Exception e)
         {
             System.out.println("Exception at KI-Creation: " + e.getMessage());
