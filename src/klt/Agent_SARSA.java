@@ -20,11 +20,22 @@ public class Agent_SARSA extends Agent{
     private double alpha = 0.2; //Lernrate
     private double gamma = 0.8; //Discountrate
     private double epsilon = 0.95; //exploration rate
-    private final int INITIALQVALUE = 5; //initial q values
+    private boolean trainingMode = true;
+    private final double INITIALQVALUE = 50.0; //initial q values
     private final int NUMBEROFACTIONS = 5;
 
     public Agent_SARSA(String saveFilePath) throws IOException, ClassNotFoundException {
+        this(saveFilePath, 0.8, true);
+    }
+
+    public Agent_SARSA(String saveFilePath, double explorationRate) throws IOException, ClassNotFoundException {
+        this(saveFilePath, explorationRate, true);
+    }
+
+    public Agent_SARSA(String saveFilePath, double explorationRate, boolean trainingMode) throws IOException, ClassNotFoundException {
         super(saveFilePath);
+        this.epsilon = explorationRate;
+        this.trainingMode = trainingMode;
     }
 
     @Override
@@ -50,9 +61,10 @@ public class Agent_SARSA extends Agent{
 
         Action returnAction = new Action(1, 0, 0);
         returnAction.intArray[0] = this.getBestAction(observation);
-
-        if (this.randGenerator.nextInt(100) < (epsilon * 100)){
-            returnAction.intArray[0] = this.randGenerator.nextInt(NUMBEROFACTIONS);
+        if (trainingMode) {
+            if (this.randGenerator.nextInt(100) < (epsilon * 100)) {
+                returnAction.intArray[0] = this.randGenerator.nextInt(NUMBEROFACTIONS);
+            }
         }
 
         lastAction = returnAction.intArray[0];
@@ -68,7 +80,7 @@ public class Agent_SARSA extends Agent{
         if (this.observationStorage.containsKey(lastObservation))
         {
             double currentQ = observationStorage.get(lastObservation).get(lastAction).doubleValue();
-            double res = (currentQ + alpha * (v - currentQ));
+            double res = currentQ + alpha * (v - currentQ);
             observationStorage.get(lastObservation).put(beforeLastAction, res);
         }
         else
@@ -81,7 +93,12 @@ public class Agent_SARSA extends Agent{
                 this.observationStorage.get(lastObservation).put(i, (i == lastAction) ? v : INITIALQVALUE);
             }
         }
-        epsilon *= epsilon;
+        if (trainingMode){
+            epsilon -= 0.005;
+            if (epsilon < 0.01){
+                epsilon = 0.01;
+            }
+        }
     }
 
     private void updateValues(double r){
@@ -95,7 +112,7 @@ public class Agent_SARSA extends Agent{
             if (observationStorage.containsKey(lastObservation)) {
                 qNext = observationStorage.get(lastObservation).get(lastAction).doubleValue();
             }
-            double res = (qThis + alpha * (r + gamma * qNext - qThis));
+            double res = qThis + alpha * (r + gamma * qNext - qThis);
             observationStorage.get(beforeLastObservation).put(beforeLastAction, res);
         }
         else
