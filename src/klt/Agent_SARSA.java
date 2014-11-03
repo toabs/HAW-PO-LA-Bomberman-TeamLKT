@@ -25,7 +25,11 @@ public class Agent_SARSA extends Agent{
     private final int NUMBEROFACTIONS = 5;
 
     public Agent_SARSA(String saveFilePath) throws IOException, ClassNotFoundException {
-        this(saveFilePath, 0.8, true);
+        this(saveFilePath, 0.8);
+    }
+
+    public Agent_SARSA(String saveFilePath, boolean trainingMode) throws IOException, ClassNotFoundException {
+        this(saveFilePath, 0.8, trainingMode);
     }
 
     public Agent_SARSA(String saveFilePath, double explorationRate) throws IOException, ClassNotFoundException {
@@ -61,7 +65,8 @@ public class Agent_SARSA extends Agent{
 
         Action returnAction = new Action(1, 0, 0);
         returnAction.intArray[0] = this.getBestAction(observation);
-        if (trainingMode) {
+
+        if (trainingMode) {         //if the trainingmode is enabled the agent will sometimes randomly choose a random action
             if (this.randGenerator.nextInt(100) < (epsilon * 100)) {
                 returnAction.intArray[0] = this.randGenerator.nextInt(NUMBEROFACTIONS);
             }
@@ -93,7 +98,8 @@ public class Agent_SARSA extends Agent{
                 this.observationStorage.get(lastObservation).put(i, (i == lastAction) ? v : INITIALQVALUE);
             }
         }
-        if (trainingMode){
+
+        if (trainingMode){        //lower the explorationrate
             epsilon -= 0.005;
             if (epsilon < 0.01){
                 epsilon = 0.01;
