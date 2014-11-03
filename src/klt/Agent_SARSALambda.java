@@ -24,14 +24,25 @@ public class Agent_SARSALambda extends Agent {
     private double lambda = 0.9;
     private double alpha = 0.2; //Lernrate
     private double gamma = 0.8; //Discountrate
-    private double epsilon = 0.95; //exploration rate
+    private double epsilon; //exploration rate
+    private boolean trainingMode; //is it allowed to explore?
     private final double INITIALQVALUE = 5; //initial q values
-    private final int NUMBEROFACTIONS = 5;
+    private final int NUMBEROFACTIONS = 5; //total numbers of actions to choose from
+    private final double EPSILON = 0.00001;
 
     public Agent_SARSALambda(String saveFilePath) throws IOException, ClassNotFoundException {
-        super(saveFilePath);
+        this(saveFilePath, 1);
+    }
 
-            traceStorage = new HashMap<String, HashMap<Integer, Double>>();
+    public Agent_SARSALambda(String saveFilePath, double explorationRate) throws IOException, ClassNotFoundException {
+        this(saveFilePath, explorationRate, true);
+    }
+
+    public Agent_SARSALambda(String saveFilePath, double explorationRate, boolean trainingMode) throws IOException, ClassNotFoundException {
+        super(saveFilePath);
+        this.epsilon = explorationRate;
+        this.trainingMode = trainingMode;
+        traceStorage = new HashMap<String, HashMap<Integer, Double>>();
     }
 
     @Override
@@ -115,10 +126,12 @@ public class Agent_SARSALambda extends Agent {
 
         for(String keyObservation : observationStorage.keySet()){
             for (Integer keyAction : observationStorage.get(keyObservation).keySet()){
-                double oldValQ = observationStorage.get(keyObservation).get(keyAction).doubleValue();
                 double oldValE = traceStorage.get(keyObservation).get(keyAction).doubleValue();
-                observationStorage.get(keyObservation).put(keyAction, (oldValQ + alpha * delta * oldValE));
-                traceStorage.get(keyObservation).put(keyAction, gamma * lambda * oldValE);
+                if (oldValE <= EPSILON) {
+                    double oldValQ = observationStorage.get(keyObservation).get(keyAction).doubleValue();
+                    observationStorage.get(keyObservation).put(keyAction, (oldValQ + alpha * delta * oldValE));
+                    traceStorage.get(keyObservation).put(keyAction, gamma * lambda * oldValE);
+                }
             }
         }
     }
@@ -133,12 +146,25 @@ public class Agent_SARSALambda extends Agent {
         returnAction.intArray[0] = this.getBestAction(observation);
 
         lastAction = returnAction.intArray[0];
+
+        if (trainingMode) {         //if the trainingmode is enabled the agent will sometimes randomly choose a random action
+            if (this.randGenerator.nextInt(100) < (epsilon * 100)) {
+                returnAction.intArray[0] = this.randGenerator.nextInt(NUMBEROFACTIONS);
+            }
+        }
+
         updateValues(v);
         return returnAction;
     }
 
     @Override
     public void agent_end(double v) {
+        if (trainingMode) {            //lower the exploration rate
+            epsilon -= 0.005;
+            if (epsilon < 0.01) {
+                epsilon = 0.01;
+            }
+        }
         updateValues(v);
     }
 
