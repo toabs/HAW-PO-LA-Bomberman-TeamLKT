@@ -87,7 +87,20 @@ public class KI_Factory
     {
         try
         {
-            return new KI(id, new Agent_SARSA("KI_FollowerSARSA.rgo"), new Environment_Follower());
+            return new KI(id, new Agent_SARSA("KI_FollowerSARSA2.rgo"), new Environment_Follower());
+        } catch (Exception e)
+        {
+            System.out.println("Exception at KI-Creation: " + e.getMessage());
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public static KI getKI_SARSA_Lambda_Follower(int id)
+    {
+        try
+        {
+            return new KI(id, new Agent_SARSALambda("KI_FollowerSARSAL.rgo"), new Environment_Follower());
         } catch (Exception e)
         {
             System.out.println("Exception at KI-Creation: " + e.getMessage());
