@@ -68,17 +68,17 @@ public class Agent_SARSA extends Agent{
         if (this.observationStorage.containsKey(lastObservation))
         {
             double currentQ = observationStorage.get(lastObservation).get(lastAction).doubleValue();
-            int res = (int) (currentQ + alpha * (v - currentQ));
+            double res = (currentQ + alpha * (v - currentQ));
             observationStorage.get(lastObservation).put(beforeLastAction, res);
         }
         else
         {
             //add the unknown observation
-            this.observationStorage.put(lastObservation, new HashMap<Integer, Integer>());
+            this.observationStorage.put(lastObservation, new HashMap<Integer, Double>());
 
             for(int i = 0; i < NUMBEROFACTIONS; i++)
             {
-                this.observationStorage.get(lastObservation).put(i, new Integer((i == lastAction) ? (int) v : INITIALQVALUE));
+                this.observationStorage.get(lastObservation).put(i, (i == lastAction) ? v : INITIALQVALUE);
             }
         }
         epsilon *= epsilon;
@@ -95,17 +95,17 @@ public class Agent_SARSA extends Agent{
             if (observationStorage.containsKey(lastObservation)) {
                 qNext = observationStorage.get(lastObservation).get(lastAction).doubleValue();
             }
-            int res = (int) (qThis + alpha * (r + gamma * qNext - qThis));
+            double res = (qThis + alpha * (r + gamma * qNext - qThis));
             observationStorage.get(beforeLastObservation).put(beforeLastAction, res);
         }
         else
         {
             //add the unknown observation
-            this.observationStorage.put(beforeLastObservation, new HashMap<Integer, Integer>());
+            this.observationStorage.put(beforeLastObservation, new HashMap<Integer, Double>());
 
             for(int i = 0; i < NUMBEROFACTIONS; i++)
             {
-                this.observationStorage.get(beforeLastObservation).put(i, new Integer((i == lastAction) ? (int) r : INITIALQVALUE));
+                this.observationStorage.get(beforeLastObservation).put(i, (i == lastAction) ? r : INITIALQVALUE);
             }
         }
     }

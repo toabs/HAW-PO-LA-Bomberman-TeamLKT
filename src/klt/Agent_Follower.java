@@ -98,16 +98,16 @@ public class Agent_Follower extends Agent
         //distribute reward
         if (this.observationStorage.containsKey(lastObs.toString()))
         {
-            this.observationStorage.get(lastObs.toString()).put(lastAction, new Integer((int) arg0));
+            this.observationStorage.get(lastObs.toString()).put(lastAction, arg0);
         }
         else
         {
             //add the unknown observation
-            this.observationStorage.put(lastObs.toString(), new HashMap<Integer, Integer>());
+            this.observationStorage.put(lastObs.toString(), new HashMap<Integer, Double>());
             
             for(int i = 0; i < 5; i++)
             {
-                this.observationStorage.get(lastObs.toString()).put(i, new Integer((i == lastAction) ? (int) arg0 : 0));
+                this.observationStorage.get(lastObs.toString()).put(i, (i == lastAction) ? arg0 : 0);
             }
         }
         

@@ -71,21 +71,21 @@ public class Agent_SARSALambda extends Agent {
             }else
             {
                 //add the unknown observation
-                this.observationStorage.put(beforeLastObservation, new HashMap<Integer, Integer>());
+                this.observationStorage.put(beforeLastObservation, new HashMap<Integer, Double>());
 
                 for(int i = 0; i < NUMBEROFACTIONS; i++)
                 {
-                    this.observationStorage.get(beforeLastObservation).put(i, (int) ((i == lastAction) ? r : INITIALQVALUE));
+                    this.observationStorage.get(beforeLastObservation).put(i, (i == lastAction) ? r : INITIALQVALUE);
                 }
             }
         }  else
         {
             //add the unknown observation
-            this.observationStorage.put(lastObservation, new HashMap<Integer, Integer>());
+            this.observationStorage.put(lastObservation, new HashMap<Integer, Double>());
 
             for(int i = 0; i < NUMBEROFACTIONS; i++)
             {
-                this.observationStorage.get(lastObservation).put(i, (int) ((i == lastAction) ? r : INITIALQVALUE));
+                this.observationStorage.get(lastObservation).put(i, (i == lastAction) ? r : INITIALQVALUE);
             }
         }
 
@@ -117,7 +117,7 @@ public class Agent_SARSALambda extends Agent {
             for (Integer keyAction : observationStorage.get(keyObservation).keySet()){
                 double oldValQ = observationStorage.get(keyObservation).get(keyAction).doubleValue();
                 double oldValE = traceStorage.get(keyObservation).get(keyAction).doubleValue();
-                observationStorage.get(keyObservation).put(keyAction, (int) (oldValQ + alpha * delta * oldValE));
+                observationStorage.get(keyObservation).put(keyAction, (oldValQ + alpha * delta * oldValE));
                 traceStorage.get(keyObservation).put(keyAction, gamma * lambda * oldValE);
             }
         }
