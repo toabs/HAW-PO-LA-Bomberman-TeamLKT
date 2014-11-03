@@ -29,6 +29,12 @@ public class KI_Factory
         }
     }
 
+    /* ************************************************************** */
+    /**
+     * getKI_Escape
+     * @param id
+     * @return
+    */ /************************************************************* */
     public static KI getKI_Escape(int id){
         try{
             return new KI(id, new Agent_Follower("KI_Escape.rgo"), new Environment_Escape());
@@ -68,7 +74,7 @@ public class KI_Factory
     {
         try
         {
-            return new KI(id, new Agent_SARSA("KI_FollowerSARSA.rgo"), new Environment_Avoidbomb_Zone());
+            return new KI(id, new Agent_SARSA("KI_AvoidBombSARSA.rgo"), new Environment_Avoidbomb_Zone());
         } catch (Exception e)
         {
             System.out.println("Exception at KI-Creation: " + e.getMessage());
@@ -96,6 +102,12 @@ public class KI_Factory
         }
     }
 
+    /* ************************************************************** */
+    /**
+     * getKI_SARSA_Lambda_Follower
+     * @param id
+     * @return
+    */ /************************************************************* */
     public static KI getKI_SARSA_Lambda_Follower(int id)
     {
         try
@@ -107,5 +119,41 @@ public class KI_Factory
             e.printStackTrace();
             return null;
         }
+    }
+    
+    /* ************************************************************** */
+    /**
+     * getFighterA
+     * @param id
+     * @return
+    */ /************************************************************* */
+    public static KI getFighterA(int id) {
+        try
+        {
+            return new KI(id, new Agent_SARSA("KI_FighterA.rgo"), new Environment_Fighter());
+        } catch (Exception e)
+        {
+            System.out.println("Exception at KI-Creation: " + e.getMessage());
+            e.printStackTrace();
+            return null;
+        }        
+    }
+    
+    /* ************************************************************** */
+    /**
+     * getFighterA
+     * @param id
+     * @return
+    */ /************************************************************* */
+    public static KI getFighterB(int id) {
+        try
+        {
+            return new KI(id, new Agent_SARSA("KI_FighterB.rgo"), new Environment_Fighter());
+        } catch (Exception e)
+        {
+            System.out.println("Exception at KI-Creation: " + e.getMessage());
+            e.printStackTrace();
+            return null;
+        }        
     }
 }
