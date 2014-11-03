@@ -24,7 +24,7 @@ public abstract class Agent implements AgentInterface
 {
     //The set of observation, saving a Map of Values indexed by the Action
     //Example 
-    protected HashMap<String, HashMap<Integer, Integer>> observationStorage; 
+    protected HashMap<String, HashMap<Integer, Double>> observationStorage; 
     private String saveFilePath;
     protected Random randGenerator = new Random();
     
@@ -39,12 +39,12 @@ public abstract class Agent implements AgentInterface
         {
             FileInputStream fin = new FileInputStream(saveFilePath);
             ObjectInputStream ois = new ObjectInputStream(fin);
-            this.observationStorage = (HashMap<String, HashMap<Integer, Integer>>) ois.readObject();
+            this.observationStorage = (HashMap<String, HashMap<Integer, Double>>) ois.readObject();
             ois.close();
         }
         else
         {
-            this.observationStorage = new HashMap<String, HashMap<Integer, Integer>>();
+            this.observationStorage = new HashMap<String, HashMap<Integer, Double>>();
         }
     }
 
@@ -57,7 +57,7 @@ public abstract class Agent implements AgentInterface
     protected int getBestAction(Observation currentObs)
     {
         int currentAction = 0;
-        int bestValue = -9999999;
+        Double bestValue = -9999999.9;
         ArrayList<Integer> bestActions = new ArrayList<Integer>();
         int bestActionCount = 0;
 
