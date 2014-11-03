@@ -25,6 +25,7 @@ public class KI extends User
     private boolean firstStep = true;
     private Environment currentEnvironment;
     private Agent currentAgent;
+    Action lastAction = null;
     
     /* ************************************************************** */
     /**
@@ -58,7 +59,6 @@ public class KI extends User
         Action actionStart = null;
         Reward_observation_terminal obsStep = null;
         Action actionStep = null;
-        Action lastAction = null;
         
         int action = 0;
         
@@ -121,10 +121,12 @@ public class KI extends User
     @Override
     public void gameOver(boolean won)
     {
+        Reward_observation_terminal envStepResult = null;
         //not used by KI
         //RLGlue.RL_cleanup();
+        envStepResult = this.currentEnvironment.env_step(this.lastAction);
         this.currentEnvironment.env_cleanup();
-        this.currentAgent.agent_end(1);
+        this.currentAgent.agent_end(envStepResult.r);
         this.currentAgent.agent_cleanup();
         firstStep = true;     
     }
