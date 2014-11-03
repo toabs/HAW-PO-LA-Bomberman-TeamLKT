@@ -119,8 +119,10 @@ public class KI extends User
      * @see Core.User#gameOver(boolean)
     */ /************************************************************* */
     @Override
-    public void gameOver(boolean won)
+    public void gameOver(boolean won, Playboard playboard)
     {
+        currentEnvironment.setPlayboard(playboard, this.getId());
+        
         Reward_observation_terminal envStepResult = null;
         //not used by KI
         //RLGlue.RL_cleanup();
