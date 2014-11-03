@@ -28,7 +28,8 @@ public class Agent_SARSALambda extends Agent {
     private boolean trainingMode; //is it allowed to explore?
     private final double INITIALQVALUE = 5; //initial q values
     private final int NUMBEROFACTIONS = 5; //total numbers of actions to choose from
-    private final double EPSILON = 0.00001;
+    private final double EPSILON = 0.00001; //the epsilon for the close to zero comparisions
+    private final double EPSILONMINIMUM = 0.1;
 
     public Agent_SARSALambda(String saveFilePath) throws IOException, ClassNotFoundException {
         this(saveFilePath, 1);
@@ -165,8 +166,8 @@ public class Agent_SARSALambda extends Agent {
     public void agent_end(double v) {
         if (trainingMode) {            //lower the exploration rate
             epsilon -= 0.005;
-            if (epsilon < 0.01) {
-                epsilon = 0.01;
+            if (epsilon < EPSILONMINIMUM) {
+                epsilon = EPSILONMINIMUM;
             }
         }
         updateValues(v);

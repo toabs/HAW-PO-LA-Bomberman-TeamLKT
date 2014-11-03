@@ -23,6 +23,7 @@ public class Agent_SARSA extends Agent{
     private boolean trainingMode = true;
     private final double INITIALQVALUE = 50.0; //initial q values
     private final int NUMBEROFACTIONS = 5;
+    private final double EPSILONMINIMUM = 0.1;
 
     public Agent_SARSA(String saveFilePath) throws IOException, ClassNotFoundException {
         this(saveFilePath, 0.8);
@@ -101,8 +102,8 @@ public class Agent_SARSA extends Agent{
 
         if (trainingMode){        //lower the explorationrate
             epsilon -= 0.005;
-            if (epsilon < 0.01){
-                epsilon = 0.01;
+            if (epsilon < EPSILONMINIMUM){
+                epsilon = EPSILONMINIMUM;
             }
         }
     }
