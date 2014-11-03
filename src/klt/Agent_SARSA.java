@@ -68,7 +68,7 @@ public class Agent_SARSA extends Agent{
         returnAction.intArray[0] = this.getBestAction(observation);
 
         if (trainingMode) {         //if the trainingmode is enabled the agent will sometimes randomly choose a random action
-            if (this.randGenerator.nextInt(100) < (epsilon * 100)) {
+            if (this.randGenerator.nextDouble() < epsilon) {
                 returnAction.intArray[0] = this.randGenerator.nextInt(NUMBEROFACTIONS);
             }
         }
