@@ -25,20 +25,18 @@ public class Agent_SARSA extends Agent{
     private final int NUMBEROFACTIONS = 5;
     private final double EPSILONMINIMUM = 0.001;
 
+    /**
+     * With this contructor it will just run what the agent learned. The agent will not train or log anything.
+     * @param saveFilePath
+     * @throws IOException
+     * @throws ClassNotFoundException
+     */
     public Agent_SARSA(String saveFilePath) throws IOException, ClassNotFoundException {
-        this(saveFilePath, 0.8);
+        this(saveFilePath, 0.0, false, DebugState.NO_DEBUG);
     }
 
-    public Agent_SARSA(String saveFilePath, boolean trainingMode) throws IOException, ClassNotFoundException {
-        this(saveFilePath, 0.8, trainingMode);
-    }
-
-    public Agent_SARSA(String saveFilePath, double explorationRate) throws IOException, ClassNotFoundException {
-        this(saveFilePath, explorationRate, true);
-    }
-
-    public Agent_SARSA(String saveFilePath, double explorationRate, boolean trainingMode) throws IOException, ClassNotFoundException {
-        super(saveFilePath);
+    public Agent_SARSA(String saveFilePath, double explorationRate, boolean trainingMode, DebugState debugState) throws IOException, ClassNotFoundException {
+        super(saveFilePath, debugState);
         this.epsilon = explorationRate;
         this.trainingMode = trainingMode;
     }

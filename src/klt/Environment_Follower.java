@@ -41,7 +41,7 @@ public class Environment_Follower extends Environment
     @Override
     public void env_cleanup()
     {
-        System.out.println("Env_cleanup called!");        
+        this.environmentLogln("Env_cleanup called!");        
     }
 
     /* ************************************************************** */
@@ -53,7 +53,7 @@ public class Environment_Follower extends Environment
     public String env_init()
     {
         maxDistanceToOpponent = Math.sqrt(Math.pow(board.getBoard().length, 2) + Math.pow(board.getBoard()[0].length, 2));
-        System.out.println("maxDistance is : " + maxDistanceToOpponent);
+        this.environmentLogln("maxDistance is : " + maxDistanceToOpponent);
         
         TaskSpecVRLGLUE3 theTaskSpecObject = new TaskSpecVRLGLUE3();
         theTaskSpecObject.addDiscreteAction(new IntRange(0, 4)); //five possible actions (without bomb-planting)
@@ -127,24 +127,24 @@ public class Environment_Follower extends Environment
         currentObs.intArray[1] = opponentDirection;
         currentObs.doubleArray[0] = distanceToOpponent; 
         
-        //System.out.println("Distance: " + distanceToOpponent);
+        //this.environmentLogln("Distance: " + distanceToOpponent);
         
         if (lastDistance > distanceToOpponent)
         {
             theReward = 1; 
-            //System.out.println("+");
+            //this.environmentLogln("+");
         } 
         
         if (lastDistance < distanceToOpponent)
         {
             theReward = -1;
-            //System.out.println("-");
+            //this.environmentLogln("-");
         }
         
         //negative reward if not moved
         if (lastX == currentPlayer.getX() && lastY == currentPlayer.getY() && lastDistance != 0)
         {
-            //System.out.println("--");
+            //this.environmentLogln("--");
             theReward = -2;
         }
 
@@ -248,7 +248,7 @@ int determineOppenentDirection() {
         if (bot && left && !right)      return 8; //botleft
         if (bot && !left && right)      return 9; //botright
         
-        System.out.println("OpponentDirection error.");        
+        this.environmentLogln("OpponentDirection error.");        
         return 0;
     }
     

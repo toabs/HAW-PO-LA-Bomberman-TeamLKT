@@ -47,7 +47,7 @@ public class Environment_Fighter extends Environment
     @Override
     public void env_cleanup()
     {
-        System.out.println("Env_cleanup called!");        
+        this.environmentLogln("Env_cleanup called!");        
     }
 
     /* ************************************************************** */
@@ -59,7 +59,7 @@ public class Environment_Fighter extends Environment
     public String env_init()
     {
         maxDistanceToOpponent = Math.sqrt(Math.pow(board.getBoard().length, 2) + Math.pow(board.getBoard()[0].length, 2));
-        System.out.println("maxDistance is : " + maxDistanceToOpponent);
+        this.environmentLogln("maxDistance is : " + maxDistanceToOpponent);
         
         TaskSpecVRLGLUE3 theTaskSpecObject = new TaskSpecVRLGLUE3();
         theTaskSpecObject.addDiscreteAction(new IntRange(0, 4)); //five possible actions (without bomb-planting)
@@ -137,7 +137,7 @@ public class Environment_Fighter extends Environment
         currentObs.intArray[2] = bombSituation;
         currentObs.doubleArray[0] = distanceToOpponent; 
         
-        //System.out.println("Distance: " + distanceToOpponent);
+        //this.environmentLogln("Distance: " + distanceToOpponent);
         
         if (lastDistance > distanceToOpponent)
         {
@@ -172,7 +172,7 @@ public class Environment_Fighter extends Environment
         //negative reward if not moved
         if (lastX == currentPlayer.getX() && lastY == currentPlayer.getY() && lastDistance != 0 && arg0.intArray[0] != 0)
         {
-            System.out.println("--");
+            this.environmentLogln("--");
             theReward = -400;
         }        
         
@@ -295,7 +295,7 @@ public class Environment_Fighter extends Environment
         if (bot && left && !right)      return 8; //botleft
         if (bot && !left && right)      return 9; //botright
         
-        System.out.println("OpponentDirection error.");        
+        this.environmentLogln("OpponentDirection error.");        
         return 0;
     }
     
@@ -364,9 +364,9 @@ public class Environment_Fighter extends Environment
         {
             for (int n = 0; n < board.getBoard()[0].length; n++)
             {
-                System.out.print("[" + dangerAnalysis[n][i] + 1 + "]");
+                this.environmentLog("[" + dangerAnalysis[n][i] + 1 + "]");
             }
-            System.out.println("");
+            this.environmentLogln("");
         } */
         
         //current Position
@@ -399,11 +399,11 @@ public class Environment_Fighter extends Environment
         result += (dangerRight   + Math.pow(countZoneStatus, 4));
         
         /*
-        System.out.println("DangerCurrent=" + dangerCurrent);
-        System.out.println("DangerTop=" + dangerTop);
-        System.out.println("DangerBot=" + dangerBot);
-        System.out.println("DangerLeft=" + dangerLeft);
-        System.out.println("DangerRight=" + dangerRight);
+        this.environmentLogln("DangerCurrent=" + dangerCurrent);
+        this.environmentLogln("DangerTop=" + dangerTop);
+        this.environmentLogln("DangerBot=" + dangerBot);
+        this.environmentLogln("DangerLeft=" + dangerLeft);
+        this.environmentLogln("DangerRight=" + dangerRight);
         */
         return result;
     }

@@ -32,19 +32,23 @@ public class Agent_SARSALambda extends Agent {
     private final double EPSILONMINIMUM = 0.1;
 
     public Agent_SARSALambda(String saveFilePath) throws IOException, ClassNotFoundException {
-        this(saveFilePath, true);
+        this(saveFilePath, DebugState.NO_DEBUG);
     }
 
-    public Agent_SARSALambda(String saveFilePath, boolean trainingMode) throws IOException, ClassNotFoundException {
-        this(saveFilePath, 0.9,  0.4, trainingMode);
+    public Agent_SARSALambda(String saveFilePath, DebugState debugState) throws IOException, ClassNotFoundException {
+        this(saveFilePath, true, debugState);
     }
 
-    public Agent_SARSALambda(String saveFilePath, double explorationRate, double lambda) throws IOException, ClassNotFoundException {
-        this(saveFilePath, explorationRate, lambda, true);
+    public Agent_SARSALambda(String saveFilePath, boolean trainingMode, DebugState debugState) throws IOException, ClassNotFoundException {
+        this(saveFilePath, 0.9,  0.4, trainingMode, debugState);
     }
 
-    public Agent_SARSALambda(String saveFilePath, double explorationRate, double lambda, boolean trainingMode) throws IOException, ClassNotFoundException {
-        super(saveFilePath);
+    public Agent_SARSALambda(String saveFilePath, double explorationRate, double lambda, DebugState debugState) throws IOException, ClassNotFoundException {
+        this(saveFilePath, explorationRate, lambda, true, debugState);
+    }
+
+    public Agent_SARSALambda(String saveFilePath, double explorationRate, double lambda, boolean trainingMode, DebugState debugState) throws IOException, ClassNotFoundException {
+        super(saveFilePath, debugState);
         this.epsilon = explorationRate;
         this.lambda = lambda;
         this.trainingMode = trainingMode;
