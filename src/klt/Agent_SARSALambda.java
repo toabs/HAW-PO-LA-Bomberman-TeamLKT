@@ -21,7 +21,7 @@ public class Agent_SARSALambda extends Agent {
     private Integer lastAction;
     private Integer beforeLastAction;
     private HashMap<String, HashMap<Integer, Double>> traceStorage;
-    private double lambda = 0.9;
+    private double lambda;
     private double alpha = 0.2; //Lernrate
     private double gamma = 0.8; //Discountrate
     private double epsilon; //exploration rate
@@ -32,20 +32,21 @@ public class Agent_SARSALambda extends Agent {
     private final double EPSILONMINIMUM = 0.1;
 
     public Agent_SARSALambda(String saveFilePath) throws IOException, ClassNotFoundException {
-        this(saveFilePath, 1);
+        this(saveFilePath, true);
     }
 
     public Agent_SARSALambda(String saveFilePath, boolean trainingMode) throws IOException, ClassNotFoundException {
-        this(saveFilePath, 0.9, trainingMode);
+        this(saveFilePath, 0.9,  0.4, trainingMode);
     }
 
-    public Agent_SARSALambda(String saveFilePath, double explorationRate) throws IOException, ClassNotFoundException {
-        this(saveFilePath, explorationRate, true);
+    public Agent_SARSALambda(String saveFilePath, double explorationRate, double lambda) throws IOException, ClassNotFoundException {
+        this(saveFilePath, explorationRate, lambda, true);
     }
 
-    public Agent_SARSALambda(String saveFilePath, double explorationRate, boolean trainingMode) throws IOException, ClassNotFoundException {
+    public Agent_SARSALambda(String saveFilePath, double explorationRate, double lambda, boolean trainingMode) throws IOException, ClassNotFoundException {
         super(saveFilePath);
         this.epsilon = explorationRate;
+        this.lambda = lambda;
         this.trainingMode = trainingMode;
         traceStorage = new HashMap<String, HashMap<Integer, Double>>();
     }
@@ -80,8 +81,8 @@ public class Agent_SARSALambda extends Agent {
 
             if(observationStorage.containsKey(beforeLastObservation)) {
 
-            double lastQ = observationStorage.get(beforeLastObservation).get(beforeLastAction).doubleValue();
-            double currentQ = observationStorage.get(lastObservation).get(lastAction).doubleValue();
+            double lastQ = observationStorage.get(beforeLastObservation).get(beforeLastAction);
+            double currentQ = observationStorage.get(lastObservation).get(lastAction);
             delta = r + gamma * currentQ - lastQ;
 
             }else

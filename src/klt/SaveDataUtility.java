@@ -75,11 +75,7 @@ public class SaveDataUtility {
                 ObjectInputStream ois = new ObjectInputStream(fin);
                 otherStorage = (HashMap<String, HashMap<Integer, Double>>) ois.readObject();
                 ois.close();
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            } catch (ClassNotFoundException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
+            } catch (ClassNotFoundException | IOException e) {
                 e.printStackTrace();
             }
 

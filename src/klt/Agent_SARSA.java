@@ -23,7 +23,7 @@ public class Agent_SARSA extends Agent{
     private boolean trainingMode = true;
     private final double INITIALQVALUE = 50.0; //initial q values
     private final int NUMBEROFACTIONS = 5;
-    private final double EPSILONMINIMUM = 0.1;
+    private final double EPSILONMINIMUM = 0.001;
 
     public Agent_SARSA(String saveFilePath) throws IOException, ClassNotFoundException {
         this(saveFilePath, 0.8);
@@ -85,7 +85,7 @@ public class Agent_SARSA extends Agent{
         //distribute reward
         if (this.observationStorage.containsKey(lastObservation))
         {
-            double currentQ = observationStorage.get(lastObservation).get(lastAction).doubleValue();
+            double currentQ = observationStorage.get(lastObservation).get(lastAction);
             double res = currentQ + alpha * (v - currentQ);
             observationStorage.get(lastObservation).put(beforeLastAction, res);
         }
@@ -114,10 +114,10 @@ public class Agent_SARSA extends Agent{
         //distribute reward
         if (this.observationStorage.containsKey(beforeLastObservation))
         {
-            double qThis = observationStorage.get(beforeLastObservation).get(beforeLastAction).doubleValue();
+            double qThis = observationStorage.get(beforeLastObservation).get(beforeLastAction);
             double qNext = INITIALQVALUE;
             if (observationStorage.containsKey(lastObservation)) {
-                qNext = observationStorage.get(lastObservation).get(lastAction).doubleValue();
+                qNext = observationStorage.get(lastObservation).get(lastAction);
             }
             double res = qThis + alpha * (r + gamma * qNext - qThis);
             observationStorage.get(beforeLastObservation).put(beforeLastAction, res);

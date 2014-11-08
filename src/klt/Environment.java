@@ -17,7 +17,17 @@ public abstract class Environment implements EnvironmentInterface
 {
     protected Playboard board;
     protected int userID = 0;
-    
+    private DebugState debugState;
+
+    Environment(DebugState debugState){
+        super();
+        this.debugState = debugState;
+    }
+
+    Environment(){
+        super();
+    }
+
     /* ************************************************************** */
     /**
      * setPlayboard
@@ -27,5 +37,17 @@ public abstract class Environment implements EnvironmentInterface
     {
         this.userID = userID;
         board = playboard;
+    }
+
+    protected void environmentLogln(String output){
+        if (debugState.getEnvironmentDebugState()){
+            System.out.println(output);
+        }
+    }
+
+    protected void environmentLog(String output){
+        if (debugState.getEnvironmentDebugState()){
+            System.out.print(output);
+        }
     }
 }

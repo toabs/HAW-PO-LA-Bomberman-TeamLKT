@@ -24,6 +24,7 @@ public class KI extends User
 {
     private boolean firstStep = true;
     private Environment currentEnvironment;
+    private DebugState debugState;
     private Agent currentAgent;
     Action lastAction = null;
     
@@ -35,12 +36,18 @@ public class KI extends User
     public KI(int id, Agent agent, Environment environment)
     {
         super(id);
+        this.debugState = DebugState.NO_DEBUG;
        
         currentAgent = agent;
         currentEnvironment = environment;
         
         //LocalGlue localGlueImplementation=new LocalGlue(environment,agent);
         //RLGlue.setGlue(localGlueImplementation);
+    }
+
+    public KI(int id, Agent agent, Environment environment, DebugState debugState){
+        this(id, agent, environment);
+        this.debugState = debugState;
     }
 
     /* ************************************************************** */
@@ -119,7 +126,7 @@ public class KI extends User
      * @see Core.User#gameOver(boolean)
     */ /************************************************************* */
     @Override
-    public void gameOver(boolean won)
+    public void gameOver(boolean won, Playboard playboard)
     {
         Reward_observation_terminal envStepResult = null;
         //not used by KI
@@ -130,4 +137,17 @@ public class KI extends User
         this.currentAgent.agent_cleanup();
         firstStep = true;     
     }
+
+    protected void kILogln(String output){
+        if (debugState.getKIDebugState()){
+            System.out.println(output);
+        }
+    }
+
+    protected void kILog(String output){
+        if (debugState.getKIDebugState()){
+            System.out.print(output);
+        }
+    }
+
 }

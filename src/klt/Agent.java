@@ -26,11 +26,18 @@ public abstract class Agent implements AgentInterface
     //Example 
     protected HashMap<String, HashMap<Integer, Double>> observationStorage; 
     private String saveFilePath;
+    private DebugState debugState;
     protected Random randGenerator = new Random();
+
+    Agent(String saveFilePath, DebugState debugState) throws IOException, ClassNotFoundException {
+        this(saveFilePath);
+        this.debugState = debugState;
+    }
     
     @SuppressWarnings("unchecked")
     Agent(String saveFilePath) throws IOException, ClassNotFoundException
     {
+        this.debugState = DebugState.NO_DEBUG;
         this.saveFilePath = saveFilePath;
         
         File f = new File(saveFilePath);
@@ -100,7 +107,19 @@ public abstract class Agent implements AgentInterface
 
         return currentAction;
     }
-    
+
+    protected void agentLogln(String output){
+        if (debugState.getAgentDebugState()){
+            System.out.println(output);
+        }
+    }
+
+    protected void agentLog(String output){
+        if (debugState.getAgentDebugState()){
+            System.out.print(output);
+        }
+    }
+
     /* ************************************************************** */
     /**
      * agent_cleanup
