@@ -22,7 +22,7 @@ public class Agent_SARSA extends Agent{
     private double epsilon = 0.95; //exploration rate
     private boolean trainingMode = true;
     private final double INITIALQVALUE = 50.0; //initial q values
-    private final int NUMBEROFACTIONS = 5;
+    private final int NUMBEROFACTIONS = 6;
     private final double EPSILONMINIMUM = 0.001;
 
     /**

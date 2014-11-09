@@ -204,7 +204,7 @@ public class Environment_Avoidbomb_Zone extends Environment
         } */
         
         //current Position
-        currentBombCounter = dangerAnalysis[cP.getY()][cP.getY()];
+        currentBombCounter = dangerAnalysis[cP.getX()][cP.getY()];
         dangerCurrent = evaluateBombCounter(currentBombCounter);
         this.lastDanger = this.currentDanger;
         this.currentDanger = dangerCurrent;

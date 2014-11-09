@@ -48,7 +48,7 @@ public class Environment_Fighter extends Environment
         this.environmentLogln("maxDistance is : " + maxDistanceToOpponent);
         
         TaskSpecVRLGLUE3 theTaskSpecObject = new TaskSpecVRLGLUE3();
-        theTaskSpecObject.addDiscreteAction(new IntRange(0, 4)); //five possible actions (without bomb-planting)
+        theTaskSpecObject.addDiscreteAction(new IntRange(0, 5)); //five possible actions (without bomb-planting)
         theTaskSpecObject.addDiscreteObservation(new IntRange(1, freeDirections));
         theTaskSpecObject.addDiscreteObservation(new IntRange(1, oppenentDirections));
         theTaskSpecObject.addDiscreteObservation(new IntRange(1, bombSituations));
@@ -155,12 +155,12 @@ public class Environment_Fighter extends Environment
             theReward = -500;
         }
         
-        //negative reward if not moved
+        //negative reward if not moved, if move was not "stay"
         if (lastX == currentPlayer.getX() && lastY == currentPlayer.getY() && lastDistance != 0 && arg0.intArray[0] != 0)
         {
             this.environmentLogln("--");
             theReward = -400;
-        }        
+        }      
         
         this.lastDistance = distanceToOpponent;
         this.lastX = currentPlayer.getX();
@@ -179,6 +179,7 @@ public class Environment_Fighter extends Environment
         Player cP = this.determineCurrentPlayer();
         int[][] dangerAnalysis = new int[board.getBoard().length][board.getBoard()[0].length];
         int currentBombCounter = 0;
+        int highDanger = 2;
         
         int countZoneStatus = 3; // count of possible danger
         
@@ -191,43 +192,59 @@ public class Environment_Fighter extends Environment
         int result = 0;
         
         determineBombZones(dangerAnalysis);
-        this.environmentLogln("***********************************");
+        
         //print out dangerAnalysis
+        /*
         for(int i = 0; i < board.getBoard().length; i++)
         {
             for (int n = 0; n < board.getBoard()[0].length; n++)
             {
-            	if (dangerAnalysis[n][i] == 99) {
-            		this.environmentLog("[0]");
-            	} else {
-            		this.environmentLog("[" + (dangerAnalysis[n][i] + 1) + "]");
-            	}
+                this.environmentLog("[" + dangerAnalysis[n][i] + 1 + "]");
             }
             this.environmentLogln("");
-        }
-        this.environmentLogln("***********************************");
+        } */
         
         //current Position
-        currentBombCounter = dangerAnalysis[cP.getY()][cP.getY()];
-        dangerCurrent = evaluateBombCounter(currentBombCounter);
-        //this.lastDanger = this.currentDanger;
-        //this.currentDanger = dangerCurrent;
+        currentBombCounter = dangerAnalysis[cP.getX()][cP.getY()];
+        if (currentBombCounter <= 1) {
+        	dangerCurrent = highDanger;
+        } else {
+        	dangerCurrent = evaluateBombCounter(currentBombCounter);
+        }
+        this.lastDanger = this.currentDanger;
+        this.currentDanger = dangerCurrent;
         
         //watch top
-        currentBombCounter = getMinBombCounter(cP.getX() -1, cP.getY() + 3, 3, 3, dangerAnalysis);
-        dangerTop = evaluateBombCounter(currentBombCounter);
+        if (getBombCounter(cP.getX(), cP.getY() - 1, 0, dangerAnalysis) <= 1) {
+        	dangerTop = highDanger;
+        } else {
+        	currentBombCounter = getMinBombCounter(cP.getX() -1, cP.getY() - 2, 3, 2, dangerAnalysis);
+        	dangerTop = evaluateBombCounter(currentBombCounter);
+   		}
         
         //watch bot
-        currentBombCounter = getMinBombCounter(cP.getX() - 1, cP.getY() + 1, 3, 3, dangerAnalysis);
-        dangerBot = evaluateBombCounter(currentBombCounter);
+        if (getBombCounter(cP.getX(), cP.getY() + 1, 0, dangerAnalysis) <= 1) {
+        	dangerBot = highDanger;
+        } else {
+        	currentBombCounter = getMinBombCounter(cP.getX() - 1, cP.getY() + 1, 3, 2, dangerAnalysis);
+        	dangerBot = evaluateBombCounter(currentBombCounter);
+        }
         
         //watch left
-        currentBombCounter = getMinBombCounter(cP.getX() -3, cP.getY() - 1, 3, 3, dangerAnalysis);
-        dangerLeft = evaluateBombCounter(currentBombCounter);
+        if (getBombCounter(cP.getX() - 1, cP.getY(), 0, dangerAnalysis) <= 1) {
+        	dangerLeft = highDanger;
+        } else {
+	        currentBombCounter = getMinBombCounter(cP.getX() -2, cP.getY() - 1, 2, 3, dangerAnalysis);
+	        dangerLeft = evaluateBombCounter(currentBombCounter);
+        }
         
         //watch right
-        currentBombCounter = getMinBombCounter(cP.getX() +1, cP.getY() -1, 3, 3, dangerAnalysis);
-        dangerRight = evaluateBombCounter(currentBombCounter);
+        if (getBombCounter(cP.getX() + 1, cP.getY(), 0, dangerAnalysis) <= 1) {
+        	dangerLeft = highDanger;
+        } else {
+	        currentBombCounter = getMinBombCounter(cP.getX() +1, cP.getY() -1, 2, 3, dangerAnalysis);
+	        dangerRight = evaluateBombCounter(currentBombCounter);
+        }
 
         
         result += (dangerCurrent + Math.pow(countZoneStatus, 0));
@@ -236,13 +253,12 @@ public class Environment_Fighter extends Environment
         result += (dangerLeft    + Math.pow(countZoneStatus, 3));
         result += (dangerRight   + Math.pow(countZoneStatus, 4));
         
-        /*
         this.environmentLogln("DangerCurrent=" + dangerCurrent);
         this.environmentLogln("DangerTop=" + dangerTop);
         this.environmentLogln("DangerBot=" + dangerBot);
         this.environmentLogln("DangerLeft=" + dangerLeft);
         this.environmentLogln("DangerRight=" + dangerRight);
-        */
+        
         return result;
     }
     
@@ -283,8 +299,7 @@ public class Environment_Fighter extends Environment
     */ /************************************************************* */
     private int evaluateBombCounter(int currentBombCounter) {
         int noDanger    = 0;
-        int maybeDanger = 1;
-        int highDanger  = 2;
+        int maybeDanger = 1;        
         
         int counterMaybeDanger = 3;
         int counterhighDanger  = 1;
@@ -295,13 +310,31 @@ public class Environment_Fighter extends Environment
             result = noDanger;
         }
         else {
-            if (currentBombCounter > counterhighDanger) {
-                result = maybeDanger;
-            } else {
-                result = highDanger;
-            }
+        	result = maybeDanger;
         }
         
         return result;
-    }   
+    }
+    
+    /* ************************************************************** */
+    /**
+     * getMinBombCounter
+     * @param startX
+     * @param startY
+     * @param spanX
+     * @param spanY
+     * @param dangerAnalysis
+     * @return
+    */ /************************************************************* */
+    private int getBombCounter(int x, int y, int stepsaway, int[][] dangerAnalysis) {
+        int initCounter = 99; //just a high value to start evaluation
+        int result = initCounter;
+        
+        if (validX(x) && validY(y)) {
+            result = ((dangerAnalysis[x][y]) == initCounter ? initCounter : dangerAnalysis[x][y] - stepsaway);
+        }             
+        
+        return result;
+    }
+    
 }

@@ -24,7 +24,7 @@ public class Agent_SARSALambda extends Agent {
     private double epsilon; //exploration rate
     private boolean trainingMode; //is it allowed to explore?
     private final double INITIALQVALUE = 5; //initial q values
-    private final int NUMBEROFACTIONS = 5; //total numbers of actions to choose from
+    private final int NUMBEROFACTIONS = 6; //total numbers of actions to choose from
     private final double EPSILON = 0.00001; //the epsilon for the close to zero comparisions
     private final double EPSILONMINIMUM = 0.1;
 
