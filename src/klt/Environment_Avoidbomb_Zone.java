@@ -176,45 +176,6 @@ public class Environment_Avoidbomb_Zone extends Environment
     
     /* ************************************************************** */
     /**
-     * determineCurrentPlayer
-     * @return
-    */ /************************************************************* */
-    private Player determineCurrentPlayer() {
-        Iterator<Player> it = board.getPlayers().iterator();
-
-        Player thisplayer = null;
-        while(it.hasNext())
-        {
-            thisplayer = it.next();
-            if(thisplayer.getId() == this.userID)
-                break;
-        }
-       
-        return thisplayer;
-    }
-    
-    /* ************************************************************** */
-    /**
-     * determineOppenentPlayer
-     * @param currentPlayer
-     * @return
-    */ /************************************************************* */
-    private Player determineOppenentPlayer() {
-        Iterator<Player> it = board.getPlayers().iterator();
-
-        Player player = null;
-        while(it.hasNext())
-        {
-            player = it.next();
-            if(player.getId() != this.userID)
-                break;
-        }
-       
-        return player;
-    }
-    
-    /* ************************************************************** */
-    /**
      * determinefreeDirections
      * @return
     */ /************************************************************* */

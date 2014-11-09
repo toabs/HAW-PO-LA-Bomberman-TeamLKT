@@ -3,9 +3,12 @@
  */
 package klt;
 
+import java.util.Iterator;
+
 import org.rlcommunity.rlglue.codec.EnvironmentInterface;
 
 import Core.Playboard;
+import Core.Player;
 
 /* ************************************************************** */
 /**
@@ -50,4 +53,43 @@ public abstract class Environment implements EnvironmentInterface
             System.out.print(output);
         }
     }
+    
+    /* ************************************************************** */
+    /**
+     * determineCurrentPlayer
+     * @return
+     */ /************************************************************* */
+	protected Player determineCurrentPlayer() {
+	    Iterator<Player> it = board.getPlayers().iterator();
+	
+	    Player thisplayer = null;
+	    while(it.hasNext())
+	    {
+	        thisplayer = it.next();
+	        if(thisplayer.getId() == this.userID)
+	            break;
+	    }
+	
+	    return thisplayer;
+	}
+
+    /* ************************************************************** */
+    /**
+     * determineOppenentPlayer
+     * @param currentPlayer
+     * @return
+     */ /************************************************************* */
+	protected Player determineOppenentPlayer() {
+	    Iterator<Player> it = board.getPlayers().iterator();
+	
+	    Player player = null;
+	    while(it.hasNext())
+	    {
+	        player = it.next();
+	        if(player.getId() != this.userID)
+	            break;
+	    }
+	
+	    return player;
+	}
 }

@@ -162,49 +162,10 @@ public class Environment_Follower extends Environment
     
     /* ************************************************************** */
     /**
-     * determineCurrentPlayer
-     * @return
-    */ /************************************************************* */
-Player determineCurrentPlayer() {
-        Iterator<Player> it = board.getPlayers().iterator();
-
-        Player thisplayer = null;
-        while(it.hasNext())
-        {
-            thisplayer = it.next();
-            if(thisplayer.getId() == this.userID)
-                break;
-        }
-       
-        return thisplayer;
-    }
-    
-    /* ************************************************************** */
-    /**
-     * determineOppenentPlayer
-     * @param currentPlayer
-     * @return
-    */ /************************************************************* */
-    private Player determineOppenentPlayer() {
-        Iterator<Player> it = board.getPlayers().iterator();
-
-        Player player = null;
-        while(it.hasNext())
-        {
-            player = it.next();
-            if(player.getId() != this.userID)
-                break;
-        }
-       
-        return player;
-    }
-    
-    /* ************************************************************** */
-    /**
      * determinefreeDirections
      * @return
     */ /************************************************************* */
-int determinefreeDirections() {
+    int determinefreeDirections() {
         Player currentPlayer = determineCurrentPlayer();
         
         int result = 1;
@@ -227,7 +188,7 @@ int determinefreeDirections() {
      * determineOppenentDirection
      * @return
     */ /************************************************************* */
-int determineOppenentDirection() {
+    int determineOppenentDirection() {
         Player cP = determineCurrentPlayer();
         Player oP = determineOppenentPlayer();
         
@@ -257,7 +218,7 @@ int determineOppenentDirection() {
      * determineDistanceToOpponent
      * @return
     */ /************************************************************* */
-double determineDistanceToOpponent()
+    double determineDistanceToOpponent()
     {     
         Player cP = determineCurrentPlayer();
         Player oP = determineOppenentPlayer();
