@@ -15,7 +15,7 @@ import org.rlcommunity.rlglue.codec.types.Observation;
  * 19.10.2014
  */
 /* *********************************************************** */
-public class Agent_Follower extends Agent
+public class Agent_Simple extends Agent
 {    
     Integer lastAction;
     Observation lastObs;
@@ -26,7 +26,7 @@ public class Agent_Follower extends Agent
      * @throws IOException
      * @throws ClassNotFoundException
     */ /************************************************************* */
-    Agent_Follower(String saveFilePath) throws IOException,
+    Agent_Simple(String saveFilePath) throws IOException,
             ClassNotFoundException
     {
         super(saveFilePath);
