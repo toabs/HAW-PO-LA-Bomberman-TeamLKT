@@ -3,8 +3,6 @@
  */
 package klt;
 
-import java.util.Iterator;
-
 import org.rlcommunity.rlglue.codec.taskspec.TaskSpec;
 import org.rlcommunity.rlglue.codec.taskspec.TaskSpecVRLGLUE3;
 import org.rlcommunity.rlglue.codec.taskspec.ranges.DoubleRange;
