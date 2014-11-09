@@ -4,7 +4,6 @@
 package klt;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.rlcommunity.rlglue.codec.types.Action;

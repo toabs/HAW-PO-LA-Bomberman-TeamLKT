@@ -3,11 +3,7 @@
  */
 package klt;
 
-import org.rlcommunity.rlglue.codec.LocalGlue;
-import org.rlcommunity.rlglue.codec.RLGlue;
 import org.rlcommunity.rlglue.codec.types.Observation;
-import org.rlcommunity.rlglue.codec.types.Observation_action;
-import org.rlcommunity.rlglue.codec.types.Reward_observation_action_terminal;
 import org.rlcommunity.rlglue.codec.types.Action;
 import org.rlcommunity.rlglue.codec.types.Reward_observation_terminal;
 
@@ -60,7 +56,7 @@ public class KI extends User
     public int getAction(Playboard playboard)
     {
         //Observation_action firstResponse = null;
-        Reward_observation_action_terminal stepResponse = null;
+        //Reward_observation_action_terminal stepResponse = null;
         String taskSpec = null;
         Observation obsStart = null;
         Action actionStart = null;

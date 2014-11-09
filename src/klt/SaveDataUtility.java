@@ -8,7 +8,8 @@ import java.util.HashMap;
  */
 public class SaveDataUtility {
 
-    public static HashMap<String, HashMap<Integer, Double>> updateData(HashMap<String, HashMap<Integer, Double>> first, HashMap<String, HashMap<Integer, Double>> second) {
+    @SuppressWarnings("unchecked")
+	public static HashMap<String, HashMap<Integer, Double>> updateData(HashMap<String, HashMap<Integer, Double>> first, HashMap<String, HashMap<Integer, Double>> second) {
 
         HashMap<String, HashMap<Integer, Double>> result = new HashMap<>();
 
@@ -63,7 +64,8 @@ public class SaveDataUtility {
         }
     }
 
-    public static HashMap<String, HashMap<Integer, Double>> loadStorage(String filePath){
+    @SuppressWarnings("unchecked")
+	public static HashMap<String, HashMap<Integer, Double>> loadStorage(String filePath){
         File f = new File(filePath);
 
         if (f.exists() && !f.isDirectory())

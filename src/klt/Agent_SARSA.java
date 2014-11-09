@@ -12,7 +12,7 @@ import java.util.*;
  */
 public class Agent_SARSA extends Agent{
 
-    private List<Pair<Pair<String,Integer>,Double>> episode;
+    //private List<Pair<Pair<String,Integer>,Double>> episode;
     private String lastObservation;
     private String beforeLastObservation;
     private Integer lastAction;
@@ -43,7 +43,7 @@ public class Agent_SARSA extends Agent{
 
     @Override
     public void agent_init(String s) {
-        episode = new ArrayList<Pair<Pair<String, Integer>,Double>>();
+        //episode = new ArrayList<Pair<Pair<String, Integer>,Double>>();
     }
 
     @Override

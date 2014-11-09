@@ -34,8 +34,8 @@ public class Environment_Fighter extends Environment
     private final int numDoubles = 1;
     
     private double lastDistance = 0;
-    private int lastDanger = 0;
-    private int currentDanger = 0;
+    //private int lastDanger = 0;
+    //private int currentDanger = 0;
     private int lastX = 0;
     private int lastY = 0;
     
@@ -372,8 +372,8 @@ public class Environment_Fighter extends Environment
         //current Position
         currentBombCounter = dangerAnalysis[cP.getY()][cP.getY()];
         dangerCurrent = evaluateBombCounter(currentBombCounter);
-        this.lastDanger = this.currentDanger;
-        this.currentDanger = dangerCurrent;
+        //this.lastDanger = this.currentDanger;
+        //this.currentDanger = dangerCurrent;
         
         //watch top
         currentBombCounter = getMinBombCounter(cP.getX() -1, cP.getY() + 3, 3, 3, dangerAnalysis);
