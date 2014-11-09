@@ -93,7 +93,7 @@ public class KI_Factory
     {
         try
         {
-            return new KI(id, new Agent_SARSA("KI_FollowerSARSA2.rgo"), new Environment_Follower());
+            return new KI(id, new Agent_SARSA("KI_FollowerSARSA.rgo"), new Environment_Follower());
         } catch (Exception e)
         {
             System.out.println("Exception at KI-Creation: " + e.getMessage());
@@ -130,7 +130,7 @@ public class KI_Factory
     public static KI getFighterA(int id) {
         try
         {
-            return new KI(id, new Agent_SARSA("KI_FighterA.rgo"), new Environment_Fighter());
+            return new KI(id, new Agent_SARSA("KI_FighterA.rgo"), new Environment_Fighter(DebugState.ENVIRONMENT_DEBUG));
         } catch (Exception e)
         {
             System.out.println("Exception at KI-Creation: " + e.getMessage());
@@ -148,7 +148,7 @@ public class KI_Factory
     public static KI getFighterB(int id) {
         try
         {
-            return new KI(id, new Agent_SARSA("KI_FighterB.rgo"), new Environment_Fighter());
+            return new KI(id, new Agent_SARSA("KI_FighterB.rgo"), new Environment_Fighter(DebugState.ENVIRONMENT_DEBUG));
         } catch (Exception e)
         {
             System.out.println("Exception at KI-Creation: " + e.getMessage());

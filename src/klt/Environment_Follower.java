@@ -21,16 +21,6 @@ import Core.Player;
 /* *********************************************************** */
 public class Environment_Follower extends Environment
 {
-    private final int freeDirections = (int) Math.pow(2, 4); //4 direction, blocked, not blocked
-    private final int oppenentDirections = 9; //equal, top, left, topleft, ...
-    private double maxDistanceToOpponent = 0; //to be calculated
-    private final int numIntegers = 2;
-    private final int numDoubles = 1;
-    
-    private double lastDistance = 0;
-    private int lastX = 0;
-    private int lastY = 0;
-    
     /* ************************************************************** */
     /**
      * env_cleanup

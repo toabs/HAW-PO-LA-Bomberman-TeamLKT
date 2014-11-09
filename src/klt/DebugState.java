@@ -4,12 +4,12 @@ package klt;
  * Created by Tobi on 04.11.2014.
  */
 public enum DebugState {
-    NO_DEBUG(false, false, false),
-    AGENT_DEBUG(true, false, false),
-    ENVIRONMENT_DEBUG(false, false, true),
-    KI_DEBUG(false, true, false),
-    AGENT_ENVIRONMENT_DEBUG(true, false, true),
-    ALL_DEBUG(true, true, true);
+    NO_DEBUG				(false, false, 	false),
+    AGENT_DEBUG				(true, 	false, 	false),
+    ENVIRONMENT_DEBUG		(false, false, 	true),
+    KI_DEBUG				(false, true, 	false),
+    AGENT_ENVIRONMENT_DEBUG	(true, 	false, 	true),
+    ALL_DEBUG				(true, 	true, 	true);
 
     private boolean debugAgent;
     private boolean debugKI;

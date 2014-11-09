@@ -7,12 +7,14 @@ import Core.Game;
 import Core.Human;
 import Core.User;
 
+import klt.KI_Factory;
+
 public class GuiMain {
 	public static void main(String[] args) {
 		
 		List<User> users = new ArrayList<>();		
 		users.add(new Human(1));
-		users.add(new Human(2));
+		users.add(KI_Factory.getFighterA(2));
 		int boardsize = 15;
 		int bombCounter = 8;
 		int explosionArea = 4;

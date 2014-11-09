@@ -4,6 +4,8 @@
 package klt;
 
 import java.util.Iterator;
+import java.util.Set;
+import java.util.TreeMap;
 
 import org.rlcommunity.rlglue.codec.EnvironmentInterface;
 
@@ -21,13 +23,40 @@ public abstract class Environment implements EnvironmentInterface
 {
     protected Playboard board;
     protected int userID = 0;
-    private DebugState debugState;
+    protected DebugState debugState;
+    
+    //Variables used for state-count-determination
+    protected final int freeDirections = (int) Math.pow(2, 4); //4 direction, blocked, not blocked
+    protected final int oppenentDirections = 9; //equal, top, left, topleft, ...
+    protected final int bombSituations = 125;
+    protected double maxDistanceToOpponent = 0; //to be calculated
+    protected final int numIntegers = 3;
+    protected final int numDoubles = 1;
+    
+    //helper variables filled by the functions
+    protected boolean topfree = false;
+    protected boolean botfree = false;
+    protected boolean leftfree = false;
+    protected boolean rightfree = false;
+    
+    //Variables used for reward-determination
+    protected double lastDistance = 0;
+    protected int lastDanger = 0;
+    protected int currentDanger = 0;
+    protected int lastX = 0;
+    protected int lastY = 0;
 
+    /**
+     * @param debugState
+     */
     Environment(DebugState debugState){
         super();
         this.debugState = debugState;
     }
 
+    /**
+     * 
+     */
     Environment(){
         super();
     }
@@ -44,15 +73,19 @@ public abstract class Environment implements EnvironmentInterface
     }
 
     protected void environmentLogln(String output){
-        if (debugState.getEnvironmentDebugState()){
-            System.out.println(output);
-        }
+    	if (debugState != null) {
+	        if (debugState.getEnvironmentDebugState()){
+	            System.out.println(output);
+	        }
+    	}
     }
 
     protected void environmentLog(String output){
-        if (debugState.getEnvironmentDebugState()){
-            System.out.print(output);
-        }
+    	if (debugState != null) {
+	        if (debugState.getEnvironmentDebugState()){
+	            System.out.print(output);
+	        }
+    	}
     }
     
     /* ************************************************************** */
@@ -190,20 +223,131 @@ public abstract class Environment implements EnvironmentInterface
         
         int result = 1;
         
-        boolean topfree =   (validY(currentPlayer.getY()+1) ? !board.getBoard()[currentPlayer.getX()][currentPlayer.getY()+1].isWall()
+        this.topfree =   (validY(currentPlayer.getY()+1) ? !board.getBoard()[currentPlayer.getX()][currentPlayer.getY()+1].isWall()
                                                             && !bombPosition[currentPlayer.getX()][currentPlayer.getY()+1] : false);
-        boolean rightfree = (validX(currentPlayer.getX()+1) ? !board.getBoard()[currentPlayer.getX()+1][currentPlayer.getY()].isWall()
+        this.rightfree = (validX(currentPlayer.getX()+1) ? !board.getBoard()[currentPlayer.getX()+1][currentPlayer.getY()].isWall()
                                                             && !bombPosition[currentPlayer.getX()+1][currentPlayer.getY()]: false);
-        boolean botfree =   (validY(currentPlayer.getY()-1) ? !board.getBoard()[currentPlayer.getX()][currentPlayer.getY()-1].isWall()
+        this.botfree =   (validY(currentPlayer.getY()-1) ? !board.getBoard()[currentPlayer.getX()][currentPlayer.getY()-1].isWall()
                                                             && !bombPosition[currentPlayer.getX()][currentPlayer.getY()-1]: false);
-        boolean leftfree =  (validX(currentPlayer.getX()-1) ? !board.getBoard()[currentPlayer.getX()-1][currentPlayer.getY()].isWall()
+        this.leftfree =  (validX(currentPlayer.getX()-1) ? !board.getBoard()[currentPlayer.getX()-1][currentPlayer.getY()].isWall()
                                                             && !bombPosition[currentPlayer.getX()-1][currentPlayer.getY()]: false);
         
-        result += (topfree) ? Math.pow(2, 0) : 0;
-        result += (rightfree) ? Math.pow(2, 1) : 0;
-        result += (botfree) ? Math.pow(2, 2) : 0;
-        result += (leftfree) ? Math.pow(2, 3) : 0;
+        result += (this.topfree) ? Math.pow(2, 0) : 0;
+        result += (this.rightfree) ? Math.pow(2, 1) : 0;
+        result += (this.botfree) ? Math.pow(2, 2) : 0;
+        result += (this.leftfree) ? Math.pow(2, 3) : 0;
         
         return result;
+    }
+	
+    /* ************************************************************** */
+    /**
+     * determineBombZones
+     * @param dangerAnalysis
+    */ /************************************************************* */
+    protected void determineBombZones(int[][] dangerAnalysis)
+    {
+        Set<Bomb> bomblist = this.board.getBombs();
+        TreeMap<Integer, Bomb> bombByTimeleft = new TreeMap<Integer, Bomb>();
+        Bomb currentBomb = null;
+        int tempBombCounter = 0;
+        int initValue = 99;
+        
+        boolean topwall = false;
+        boolean botwall = false;
+        boolean leftwall = false;
+        boolean rightwall = false;        
+        
+        //initilize with initValue
+        for(int i = 0; i < board.getBoard().length; i++)
+        {
+            for (int n = 0; n < board.getBoard()[0].length; n++)
+            {
+                dangerAnalysis[i][n] = initValue;
+            }
+        }
+        
+        //sort bombs by timeleft
+        Iterator<Bomb> bIt = bomblist.iterator();
+        while(bIt.hasNext())
+        {
+            currentBomb = bIt.next();
+            bombByTimeleft.put(currentBomb.getCounter(), currentBomb);
+        }
+        
+        //iterate again over the sorted treemap
+        bIt = bombByTimeleft.values().iterator();
+        while(bIt.hasNext())
+        {
+            topwall = false;
+            botwall = false;
+            leftwall = false;
+            rightwall = false;
+            
+            //for each bomb, itereate once
+            currentBomb = bIt.next();
+            
+            //Determine shortest bombcounter
+            tempBombCounter = dangerAnalysis[currentBomb.getX()][currentBomb.getY()];
+            
+            if (tempBombCounter < 0 || tempBombCounter > currentBomb.getCounter()) {
+                tempBombCounter = currentBomb.getCounter();
+            }
+            
+            dangerAnalysis[currentBomb.getX()][currentBomb.getY()] = tempBombCounter;
+            
+            //radius
+            //todo: one var for each way, to check for walls and stop
+            for (int i = 1; i < currentBomb.getExplosionRadius(); i++) {
+                //top
+                if (validY(currentBomb.getY() + i) && !topwall) {
+                    if (board.getBoard()[currentBomb.getX()][currentBomb.getY() + i].isWall()) {
+                       topwall = true; 
+                    }
+                    else {
+                        if (dangerAnalysis[currentBomb.getX()][currentBomb.getY() + i] > tempBombCounter
+                            || dangerAnalysis[currentBomb.getX()][currentBomb.getY() + i] == initValue) {
+                            dangerAnalysis[currentBomb.getX()][currentBomb.getY() + i] = tempBombCounter;
+                        }
+                    }
+                }
+                //bot
+                if (validY(currentBomb.getY() - i) && !botwall) {
+                    if (board.getBoard()[currentBomb.getX()][currentBomb.getY() - i].isWall()) {
+                        botwall = true; 
+                     }
+                     else {
+                        if (dangerAnalysis[currentBomb.getX()][currentBomb.getY() - i] > tempBombCounter
+                            || dangerAnalysis[currentBomb.getX()][currentBomb.getY() - i] == initValue) {
+                            dangerAnalysis[currentBomb.getX()][currentBomb.getY() - i] = tempBombCounter;
+                        }   
+                    }
+                }
+                //left
+                if (validX(currentBomb.getX() - i) && !leftwall) {
+                    if (board.getBoard()[currentBomb.getX() - i][currentBomb.getY()].isWall()) {
+                        leftwall = true; 
+                    }
+                    else {
+                        if (dangerAnalysis[currentBomb.getX() - i][currentBomb.getY()] > tempBombCounter
+                            || dangerAnalysis[currentBomb.getX() - i][currentBomb.getY()] == initValue) {
+                            dangerAnalysis[currentBomb.getX() - i][currentBomb.getY()] = tempBombCounter;
+                        } 
+                    }
+                }
+                //right
+                if (validX(currentBomb.getX() + i) && !rightwall) {
+                    if (board.getBoard()[currentBomb.getX() + i][currentBomb.getY()].isWall()) {
+                        rightwall = true; 
+                    }
+                    else {
+                        if (dangerAnalysis[currentBomb.getX() + i][currentBomb.getY()] > tempBombCounter
+                            || dangerAnalysis[currentBomb.getX() + i][currentBomb.getY()] == initValue) {
+                            dangerAnalysis[currentBomb.getX() + i][currentBomb.getY()] = tempBombCounter;
+                        } 
+                    }
+                }
+            }
+        }
     }
 }
