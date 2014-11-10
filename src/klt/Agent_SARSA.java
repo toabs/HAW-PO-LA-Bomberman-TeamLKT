@@ -23,7 +23,7 @@ public class Agent_SARSA extends Agent{
     private boolean trainingMode = true;
     private final double INITIALQVALUE = 50.0; //initial q values
     private final int NUMBEROFACTIONS = 6;
-    private final double EPSILONMINIMUM = 0.001;
+    private final double EPSILONMINIMUM = 0.005;
 
     /**
      * With this contructor it will just run what the agent learned. The agent will not train or log anything.
@@ -98,7 +98,7 @@ public class Agent_SARSA extends Agent{
             }
 
             {        //lower the explorationrate
-                epsilon -= 0.005;
+                epsilon -= 0.003;
                 if (epsilon < EPSILONMINIMUM) {
                     epsilon = EPSILONMINIMUM;
                 }
