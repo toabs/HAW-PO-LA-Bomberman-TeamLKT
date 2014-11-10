@@ -8,7 +8,7 @@ public class Playboard {
 	
 	private Field[][] board;
 	private Set<Player> players = new HashSet<>();
-	private Set<Bomb> bombs = new HashSet<>();;
+	private Set<Bomb> bombs = new HashSet<>();
 	private int stepsLeft;
 	private final Set<Integer> POSSIBLE_ACTIONS = new HashSet<>(Arrays.asList(new Integer[]{ 0, 1, 2, 3, 4, 5 }));
 		

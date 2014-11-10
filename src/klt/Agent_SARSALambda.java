@@ -49,7 +49,7 @@ public class Agent_SARSALambda extends Agent {
         this.epsilon = explorationRate;
         this.lambda = lambda;
         this.trainingMode = trainingMode;
-        traceStorage = new HashMap<String, HashMap<Integer, Double>>();
+        traceStorage = new HashMap<>();
     }
 
     @Override
@@ -108,7 +108,7 @@ public class Agent_SARSALambda extends Agent {
         }
 
         if (traceStorage.containsKey(beforeLastObservation)){
-            double now = traceStorage.get(beforeLastObservation).get(beforeLastAction).doubleValue();
+            double now = traceStorage.get(beforeLastObservation).get(beforeLastAction);
             traceStorage.get(beforeLastObservation).put(beforeLastAction, now + 1);
         } else
         {
@@ -133,9 +133,9 @@ public class Agent_SARSALambda extends Agent {
 
         for(String keyObservation : observationStorage.keySet()){
             for (Integer keyAction : observationStorage.get(keyObservation).keySet()){
-                double oldValE = traceStorage.get(keyObservation).get(keyAction).doubleValue();
+                double oldValE = traceStorage.get(keyObservation).get(keyAction);
                 if (oldValE <= EPSILON) {
-                    double oldValQ = observationStorage.get(keyObservation).get(keyAction).doubleValue();
+                    double oldValQ = observationStorage.get(keyObservation).get(keyAction);
                     observationStorage.get(keyObservation).put(keyAction, (oldValQ + alpha * delta * oldValE));
                     traceStorage.get(keyObservation).put(keyAction, gamma * lambda * oldValE);
                 }
@@ -167,7 +167,7 @@ public class Agent_SARSALambda extends Agent {
     @Override
     public void agent_end(double v) {
         if (trainingMode) {            //lower the exploration rate
-            epsilon -= 0.005;
+            epsilon -= 0.002;
             if (epsilon < EPSILONMINIMUM) {
                 epsilon = EPSILONMINIMUM;
             }
