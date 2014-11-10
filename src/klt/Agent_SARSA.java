@@ -72,36 +72,36 @@ public class Agent_SARSA extends Agent{
         }
 
         lastAction = returnAction.intArray[0];
-        updateValues(v);
+        if (trainingMode) {
+            updateValues(v);
+        }
         return returnAction;
     }
 
     @Override
     public void agent_end(double v) {
-        updateValues(v);
+        if(trainingMode) {
+            updateValues(v);
 
-        //distribute reward
-        if (this.observationStorage.containsKey(lastObservation))
-        {
-            double currentQ = observationStorage.get(lastObservation).get(lastAction);
-            double res = currentQ + alpha * (v - currentQ);
-            observationStorage.get(lastObservation).put(beforeLastAction, res);
-        }
-        else
-        {
-            //add the unknown observation
-            this.observationStorage.put(lastObservation, new HashMap<Integer, Double>());
+            //distribute reward
+            if (this.observationStorage.containsKey(lastObservation)) {
+                double currentQ = observationStorage.get(lastObservation).get(lastAction);
+                double res = currentQ + alpha * (v - currentQ);
+                observationStorage.get(lastObservation).put(beforeLastAction, res);
+            } else {
+                //add the unknown observation
+                this.observationStorage.put(lastObservation, new HashMap<Integer, Double>());
 
-            for(int i = 0; i < NUMBEROFACTIONS; i++)
-            {
-                this.observationStorage.get(lastObservation).put(i, (i == lastAction) ? v : INITIALQVALUE);
+                for (int i = 0; i < NUMBEROFACTIONS; i++) {
+                    this.observationStorage.get(lastObservation).put(i, (i == lastAction) ? v : INITIALQVALUE);
+                }
             }
-        }
 
-        if (trainingMode){        //lower the explorationrate
-            epsilon -= 0.005;
-            if (epsilon < EPSILONMINIMUM){
-                epsilon = EPSILONMINIMUM;
+            {        //lower the explorationrate
+                epsilon -= 0.005;
+                if (epsilon < EPSILONMINIMUM) {
+                    epsilon = EPSILONMINIMUM;
+                }
             }
         }
     }
