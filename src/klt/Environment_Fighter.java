@@ -148,23 +148,24 @@ public class Environment_Fighter extends Environment
         }
         //lose
         if (!currentPlayer.isAlive() && opponentPlayer.isAlive()) {
-            theReward = -700;
-        }
-        //draw
-        if (!currentPlayer.isAlive() && !opponentPlayer.isAlive()) {
             theReward = -500;
         }
+        //draw
+        /*
+        if (!currentPlayer.isAlive() && !opponentPlayer.isAlive()) {
+            theReward = -300;
+        }*/
                
         //reward bomb-plant
-        if (arg0.intArray[0] == 6) {
-        	theReward = 50;
+        if (arg0.intArray[0] == 5) {
+        	theReward = 700;
         }
         
         //negative reward if not moved, if move was not "stay" or "bomb"
-        if (lastX == currentPlayer.getX() && lastY == currentPlayer.getY() && lastDistance != 0 && arg0.intArray[0] != 0 && arg0.intArray[0] != 6)
+        if (lastX == currentPlayer.getX() && lastY == currentPlayer.getY() && lastDistance != 0 && arg0.intArray[0] != 0 && arg0.intArray[0] != 5)
         {
             this.environmentLogln("--");
-            theReward = -400;
+            theReward = -200;
         }      
         
         this.lastDistance = distanceToOpponent;

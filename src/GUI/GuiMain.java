@@ -14,14 +14,15 @@ public class GuiMain {
 		
 		List<User> users = new ArrayList<>();		
 		users.add(KI_Factory.getFighterA(1));
-		users.add(new Human(2));
+		users.add(KI_Factory.getFighterB(2));
 		int boardsize = 15;
 		int bombCounter = 8;
 		int explosionArea = 4;
 		int maxSteps = 300;
-		long gameoverSleep = 10l;
-		long stepSleep = 200l;
+		long gameoverSleep = 0l;
+		long stepSleep = 0l;
+		boolean paintGUI = true;
 		
-		new GuiStart(new Game(users, boardsize, bombCounter, explosionArea, maxSteps, stepSleep), gameoverSleep);
+		new GuiStart(new Game(users, boardsize, bombCounter, explosionArea, maxSteps, stepSleep), gameoverSleep, paintGUI);
 	}
 }
