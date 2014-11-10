@@ -40,7 +40,7 @@ public abstract class Environment implements EnvironmentInterface
     protected boolean rightfree = false;
     
     //Variables used for reward-determination
-    protected double lastDistance = 0;
+    protected Double lastDistance = 0.0;
     protected int lastDanger = 0;
     protected int currentDanger = 0;
     protected int lastX = 0;

@@ -17,7 +17,7 @@ public class Agent_SARSA extends Agent{
     private String beforeLastObservation;
     private Integer lastAction;
     private Integer beforeLastAction;
-    private double alpha = 0.2; //Lernrate
+    private double alpha = 0.4; //Lernrate
     private double gamma = 0.8; //Discountrate
     private double epsilon = 0.95; //exploration rate
     private boolean trainingMode = true;
@@ -50,7 +50,7 @@ public class Agent_SARSA extends Agent{
     public Action agent_start(Observation observation) {
         lastObservation = observation.toString();
         Action returnAction = new Action(1, 0, 0);
-        returnAction.intArray[0] = this.getBestAction(observation);
+        returnAction.intArray[0] = this.getBestAction(observation, NUMBEROFACTIONS);
 
         lastAction = returnAction.intArray[0];
         return returnAction;
@@ -63,7 +63,7 @@ public class Agent_SARSA extends Agent{
         lastObservation = observation.toString();
 
         Action returnAction = new Action(1, 0, 0);
-        returnAction.intArray[0] = this.getBestAction(observation);
+        returnAction.intArray[0] = this.getBestAction(observation, NUMBEROFACTIONS);
 
         if (trainingMode) {         //if the trainingmode is enabled the agent will sometimes randomly choose a random action
             if (this.randGenerator.nextDouble() < epsilon) {

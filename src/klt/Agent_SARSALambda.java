@@ -70,7 +70,7 @@ public class Agent_SARSALambda extends Agent {
     public Action agent_start(Observation observation) {
         lastObservation = observation.toString();
         Action returnAction = new Action(1, 0, 0);
-        returnAction.intArray[0] = this.getBestAction(observation);
+        returnAction.intArray[0] = this.getBestAction(observation, NUMBEROFACTIONS);
 
         lastAction = returnAction.intArray[0];
         return returnAction;
@@ -150,7 +150,7 @@ public class Agent_SARSALambda extends Agent {
 
         lastObservation = observation.toString();
         Action returnAction = new Action(1, 0, 0);
-        returnAction.intArray[0] = this.getBestAction(observation);
+        returnAction.intArray[0] = this.getBestAction(observation, NUMBEROFACTIONS);
 
         lastAction = returnAction.intArray[0];
 

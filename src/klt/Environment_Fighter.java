@@ -151,15 +151,15 @@ public class Environment_Fighter extends Environment
             theReward = -500;
         }
         //draw
-        /*
         if (!currentPlayer.isAlive() && !opponentPlayer.isAlive()) {
             theReward = -300;
-        }*/
+        }
                
         //reward bomb-plant
+        /*
         if (arg0.intArray[0] == 5) {
-        	theReward = 700;
-        }
+        	theReward = 10;
+        } */
         
         //negative reward if not moved, if move was not "stay" or "bomb"
         if (lastX == currentPlayer.getX() && lastY == currentPlayer.getY() && lastDistance != 0 && arg0.intArray[0] != 0 && arg0.intArray[0] != 5)

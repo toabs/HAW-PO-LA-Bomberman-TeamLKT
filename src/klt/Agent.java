@@ -61,34 +61,39 @@ public abstract class Agent implements AgentInterface
      * @param currentObs
      * @return
      */ /************************************************************* */
-    protected int getBestAction(Observation currentObs)
+    protected int getBestAction(Observation currentObs, int actionCount)
     {
         int currentAction = 0;
-        Double bestValue = -9999999.9;
+//        Double bestValue = -1 * Double.MAX_VALUE;
+        Double bestValue = -9999999.0;
         ArrayList<Integer> bestActions = new ArrayList<Integer>();
         int bestActionCount = 0;
 
         if (this.observationStorage.containsKey(currentObs.toString()))
         {
             //determine highest value
-            for(int i = 0; i < 5; i++)
+            for(int i = 0; i < actionCount; i++)
             {
+            	agentLogln("Reward["+i+"]:" + this.observationStorage.get(currentObs.toString()).get(i));
                 if (this.observationStorage.get(currentObs.toString()).get(i) > bestValue)
-                {
+                {                	
                     bestValue = this.observationStorage.get(currentObs.toString()).get(i);
                 }
             }
-
+            
+            agentLogln("bestValue:" + bestValue);
+            
             //get Actions with that value (must be at least one)
-            for(int i = 0; i < 5; i++)
+            for(int i = 0; i < actionCount; i++)
             {
-                if (this.observationStorage.get(currentObs.toString()).get(i) == bestValue)
+                if (this.observationStorage.get(currentObs.toString()).get(i).equals(bestValue))
                 {
                     bestActions.add(i);
                 }
             }
-
+            
             bestActionCount = bestActions.size();
+            agentLogln("bestActionCount:" + bestActionCount);
 
             if (bestActionCount <= 1)
             {
@@ -102,9 +107,10 @@ public abstract class Agent implements AgentInterface
         }
         else
         {
-            currentAction = this.randGenerator.nextInt(5);
+            currentAction = this.randGenerator.nextInt(actionCount);
         }
 
+        agentLogln("Action chosen:" + currentAction);
         return currentAction;
     }
 

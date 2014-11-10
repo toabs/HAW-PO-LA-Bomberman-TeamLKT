@@ -19,6 +19,8 @@ public class Agent_Simple extends Agent
 {    
     Integer lastAction;
     Observation lastObs;
+    int NUMBEROFACTIONS = 5;
+    
     /* ************************************************************** */
     /**
      * Agent_Follower
@@ -26,10 +28,10 @@ public class Agent_Simple extends Agent
      * @throws IOException
      * @throws ClassNotFoundException
     */ /************************************************************* */
-    Agent_Simple(String saveFilePath) throws IOException,
+    Agent_Simple(String saveFilePath, DebugState debugState) throws IOException,
             ClassNotFoundException
     {
-        super(saveFilePath);
+        super(saveFilePath, debugState);
     }
 
     /* ************************************************************** */
@@ -77,7 +79,7 @@ public class Agent_Simple extends Agent
     public Action agent_start(Observation arg0)
     {
         Action returnAction = new Action(1, 0, 0);
-        returnAction.intArray[0] = this.getBestAction(arg0);
+        returnAction.intArray[0] = this.getBestAction(arg0, NUMBEROFACTIONS);
         
         lastObs = arg0;
         lastAction = returnAction.intArray[0];
@@ -94,6 +96,8 @@ public class Agent_Simple extends Agent
     @Override
     public Action agent_step(double arg0, Observation arg1)
     {
+    	this.agentLogln("LastReward: " + arg0);
+    	
         //distribute reward
         if (this.observationStorage.containsKey(lastObs.toString()))
         {
@@ -104,7 +108,7 @@ public class Agent_Simple extends Agent
             //add the unknown observation
             this.observationStorage.put(lastObs.toString(), new HashMap<Integer, Double>());
             
-            for(int i = 0; i < 5; i++)
+            for(int i = 0; i < NUMBEROFACTIONS; i++)
             {
                 this.observationStorage.get(lastObs.toString()).put(i, (i == lastAction) ? arg0 : 0);
             }
@@ -112,7 +116,7 @@ public class Agent_Simple extends Agent
         
         //calculate next action
         Action returnAction = new Action(1, 0, 0);
-        returnAction.intArray[0] = this.getBestAction(arg1);
+        returnAction.intArray[0] = this.getBestAction(arg1, NUMBEROFACTIONS);
         
         lastObs = arg1;
         lastAction = returnAction.intArray[0];

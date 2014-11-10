@@ -32,7 +32,7 @@ public abstract class User {
 	
 	abstract public void gameOver(boolean won, Playboard playboard);
 	
-	public void gameExit() {}
+	public void gameExit() {};
 
 	@Override
 	public int hashCode() {
@@ -54,5 +54,5 @@ public abstract class User {
 		if (id != other.id)
 			return false;
 		return true;
-	};
+	}
 }
