@@ -1,8 +1,10 @@
 package GUI;
 
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.GridLayout;
+import Core.*;
+
+import javax.imageio.ImageIO;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
@@ -10,18 +12,6 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.Set;
-
-import javax.imageio.ImageIO;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-
-import Core.Field;
-import Core.Bomb;
-import Core.Game;
-import Core.Human;
-import Core.Playboard;
-import Core.Player;
-import Core.User;
 
 public class GuiStart extends JPanel implements Runnable {
 	private static final long serialVersionUID = 1L;

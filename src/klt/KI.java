@@ -3,12 +3,11 @@
  */
 package klt;
 
-import org.rlcommunity.rlglue.codec.types.Observation;
-import org.rlcommunity.rlglue.codec.types.Action;
-import org.rlcommunity.rlglue.codec.types.Reward_observation_terminal;
-
 import Core.Playboard;
 import Core.User;
+import org.rlcommunity.rlglue.codec.types.Action;
+import org.rlcommunity.rlglue.codec.types.Observation;
+import org.rlcommunity.rlglue.codec.types.Reward_observation_terminal;
 
 /* ************************************************************** */
 /**

@@ -1,4 +1,4 @@
-package klt;
+package klt.util;
 
 import java.io.*;
 import java.util.HashMap;

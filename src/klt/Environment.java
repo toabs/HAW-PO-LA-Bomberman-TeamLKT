@@ -3,15 +3,14 @@
  */
 package klt;
 
-import java.util.Iterator;
-import java.util.Set;
-import java.util.TreeMap;
-
-import org.rlcommunity.rlglue.codec.EnvironmentInterface;
-
 import Core.Bomb;
 import Core.Playboard;
 import Core.Player;
+import org.rlcommunity.rlglue.codec.EnvironmentInterface;
+
+import java.util.Iterator;
+import java.util.Set;
+import java.util.TreeMap;
 
 /* ************************************************************** */
 /**

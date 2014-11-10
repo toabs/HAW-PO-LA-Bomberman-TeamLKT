@@ -1,13 +1,11 @@
 package GUI;
 
+import Core.Game;
+import Core.User;
+import klt.KI_Factory;
+
 import java.util.ArrayList;
 import java.util.List;
-
-import Core.Game;
-import Core.Human;
-import Core.User;
-
-import klt.KI_Factory;
 
 public class GuiMain {
 	public static void main(String[] args) {

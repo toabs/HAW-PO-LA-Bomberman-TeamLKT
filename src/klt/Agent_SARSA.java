@@ -4,7 +4,7 @@ import org.rlcommunity.rlglue.codec.types.Action;
 import org.rlcommunity.rlglue.codec.types.Observation;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.HashMap;
 
 /**
  * Created by Tobi on 26.10.2014.
