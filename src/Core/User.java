@@ -31,4 +31,6 @@ public abstract class User {
 	abstract public void resetMove();
 	
 	abstract public void gameOver(boolean won, Playboard playboard);
+	
+	public void gameExit() {};
 }

@@ -127,9 +127,14 @@ public abstract class Agent implements AgentInterface
     */ /************************************************************* */
     @Override
     public void agent_cleanup()
-    {
-        System.out.println("Cleanup Called");
-        //save progress
+    {    	
+        this.agentLogln("Cleanup Called");
+
+    }
+
+	public void agent_exit() {
+		this.agentLogln("Exit Called");
+		//save progress
         try
         {
             FileOutputStream fout = new FileOutputStream(saveFilePath);
@@ -140,5 +145,5 @@ public abstract class Agent implements AgentInterface
         {
             System.out.println("Error saving observationStorage: " + e.getMessage());
         }
-    }
+	}
 }

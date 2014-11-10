@@ -154,9 +154,14 @@ public class Environment_Fighter extends Environment
         if (!currentPlayer.isAlive() && !opponentPlayer.isAlive()) {
             theReward = -500;
         }
+               
+        //reward bomb-plant
+        if (arg0.intArray[0] == 6) {
+        	theReward = 50;
+        }
         
-        //negative reward if not moved, if move was not "stay"
-        if (lastX == currentPlayer.getX() && lastY == currentPlayer.getY() && lastDistance != 0 && arg0.intArray[0] != 0)
+        //negative reward if not moved, if move was not "stay" or "bomb"
+        if (lastX == currentPlayer.getX() && lastY == currentPlayer.getY() && lastDistance != 0 && arg0.intArray[0] != 0 && arg0.intArray[0] != 6)
         {
             this.environmentLogln("--");
             theReward = -400;

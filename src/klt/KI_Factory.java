@@ -130,7 +130,7 @@ public class KI_Factory
     public static KI getFighterA(int id) {
         try
         {
-            return new KI(id, new Agent_SARSA("KI_FighterA.rgo", 0.95, true, DebugState.NO_DEBUG), new Environment_Fighter(DebugState.NO_DEBUG));
+            return new KI(id, new Agent_SARSA("KI_FighterA.rgo", 0.95, false, DebugState.NO_DEBUG), new Environment_Fighter(DebugState.NO_DEBUG));
         } catch (Exception e)
         {
             System.out.println("Exception at KI-Creation: " + e.getMessage());

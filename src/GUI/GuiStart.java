@@ -117,11 +117,12 @@ public class GuiStart extends JPanel implements Runnable {
 
 	@Override
 	public void run() {
+		Playboard playboard = null;
 		while (!end) {	
 			boolean notGameOver = true;
 			while (notGameOver && !end) {
 				notGameOver = !game.isGameOver();
-				Playboard playboard = game.getPlayboard();
+				playboard = game.getPlayboard();
 				
 				for (Field[] row : playboard.getBoard()) {
 					for (Field field : row) {
@@ -154,6 +155,9 @@ public class GuiStart extends JPanel implements Runnable {
 			gameover();
 		}
 
+		for (User user : game.getUsers()) {
+			user.gameExit();
+		}
         System.exit(0);
 	}
 

@@ -146,4 +146,8 @@ public class KI extends User
         }
     }
 
+    @Override
+    public void gameExit() {
+    	this.currentAgent.agent_exit();
+    }
 }
