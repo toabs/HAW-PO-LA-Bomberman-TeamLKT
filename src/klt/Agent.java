@@ -24,6 +24,8 @@ public abstract class Agent implements AgentInterface
     protected HashMap<String, HashMap<Integer, Double>> observationStorage; 
     private String saveFilePath;
     private DebugState debugState;
+    protected int NUMBEROFACTIONS = 6;
+    protected double INITIALQVALUE = 50.0;
     protected Random randGenerator = new Random();
 
     Agent(String saveFilePath, DebugState debugState) throws IOException, ClassNotFoundException {
@@ -120,6 +122,30 @@ public abstract class Agent implements AgentInterface
     protected void agentLog(String output){
         if (debugState.getAgentDebugState()){
             System.out.print(output);
+        }
+    }
+
+    protected void setRewardForActionObservation(double reward, String observation, int action){
+        if (observationStorage.containsKey(observation)) {
+
+            observationStorage.get(observation).put(action, reward);
+
+        } else {
+            //add the unknown observation
+            observationStorage.put(observation, new HashMap<Integer, Double>());
+
+            for (int i = 0; i < NUMBEROFACTIONS; i++) {
+                observationStorage.get(observation).put(i, (i == action) ? reward : INITIALQVALUE);
+            }
+        }
+    }
+
+    protected void fillInUnknownObservations(String observation){
+        //add the unknown observation
+        observationStorage.put(observation, new HashMap<Integer, Double>());
+
+        for (int i = 0; i < NUMBEROFACTIONS; i++) {
+            observationStorage.get(observation).put(i, INITIALQVALUE);
         }
     }
 

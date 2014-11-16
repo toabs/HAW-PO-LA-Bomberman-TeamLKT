@@ -1,5 +1,8 @@
 package klt;
 
+import klt.util.Pair;
+import klt.util.RingBuffer;
+import klt.util.SarsaLambdaQueueElement;
 import org.rlcommunity.rlglue.codec.types.Action;
 import org.rlcommunity.rlglue.codec.types.Observation;
 
@@ -27,6 +30,7 @@ public class Agent_SARSALambda extends Agent {
     private final int NUMBEROFACTIONS = 6; //total numbers of actions to choose from
     private final double EPSILON = 0.00001; //the epsilon for the close to zero comparisions
     private final double EPSILONMINIMUM = 0.1;
+    private RingBuffer<SarsaLambdaQueueElement> queue;
 
     public Agent_SARSALambda(String saveFilePath) throws IOException, ClassNotFoundException {
         this(saveFilePath, DebugState.NO_DEBUG);
@@ -45,25 +49,20 @@ public class Agent_SARSALambda extends Agent {
     }
 
     public Agent_SARSALambda(String saveFilePath, double explorationRate, double lambda, boolean trainingMode, DebugState debugState) throws IOException, ClassNotFoundException {
+        this(saveFilePath, explorationRate, lambda, trainingMode, debugState, 50);
+    }
+
+    public Agent_SARSALambda(String saveFilePath, double explorationRate, double lambda, boolean trainingMode, DebugState debugState, int queueLenght) throws IOException, ClassNotFoundException {
         super(saveFilePath, debugState);
         this.epsilon = explorationRate;
         this.lambda = lambda;
         this.trainingMode = trainingMode;
-        traceStorage = new HashMap<>();
+        queue = new RingBuffer<>(queueLenght);
     }
 
     @Override
     public void agent_init(String s) {
-        //set 0 in the trace map e(s, a) for all known s, a
-        for(String keyObs : observationStorage.keySet()){
-            //add the unknown observation
-            this.traceStorage.put(keyObs, new HashMap<Integer, Double>());
-
-            for(int i = 0; i < NUMBEROFACTIONS; i++)
-            {
-                this.traceStorage.get(keyObs).put(i, 0.0);
-            }
-        }
+        queue.clear();
     }
 
     @Override
@@ -86,61 +85,42 @@ public class Agent_SARSALambda extends Agent {
             double currentQ = observationStorage.get(lastObservation).get(lastAction);
             delta = r + gamma * currentQ - lastQ;
 
-            }else
-            {
-                //add the unknown observation
-                this.observationStorage.put(beforeLastObservation, new HashMap<Integer, Double>());
-
-                for(int i = 0; i < NUMBEROFACTIONS; i++)
-                {
-                    this.observationStorage.get(beforeLastObservation).put(i, (i == lastAction) ? r : INITIALQVALUE);
-                }
             }
-        }  else
-        {
-            //add the unknown observation
-            this.observationStorage.put(lastObservation, new HashMap<Integer, Double>());
-
-            for(int i = 0; i < NUMBEROFACTIONS; i++)
-            {
-                this.observationStorage.get(lastObservation).put(i, (i == lastAction) ? r : INITIALQVALUE);
+            else{
+                fillInUnknownObservations(beforeLastObservation);
             }
         }
-
-        if (traceStorage.containsKey(beforeLastObservation)){
-            double now = traceStorage.get(beforeLastObservation).get(beforeLastAction);
-            traceStorage.get(beforeLastObservation).put(beforeLastAction, now + 1);
-        } else
-        {
-            //add the unknown observation
-            this.traceStorage.put(beforeLastObservation, new HashMap<Integer, Double>());
-
-            for(int i = 0; i < NUMBEROFACTIONS; i++)
-            {
-                this.traceStorage.get(beforeLastObservation).put(i, (double) ((i == beforeLastAction) ? 1 : 0));
-            }
+        else{
+            fillInUnknownObservations(lastObservation);
         }
 
-        if (!traceStorage.containsKey(lastObservation)){
-            //add the unknown observation
-            this.traceStorage.put(lastObservation, new HashMap<Integer, Double>());
-
-            for(int i = 0; i < NUMBEROFACTIONS; i++)
-            {
-                this.traceStorage.get(lastObservation).put(i, (double) ((i == beforeLastAction) ? 1 : 0));
-            }
+        if (queue.contains(beforeLastObservation, beforeLastAction)){
+            SarsaLambdaQueueElement element = queue.getElement(beforeLastObservation, beforeLastAction);
+            element.setValue(element.getValue() + 1);
+            queue.add(element);
+        }
+        else{
+            queue.add(new SarsaLambdaQueueElement(beforeLastObservation, beforeLastAction, 1));
         }
 
-        for(String keyObservation : observationStorage.keySet()){
+        for (SarsaLambdaQueueElement stepElement : queue){
+            double oldValE = stepElement.getValue();
+            if (oldValE >= EPSILON){
+                double oldValQ = observationStorage.get(stepElement.getObservation()).get(stepElement.getAction());
+                observationStorage.get(stepElement.getObservation()).put(stepElement.getAction(), (oldValQ + alpha * delta * oldValE));
+                stepElement.setValue(gamma * lambda * oldValE);
+            }
+        }
+        /*for(String keyObservation : observationStorage.keySet()){
             for (Integer keyAction : observationStorage.get(keyObservation).keySet()){
                 double oldValE = traceStorage.get(keyObservation).get(keyAction);
-                if (oldValE <= EPSILON) {
+                if (oldValE >= EPSILON) {
                     double oldValQ = observationStorage.get(keyObservation).get(keyAction);
                     observationStorage.get(keyObservation).put(keyAction, (oldValQ + alpha * delta * oldValE));
                     traceStorage.get(keyObservation).put(keyAction, gamma * lambda * oldValE);
                 }
             }
-        }
+        }*/
     }
 
     @Override
