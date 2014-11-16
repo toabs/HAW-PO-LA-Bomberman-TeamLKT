@@ -3,10 +3,10 @@
  */
 package klt;
 
-import java.io.IOException;
-
 import org.rlcommunity.rlglue.codec.types.Action;
 import org.rlcommunity.rlglue.codec.types.Observation;
+
+import java.io.IOException;
 
 /* ************************************************************** */
 /**

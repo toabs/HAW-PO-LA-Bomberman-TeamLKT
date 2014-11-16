@@ -1,7 +1,14 @@
+/*
 package Core;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 public class Game {
 	
@@ -21,6 +28,7 @@ public class Game {
 	private boolean gameOver = false;
 	private int maxSteps;
 	private long stepSleep;
+	private HashMap<User, Integer> listUserAction = new HashMap<User, Integer>();
 	
 
 	public Game(List<User> usersList, int boardSize, int bombCounter, int explosionArea, int maxSteps, long stepSleep) {
@@ -138,35 +146,41 @@ public class Game {
 
 	private void playerActions() {
 	    //Get the playboard only once
-	    Playboard currentBoard = playboard.clone();
+	    //Playboard currentBoard = playboard.clone();
 	    
 		for (Entry<User, Player> entry : users.entrySet()) {
-			Player player = entry.getValue();
 			User user = entry.getKey();
-			Field field = player.getField();
-			switch (user.getAction(currentBoard)) {
+			listUserAction.put(entry.getKey(), user.getAction(playboard.clone()));
+		}
+		
+		Field currentField;
+		Player currentPlayer;
+		for(User user : listUserAction.keySet()) {
+			currentPlayer = users.get(user);
+			currentField = currentPlayer.getField();
+			switch (user.getAction(playboard)) {
 			case 1:
-				if (field.getY() - PLAYER_RANGE >= MIN_FIELD) {
-					setPlayerPosition(field.getX(), field.getY() - PLAYER_RANGE, player);
+				if (currentField.getY() - PLAYER_RANGE >= MIN_FIELD) {
+					setPlayerPosition(currentField.getX(), currentField.getY() - PLAYER_RANGE, currentPlayer);
 				}				
 				break;
 			case 2:
-				if (field.getY() + PLAYER_RANGE <= maxBoardIndex) {
-					setPlayerPosition(field.getX(), field.getY() + PLAYER_RANGE, player);
+				if (currentField.getY() + PLAYER_RANGE <= maxBoardIndex) {
+					setPlayerPosition(currentField.getX(), currentField.getY() + PLAYER_RANGE, currentPlayer);
 				}
 				break;
 			case 3:
-				if (field.getX() - PLAYER_RANGE >= MIN_FIELD) {
-					setPlayerPosition(field.getX() - PLAYER_RANGE, field.getY(), player);
+				if (currentField.getX() - PLAYER_RANGE >= MIN_FIELD) {
+					setPlayerPosition(currentField.getX() - PLAYER_RANGE, currentField.getY(), currentPlayer);
 				}
 				break;
 			case 4:
-				if (field.getX() + PLAYER_RANGE <= maxBoardIndex) {
-					setPlayerPosition(field.getX() + PLAYER_RANGE, field.getY(), player);
+				if (currentField.getX() + PLAYER_RANGE <= maxBoardIndex) {
+					setPlayerPosition(currentField.getX() + PLAYER_RANGE, currentField.getY(), currentPlayer);
 				}
 				break;
 			case 5:
-				playboard.addBomb(bombCounter, player.getX(), player.getY(), explosionRadius, player.getId());
+				playboard.addBomb(bombCounter, currentPlayer.getX(), currentPlayer.getY(), explosionRadius, currentPlayer.getId());
 				break;
 			default:
 				break;
@@ -228,3 +242,4 @@ public class Game {
 	}
 	
 }
+*/

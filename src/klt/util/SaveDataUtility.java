@@ -1,4 +1,4 @@
-package klt;
+package klt.util;
 
 import java.io.*;
 import java.util.HashMap;
@@ -8,7 +8,8 @@ import java.util.HashMap;
  */
 public class SaveDataUtility {
 
-    public static HashMap<String, HashMap<Integer, Double>> updateData(HashMap<String, HashMap<Integer, Double>> first, HashMap<String, HashMap<Integer, Double>> second) {
+    @SuppressWarnings("unchecked")
+	public static HashMap<String, HashMap<Integer, Double>> updateData(HashMap<String, HashMap<Integer, Double>> first, HashMap<String, HashMap<Integer, Double>> second) {
 
         HashMap<String, HashMap<Integer, Double>> result = new HashMap<>();
 
@@ -63,7 +64,8 @@ public class SaveDataUtility {
         }
     }
 
-    public static HashMap<String, HashMap<Integer, Double>> loadStorage(String filePath){
+    @SuppressWarnings("unchecked")
+	public static HashMap<String, HashMap<Integer, Double>> loadStorage(String filePath){
         File f = new File(filePath);
 
         if (f.exists() && !f.isDirectory())
@@ -75,11 +77,7 @@ public class SaveDataUtility {
                 ObjectInputStream ois = new ObjectInputStream(fin);
                 otherStorage = (HashMap<String, HashMap<Integer, Double>>) ois.readObject();
                 ois.close();
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            } catch (ClassNotFoundException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
+            } catch (ClassNotFoundException | IOException e) {
                 e.printStackTrace();
             }
 

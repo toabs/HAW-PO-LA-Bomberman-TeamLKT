@@ -3,10 +3,7 @@ package klt;
 import org.rlcommunity.rlglue.codec.types.Action;
 import org.rlcommunity.rlglue.codec.types.Observation;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.util.HashMap;
 
 /**
@@ -21,32 +18,38 @@ public class Agent_SARSALambda extends Agent {
     private Integer lastAction;
     private Integer beforeLastAction;
     private HashMap<String, HashMap<Integer, Double>> traceStorage;
-    private double lambda = 0.9;
+    private double lambda;
     private double alpha = 0.2; //Lernrate
     private double gamma = 0.8; //Discountrate
     private double epsilon; //exploration rate
     private boolean trainingMode; //is it allowed to explore?
     private final double INITIALQVALUE = 5; //initial q values
-    private final int NUMBEROFACTIONS = 5; //total numbers of actions to choose from
-    private final double EPSILON = 0.00001;
+    private final int NUMBEROFACTIONS = 6; //total numbers of actions to choose from
+    private final double EPSILON = 0.00001; //the epsilon for the close to zero comparisions
+    private final double EPSILONMINIMUM = 0.1;
 
     public Agent_SARSALambda(String saveFilePath) throws IOException, ClassNotFoundException {
-        this(saveFilePath, 1);
+        this(saveFilePath, DebugState.NO_DEBUG);
     }
 
-    public Agent_SARSALambda(String saveFilePath, boolean trainingMode) throws IOException, ClassNotFoundException {
-        this(saveFilePath, 0.9, trainingMode);
+    public Agent_SARSALambda(String saveFilePath, DebugState debugState) throws IOException, ClassNotFoundException {
+        this(saveFilePath, true, debugState);
     }
 
-    public Agent_SARSALambda(String saveFilePath, double explorationRate) throws IOException, ClassNotFoundException {
-        this(saveFilePath, explorationRate, true);
+    public Agent_SARSALambda(String saveFilePath, boolean trainingMode, DebugState debugState) throws IOException, ClassNotFoundException {
+        this(saveFilePath, 0.9,  0.4, trainingMode, debugState);
     }
 
-    public Agent_SARSALambda(String saveFilePath, double explorationRate, boolean trainingMode) throws IOException, ClassNotFoundException {
-        super(saveFilePath);
+    public Agent_SARSALambda(String saveFilePath, double explorationRate, double lambda, DebugState debugState) throws IOException, ClassNotFoundException {
+        this(saveFilePath, explorationRate, lambda, true, debugState);
+    }
+
+    public Agent_SARSALambda(String saveFilePath, double explorationRate, double lambda, boolean trainingMode, DebugState debugState) throws IOException, ClassNotFoundException {
+        super(saveFilePath, debugState);
         this.epsilon = explorationRate;
+        this.lambda = lambda;
         this.trainingMode = trainingMode;
-        traceStorage = new HashMap<String, HashMap<Integer, Double>>();
+        traceStorage = new HashMap<>();
     }
 
     @Override
@@ -67,7 +70,7 @@ public class Agent_SARSALambda extends Agent {
     public Action agent_start(Observation observation) {
         lastObservation = observation.toString();
         Action returnAction = new Action(1, 0, 0);
-        returnAction.intArray[0] = this.getBestAction(observation);
+        returnAction.intArray[0] = this.getBestAction(observation, NUMBEROFACTIONS);
 
         lastAction = returnAction.intArray[0];
         return returnAction;
@@ -79,8 +82,8 @@ public class Agent_SARSALambda extends Agent {
 
             if(observationStorage.containsKey(beforeLastObservation)) {
 
-            double lastQ = observationStorage.get(beforeLastObservation).get(beforeLastAction).doubleValue();
-            double currentQ = observationStorage.get(lastObservation).get(lastAction).doubleValue();
+            double lastQ = observationStorage.get(beforeLastObservation).get(beforeLastAction);
+            double currentQ = observationStorage.get(lastObservation).get(lastAction);
             delta = r + gamma * currentQ - lastQ;
 
             }else
@@ -105,7 +108,7 @@ public class Agent_SARSALambda extends Agent {
         }
 
         if (traceStorage.containsKey(beforeLastObservation)){
-            double now = traceStorage.get(beforeLastObservation).get(beforeLastAction).doubleValue();
+            double now = traceStorage.get(beforeLastObservation).get(beforeLastAction);
             traceStorage.get(beforeLastObservation).put(beforeLastAction, now + 1);
         } else
         {
@@ -130,9 +133,9 @@ public class Agent_SARSALambda extends Agent {
 
         for(String keyObservation : observationStorage.keySet()){
             for (Integer keyAction : observationStorage.get(keyObservation).keySet()){
-                double oldValE = traceStorage.get(keyObservation).get(keyAction).doubleValue();
+                double oldValE = traceStorage.get(keyObservation).get(keyAction);
                 if (oldValE <= EPSILON) {
-                    double oldValQ = observationStorage.get(keyObservation).get(keyAction).doubleValue();
+                    double oldValQ = observationStorage.get(keyObservation).get(keyAction);
                     observationStorage.get(keyObservation).put(keyAction, (oldValQ + alpha * delta * oldValE));
                     traceStorage.get(keyObservation).put(keyAction, gamma * lambda * oldValE);
                 }
@@ -147,12 +150,12 @@ public class Agent_SARSALambda extends Agent {
 
         lastObservation = observation.toString();
         Action returnAction = new Action(1, 0, 0);
-        returnAction.intArray[0] = this.getBestAction(observation);
+        returnAction.intArray[0] = this.getBestAction(observation, NUMBEROFACTIONS);
 
         lastAction = returnAction.intArray[0];
 
         if (trainingMode) {         //if the trainingmode is enabled the agent will sometimes randomly choose a random action
-            if (this.randGenerator.nextInt(100) < (epsilon * 100)) {
+            if (this.randGenerator.nextDouble() < epsilon) {
                 returnAction.intArray[0] = this.randGenerator.nextInt(NUMBEROFACTIONS);
             }
         }
@@ -164,9 +167,9 @@ public class Agent_SARSALambda extends Agent {
     @Override
     public void agent_end(double v) {
         if (trainingMode) {            //lower the exploration rate
-            epsilon -= 0.005;
-            if (epsilon < 0.01) {
-                epsilon = 0.01;
+            epsilon -= 0.002;
+            if (epsilon < EPSILONMINIMUM) {
+                epsilon = EPSILONMINIMUM;
             }
         }
         updateValues(v);

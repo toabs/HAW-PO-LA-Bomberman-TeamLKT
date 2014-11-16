@@ -3,16 +3,11 @@
  */
 package klt;
 
-import org.rlcommunity.rlglue.codec.LocalGlue;
-import org.rlcommunity.rlglue.codec.RLGlue;
-import org.rlcommunity.rlglue.codec.types.Observation;
-import org.rlcommunity.rlglue.codec.types.Observation_action;
-import org.rlcommunity.rlglue.codec.types.Reward_observation_action_terminal;
-import org.rlcommunity.rlglue.codec.types.Action;
-import org.rlcommunity.rlglue.codec.types.Reward_observation_terminal;
-
 import Core.Playboard;
 import Core.User;
+import org.rlcommunity.rlglue.codec.types.Action;
+import org.rlcommunity.rlglue.codec.types.Observation;
+import org.rlcommunity.rlglue.codec.types.Reward_observation_terminal;
 
 /* ************************************************************** */
 /**
@@ -24,6 +19,7 @@ public class KI extends User
 {
     private boolean firstStep = true;
     private Environment currentEnvironment;
+    private DebugState debugState;
     private Agent currentAgent;
     Action lastAction = null;
     
@@ -35,12 +31,18 @@ public class KI extends User
     public KI(int id, Agent agent, Environment environment)
     {
         super(id);
+        this.debugState = DebugState.NO_DEBUG;
        
         currentAgent = agent;
         currentEnvironment = environment;
         
         //LocalGlue localGlueImplementation=new LocalGlue(environment,agent);
         //RLGlue.setGlue(localGlueImplementation);
+    }
+
+    public KI(int id, Agent agent, Environment environment, DebugState debugState){
+        this(id, agent, environment);
+        this.debugState = debugState;
     }
 
     /* ************************************************************** */
@@ -53,7 +55,7 @@ public class KI extends User
     public int getAction(Playboard playboard)
     {
         //Observation_action firstResponse = null;
-        Reward_observation_action_terminal stepResponse = null;
+        //Reward_observation_action_terminal stepResponse = null;
         String taskSpec = null;
         Observation obsStart = null;
         Action actionStart = null;
@@ -131,5 +133,22 @@ public class KI extends User
         this.currentAgent.agent_end(envStepResult.r);
         this.currentAgent.agent_cleanup();
         firstStep = true;     
+    }
+
+    protected void kILogln(String output){
+        if (debugState.getKIDebugState()){
+            System.out.println(output);
+        }
+    }
+
+    protected void kILog(String output){
+        if (debugState.getKIDebugState()){
+            System.out.print(output);
+        }
+    }
+
+    @Override
+    public void gameExit() {
+    	this.currentAgent.agent_exit();
     }
 }

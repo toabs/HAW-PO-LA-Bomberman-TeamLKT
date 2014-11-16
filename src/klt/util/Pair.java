@@ -1,4 +1,4 @@
-package klt;
+package klt.util;
 
 /**
  * Created by Tobi on 26.10.2014.

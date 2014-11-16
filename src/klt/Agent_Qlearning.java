@@ -10,10 +10,10 @@ import java.io.IOException;
  */
 public class Agent_Qlearning extends Agent {
 
-    private double alpha = 0.2; //Learningrate
-    private double epsilon = 0.4; //exploration rate
-    private double gamma = 0.625; //discount factor
-    private int initialQValue = 10; //a higher initial value encourages exploration
+    //private double alpha = 0.2; //Learningrate
+    //private double epsilon = 0.4; //exploration rate
+    //private double gamma = 0.625; //discount factor
+    //private int initialQValue = 10; //a higher initial value encourages exploration
 
     public Agent_Qlearning(String saveFilePath) throws IOException, ClassNotFoundException {
         super(saveFilePath);
