@@ -84,11 +84,13 @@ public class Environment_Fighter extends Environment
         
         int freeDirection = this.determinefreeDirections();
         int opponentDirection = this.determineOppenentDirection();
+        int bombSituation = determineBombSituation();
         double distanceToOpponent = this.determineDistanceToOpponent();
         
         Observation result = new Observation(numIntegers, numDoubles);
         result.intArray[0] = freeDirection;
         result.intArray[1] = opponentDirection;
+        result.intArray[2] = bombSituation;
         result.doubleArray[0] = distanceToOpponent;
         
         this.lastDistance = distanceToOpponent;

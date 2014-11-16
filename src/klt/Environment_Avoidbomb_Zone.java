@@ -21,17 +21,18 @@ import org.rlcommunity.rlglue.codec.types.Reward_observation_terminal;
 public class Environment_Avoidbomb_Zone extends Environment
 {
     private final int freeDirections = (int) Math.pow(2, 4); //4 direction, blocked, not blocked
-    private final int oppenentDirections = 9; //equal, top, left, topleft, ...
     private final int bombSituations = 125;
-    private double maxDistanceToOpponent = 0; //to be calculated
-    private final int numIntegers = 3;
-    private final int numDoubles = 1;
+    private final int numIntegers = 2;
+    private final int numDoubles = 0;
     
-    private double lastDistance = 0;
-    private int lastDanger = 0;
-    private int currentDanger = 0;
-    private int lastX = 0;
-    private int lastY = 0;
+    /* ************************************************************** */
+    /**
+     * Environment_Fighter
+     * @param debugState
+    */ /************************************************************* */
+    Environment_Avoidbomb_Zone(DebugState debugState) {
+        super(debugState);
+     }
     
     /* ************************************************************** */
     /**
@@ -51,16 +52,11 @@ public class Environment_Avoidbomb_Zone extends Environment
     */ /************************************************************* */
     @Override
     public String env_init()
-    {
-        maxDistanceToOpponent = Math.sqrt(Math.pow(board.getBoard().length, 2) + Math.pow(board.getBoard()[0].length, 2));
-        this.environmentLogln("maxDistance is : " + maxDistanceToOpponent);
-        
+    {       
         TaskSpecVRLGLUE3 theTaskSpecObject = new TaskSpecVRLGLUE3();
         theTaskSpecObject.addDiscreteAction(new IntRange(0, 4)); //five possible actions (without bomb-planting)
         theTaskSpecObject.addDiscreteObservation(new IntRange(1, freeDirections));
-        theTaskSpecObject.addDiscreteObservation(new IntRange(1, oppenentDirections));
         theTaskSpecObject.addDiscreteObservation(new IntRange(1, bombSituations));
-        theTaskSpecObject.addContinuousObservation(new DoubleRange(0, maxDistanceToOpponent, board.getBoard().length*board.getBoard()[0].length));
         theTaskSpecObject.setEpisodic();
         theTaskSpecObject.setRewardRange(new DoubleRange(-20, 20));
         
@@ -92,15 +88,12 @@ public class Environment_Avoidbomb_Zone extends Environment
         Player currentPlayer = determineCurrentPlayer();
         
         int freeDirection = this.determinefreeDirections();
-        int opponentDirection = this.determineOppenentDirection();
-        double distanceToOpponent = this.determineDistanceToOpponent();
+        int bombSituation = determineBombSituation();
         
         Observation result = new Observation(numIntegers, numDoubles);
         result.intArray[0] = freeDirection;
-        result.intArray[1] = opponentDirection;
-        result.doubleArray[0] = distanceToOpponent;
+        result.intArray[1] = bombSituation;
         
-        this.lastDistance = distanceToOpponent;
         this.lastX = currentPlayer.getX();
         this.lastY = currentPlayer.getY();
         
@@ -120,64 +113,70 @@ public class Environment_Avoidbomb_Zone extends Environment
         Player currentPlayer = determineCurrentPlayer();
         
         int freeDirection = this.determinefreeDirections();
-        int opponentDirection = this.determineOppenentDirection();
-        double distanceToOpponent = this.determineDistanceToOpponent();
         int bombSituation = determineBombSituation();
         
         Observation currentObs = new Observation(numIntegers, numDoubles);
         currentObs.intArray[0] = freeDirection;
-        currentObs.intArray[1] = opponentDirection;
-        currentObs.intArray[2] = bombSituation;
-        currentObs.doubleArray[0] = distanceToOpponent; 
+        currentObs.intArray[1] = bombSituation;
         
-        this.environmentLogln("Distance: " + distanceToOpponent);
-        
-        if (lastDistance > distanceToOpponent)
+        //high negative reward if moved against a wall or bomb
+        if (lastX == currentPlayer.getX() && lastY == currentPlayer.getY() && arg0.intArray[0] != 0)
         {
-            theReward = 100; 
-            this.environmentLogln("+");
-        } 
-        
-        if (lastDistance < distanceToOpponent)
-        {
-            theReward = -100;
-            this.environmentLogln("-");
-        }
-        
-        if (currentDanger < lastDanger)
-        {
-            theReward = 200;
-        }
-        
-        if (lastDanger != 0 && (currentDanger > lastDanger))
-        {
-            theReward = -200;
-        }
-        
-        //negative reward if not moved
-        if (lastX == currentPlayer.getX() && lastY == currentPlayer.getY() && lastDistance != 0)
-        {
-            this.environmentLogln("--");
             theReward = -500;
-        }        
+        } 
+        else
+        {
+            if (currentDanger < lastDanger)
+            {
+                theReward = 100;
+            }
+        }
+        /*
+        if (currentDanger == 0 && lastDanger == 0) {
+            //reward if staying in place
+            if (arg0.intArray[0] == 0) {
+                theReward = 50;
+            }
+            else {
+                theReward = -50;
+            }
+        }
+        else
+        {
+            if (arg0.intArray[0] == 0 && lastDanger != 0) {
+                theReward = - 100;
+            }
+            else
+            {
+                if (currentDanger < lastDanger && lastDanger != 0)
+                {
+                    theReward = 100;
+                }
+                else 
+                {
+                    theReward = 50;
+                }
+            }
+        }
+        */
         
-        this.lastDistance = distanceToOpponent;
+       
+        
         this.lastX = currentPlayer.getX();
         this.lastY = currentPlayer.getY();
+        
+        System.out.println("reward:" + theReward);
+        System.out.println("cd:" + currentDanger);
         
         return new Reward_observation_terminal(theReward,currentObs,episodeOver);
     }
     
-    /* ************************************************************** */
-    /**
-     * determineBombSituation
-     * @return
-    */ /************************************************************* */
     private int determineBombSituation()
     {
         Player cP = this.determineCurrentPlayer();
         int[][] dangerAnalysis = new int[board.getBoard().length][board.getBoard()[0].length];
         int currentBombCounter = 0;
+        int highDanger = 2;
         
         int countZoneStatus = 3; // count of possible danger
         
@@ -192,37 +191,61 @@ public class Environment_Avoidbomb_Zone extends Environment
         determineBombZones(dangerAnalysis);
         
         //print out dangerAnalysis
-        /*
         for(int i = 0; i < board.getBoard().length; i++)
         {
             for (int n = 0; n < board.getBoard()[0].length; n++)
             {
-                this.environmentLog("[" + dangerAnalysis[n][i] + 1 + "]");
+                if (i == cP.getX() && n == cP.getY()) {
+                    this.environmentLog("[XX]");
+                } else {
+                    this.environmentLog("[" + dangerAnalysis[n][i] + "]");
+                }
             }
             this.environmentLogln("");
-        } */
+        } 
         
         //current Position
         currentBombCounter = dangerAnalysis[cP.getX()][cP.getY()];
-        dangerCurrent = evaluateBombCounter(currentBombCounter);
+        if (currentBombCounter <= 1) {
+            dangerCurrent = highDanger;
+        } else {
+            dangerCurrent = evaluateBombCounter(currentBombCounter);
+        }
         this.lastDanger = this.currentDanger;
         this.currentDanger = dangerCurrent;
         
         //watch top
-        currentBombCounter = getMinBombCounter(cP.getX() -1, cP.getY() + 3, 3, 3, dangerAnalysis);
-        dangerTop = evaluateBombCounter(currentBombCounter);
+        if (getBombCounter(cP.getX(), cP.getY() - 1, 0, dangerAnalysis) <= 1) {
+            dangerTop = highDanger;
+        } else {
+            currentBombCounter = getMinBombCounter(cP.getX() -1, cP.getY() - 2, 3, 2, dangerAnalysis);
+            this.environmentLogln("currentBombCounterTop=" + currentBombCounter);
+            dangerTop = evaluateBombCounter(currentBombCounter);
+        }
         
         //watch bot
-        currentBombCounter = getMinBombCounter(cP.getX() - 1, cP.getY() + 1, 3, 3, dangerAnalysis);
-        dangerBot = evaluateBombCounter(currentBombCounter);
+        if (getBombCounter(cP.getX(), cP.getY() + 1, 0, dangerAnalysis) <= 1) {
+            dangerBot = highDanger;
+        } else {
+            currentBombCounter = getMinBombCounter(cP.getX() - 1, cP.getY() + 1, 3, 2, dangerAnalysis);
+            dangerBot = evaluateBombCounter(currentBombCounter);
+        }
         
         //watch left
-        currentBombCounter = getMinBombCounter(cP.getX() -3, cP.getY() - 1, 3, 3, dangerAnalysis);
-        dangerLeft = evaluateBombCounter(currentBombCounter);
+        if (getBombCounter(cP.getX() - 1, cP.getY(), 0, dangerAnalysis) <= 1) {
+            dangerLeft = highDanger;
+        } else {
+            currentBombCounter = getMinBombCounter(cP.getX() -2, cP.getY() - 1, 2, 3, dangerAnalysis);
+            dangerLeft = evaluateBombCounter(currentBombCounter);
+        }
         
         //watch right
-        currentBombCounter = getMinBombCounter(cP.getX() +1, cP.getY() -1, 3, 3, dangerAnalysis);
-        dangerRight = evaluateBombCounter(currentBombCounter);
+        if (getBombCounter(cP.getX() + 1, cP.getY(), 0, dangerAnalysis) <= 1) {
+            dangerRight = highDanger;
+        } else {
+            currentBombCounter = getMinBombCounter(cP.getX() +1, cP.getY() -1, 2, 3, dangerAnalysis);
+            dangerRight = evaluateBombCounter(currentBombCounter);
+        }
 
         
         result += (dangerCurrent + Math.pow(countZoneStatus, 0));
@@ -260,8 +283,6 @@ public class Environment_Avoidbomb_Zone extends Environment
             {
                 if (validX(x) && validY(y)) {
                     result = ((dangerAnalysis[x][y] < result) ? dangerAnalysis[x][y] : result);
-                } else {
-                    result = initCounter;
                 }
             }
         }
@@ -277,24 +298,39 @@ public class Environment_Avoidbomb_Zone extends Environment
     */ /************************************************************* */
     private int evaluateBombCounter(int currentBombCounter) {
         int noDanger    = 0;
-        int maybeDanger = 1;
-        int highDanger  = 2;
+        int maybeDanger = 1;        
         
-        int counterMaybeDanger = 3;
-        int counterhighDanger  = 1;
+        int counterMaybeDanger = 2;
         
         int result = noDanger;
         
-        if ((currentBombCounter == 99) || (currentBombCounter >= counterMaybeDanger)) {
+        if ((currentBombCounter == 99) || !(currentBombCounter >= counterMaybeDanger)) {
             result = noDanger;
         }
         else {
-            if (currentBombCounter > counterhighDanger) {
-                result = maybeDanger;
-            } else {
-                result = highDanger;
-            }
+            result = maybeDanger;
         }
+        
+        return result;
+    }
+    
+    /* ************************************************************** */
+    /**
+     * getMinBombCounter
+     * @param startX
+     * @param startY
+     * @param spanX
+     * @param spanY
+     * @param dangerAnalysis
+     * @return
+    */ /************************************************************* */
+    private int getBombCounter(int x, int y, int stepsaway, int[][] dangerAnalysis) {
+        int initCounter = 99; //just a high value to start evaluation
+        int result = initCounter;
+        
+        if (validX(x) && validY(y)) {
+            result = ((dangerAnalysis[x][y]) == initCounter ? initCounter : dangerAnalysis[x][y] - stepsaway);
+        }             
         
         return result;
     }
