@@ -195,7 +195,7 @@ public class Environment_Avoidbomb_Zone extends Environment
         {
             for (int n = 0; n < board.getBoard()[0].length; n++)
             {
-                if (i == cP.getX() && n == cP.getY()) {
+                if (n == cP.getX() && i == cP.getY()) {
                     this.environmentLog("[XX]");
                 } else {
                     this.environmentLog("[" + dangerAnalysis[n][i] + "]");
