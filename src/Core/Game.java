@@ -24,9 +24,6 @@ public class Game {
 	
 	private long explosionTime = 0;
 	private long iterationTime = 0;
-	private long playerActionTime = 0;
-	private long updateBoardTime = 0;
-	private long gameOverTime = 0;
 	
 
 	public Game(List<User> usersList, int boardSize, int bombCounter, int explosionArea, int maxSteps, long stepSleep) {
@@ -110,21 +107,11 @@ public class Game {
 	public void doIteration() throws InterruptedException {
 	    this.iterationTime = System.nanoTime();
 		Thread.sleep(stepSleep);
-		this.playerActionTime = System.nanoTime();
-		playerActions();
-		this.playerActionTime = System.nanoTime() - this.playerActionTime;
-		this.updateBoardTime = System.nanoTime();
+		playerActions();	
 		updatePlayboard();
-		this.updateBoardTime = System.nanoTime() - this.updateBoardTime;
-		this.gameOverTime = System.nanoTime();
 		checkGameOver();
-		this.gameOverTime = System.nanoTime() - this.gameOverTime;
 		this.iterationTime = System.nanoTime() - this.iterationTime;
-		System.out.println("IterationTime: " + this.iterationTime);
-		System.out.println("playerActionTime" + this.playerActionTime);
-		System.out.println("updateBoardTime" + this.updateBoardTime);
-		System.out.println("gameoverTime" + this.gameOverTime);
-		System.out.println("ExplosionTime:" + this.explosionTime);
+		System.out.println("IT: " + this.iterationTime + ", ET:" + this.explosionTime);
 	}
 
 	private void checkGameOver() {
@@ -156,8 +143,6 @@ public class Game {
 	}
 
 	private void playerActions() {
-	    long actionTime = 0;
-	    int userAction = 0;
 	    //Get the playboard only once
 	    Playboard currentBoard = playboard.clone();
 	    
@@ -165,11 +150,7 @@ public class Game {
 			Player player = entry.getValue();
 			User user = entry.getKey();
 			Field field = player.getField();
-			actionTime = System.nanoTime();
-			userAction = user.getAction(currentBoard);
-			actionTime = System.nanoTime() - actionTime;
-			System.out.println("actionTime: " + actionTime);
-			switch (userAction) {
+			switch (user.getAction(currentBoard)) {
 			case 1:
 				if (field.getY() - PLAYER_RANGE >= MIN_FIELD) {
 					setPlayerPosition(field.getX(), field.getY() - PLAYER_RANGE, player);

@@ -3,7 +3,6 @@
  */
 package klt;
 
-import klt.util.Actions_E;
 import Core.Player;
 import org.rlcommunity.rlglue.codec.taskspec.TaskSpec;
 import org.rlcommunity.rlglue.codec.taskspec.TaskSpecVRLGLUE3;
@@ -84,25 +83,15 @@ public class Environment_Fighter extends Environment
         Player currentPlayer = determineCurrentPlayer();
         
         int freeDirection = this.determinefreeDirections();
-        int playerOnBomb = this.determinePlayerOnBomb();
         int opponentDirection = this.determineOppenentDirection();
         int bombSituation = determineBombSituation();
         double distanceToOpponent = this.determineDistanceToOpponent();
         
-        ObservationWithActions result = new ObservationWithActions(numIntegers, numDoubles);
-        
-        if (!this.deadlyCurrent) { result.addAction(Actions_E.STAY); }
-        if (this.topfree && !this.deadlyTop) { result.addAction(Actions_E.UP); }
-        if (this.botfree && !this.deadlyBot) { result.addAction(Actions_E.DOWN); }
-        if (this.leftfree && !this.deadlyLeft) { result.addAction(Actions_E.LEFT); }
-        if (this.rightfree && !this.deadlyRight) { result.addAction(Actions_E.RIGHT); }
-        if (playerOnBomb == 0)  { result.addAction(Actions_E.BOMB); }
-        
-        //result.intArray[] = freeDirection;
-        result.intArray[0] = opponentDirection;
-        result.intArray[1] = bombSituation;
-        result.intArray[2] = playerOnBomb;
-        result.doubleArray[2] = distanceToOpponent;
+        Observation result = new Observation(numIntegers, numDoubles);
+        result.intArray[0] = freeDirection;
+        result.intArray[1] = opponentDirection;
+        result.intArray[2] = bombSituation;
+        result.doubleArray[0] = distanceToOpponent;
         
         this.lastDistance = distanceToOpponent;
         this.lastX = currentPlayer.getX();
@@ -128,21 +117,11 @@ public class Environment_Fighter extends Environment
         int opponentDirection = this.determineOppenentDirection();
         double distanceToOpponent = this.determineDistanceToOpponent();
         int bombSituation = determineBombSituation();
-        int playerOnBomb = this.determinePlayerOnBomb();
         
-        ObservationWithActions currentObs = new ObservationWithActions(numIntegers, numDoubles);
-        
-        if (!this.deadlyCurrent) { currentObs.addAction(Actions_E.STAY); }
-        if (this.topfree && !this.deadlyTop) { currentObs.addAction(Actions_E.UP); }
-        if (this.botfree && !this.deadlyBot) { currentObs.addAction(Actions_E.DOWN); }
-        if (this.leftfree && !this.deadlyLeft) { currentObs.addAction(Actions_E.LEFT); }
-        if (this.rightfree && !this.deadlyRight) { currentObs.addAction(Actions_E.RIGHT); }
-        if (playerOnBomb == 0)  { currentObs.addAction(Actions_E.BOMB); }
-        
-        //currentObs.intArray[0] = freeDirection;
-        currentObs.intArray[0] = opponentDirection;
-        currentObs.intArray[1] = bombSituation;
-        currentObs.intArray[2] = playerOnBomb;
+        Observation currentObs = new Observation(numIntegers, numDoubles);
+        currentObs.intArray[0] = freeDirection;
+        currentObs.intArray[1] = opponentDirection;
+        currentObs.intArray[2] = bombSituation;
         currentObs.doubleArray[0] = distanceToOpponent; 
         
         //this.environmentLogln("Distance: " + distanceToOpponent);
@@ -186,7 +165,14 @@ public class Environment_Fighter extends Environment
         //negative reward for placing bombs without sense
         if (arg0.intArray[0] == 5 && distanceToOpponent > this.board.getExplosionRadius()+2) {
             theReward = -50;
-        }  
+        }
+        
+        //negative reward if not moved, if move was not "stay" or "bomb"
+        if (lastX == currentPlayer.getX() && lastY == currentPlayer.getY() && arg0.intArray[0] != 0 && arg0.intArray[0] != 5)
+        {
+            this.environmentLogln("--");
+            theReward = -100;
+        }      
         
         this.lastDistance = distanceToOpponent;
         this.lastX = currentPlayer.getX();
