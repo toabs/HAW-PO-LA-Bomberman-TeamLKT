@@ -26,6 +26,7 @@ public abstract class Environment implements EnvironmentInterface
     
     //Variables used for state-count-determination
     protected final int freeDirections = (int) Math.pow(2, 4); //4 direction, blocked, not blocked
+    protected final int playerOnBombValues = 1;
     protected final int oppenentDirections = 9; //equal, top, left, topleft, ...
     protected final int bombSituations = 125;
     protected double maxDistanceToOpponent = 0; //to be calculated
@@ -37,6 +38,12 @@ public abstract class Environment implements EnvironmentInterface
     protected boolean botfree = false;
     protected boolean leftfree = false;
     protected boolean rightfree = false;
+    
+    protected boolean deadlyCurrent   = false;
+    protected boolean deadlyTop       = false;
+    protected boolean deadlyBot       = false;
+    protected boolean deadlyLeft      = false;
+    protected boolean deadlyRight     = false;
     
     //Variables used for reward-determination
     protected Double lastDistance = 0.0;
@@ -383,48 +390,35 @@ public abstract class Environment implements EnvironmentInterface
             this.environmentLogln("");
         } 
         
-        //current Position
+        //current Position        
+        deadlyCurrent =  (currentBombCounter <= 1);
+        
         currentBombCounter = dangerAnalysis[cP.getX()][cP.getY()];
-        if (currentBombCounter <= 1) {
-            dangerCurrent = highDanger;
-        } else {
-            dangerCurrent = evaluateBombCounter(currentBombCounter);
-        }
+        dangerCurrent = evaluateBombCounter(currentBombCounter);
+        
+        //TODO: Remove, its still used in bomb-avoider
         this.lastDanger = this.currentDanger;
         this.currentDanger = dangerCurrent;
         
         //watch top
-        if (getBombCounter(cP.getX(), cP.getY() - 1, 0, dangerAnalysis) <= 1) {
-            dangerTop = highDanger;
-        } else {
-            currentBombCounter = getMinBombCounter(cP.getX() -1, cP.getY() - 2, 3, 2, dangerAnalysis);
-            this.environmentLogln("currentBombCounterTop=" + currentBombCounter);
-            dangerTop = evaluateBombCounter(currentBombCounter);
-        }
+        deadlyTop = (getBombCounter(cP.getX(), cP.getY() - 1, 0, dangerAnalysis) <= 1);
+        currentBombCounter = getMinBombCounter(cP.getX() -1, cP.getY() - 2, 3, 2, dangerAnalysis);
+        dangerTop = evaluateBombCounter(currentBombCounter);
         
         //watch bot
-        if (getBombCounter(cP.getX(), cP.getY() + 1, 0, dangerAnalysis) <= 1) {
-            dangerBot = highDanger;
-        } else {
-            currentBombCounter = getMinBombCounter(cP.getX() - 1, cP.getY() + 1, 3, 2, dangerAnalysis);
-            dangerBot = evaluateBombCounter(currentBombCounter);
-        }
+        deadlyBot = (getBombCounter(cP.getX(), cP.getY() + 1, 0, dangerAnalysis) <= 1);                
+        currentBombCounter = getMinBombCounter(cP.getX() - 1, cP.getY() + 1, 3, 2, dangerAnalysis);
+        dangerBot = evaluateBombCounter(currentBombCounter);
         
         //watch left
-        if (getBombCounter(cP.getX() - 1, cP.getY(), 0, dangerAnalysis) <= 1) {
-            dangerLeft = highDanger;
-        } else {
-            currentBombCounter = getMinBombCounter(cP.getX() -2, cP.getY() - 1, 2, 3, dangerAnalysis);
-            dangerLeft = evaluateBombCounter(currentBombCounter);
-        }
+        deadlyLeft = (getBombCounter(cP.getX() - 1, cP.getY(), 0, dangerAnalysis) <= 1);        
+        currentBombCounter = getMinBombCounter(cP.getX() -2, cP.getY() - 1, 2, 3, dangerAnalysis);
+        dangerLeft = evaluateBombCounter(currentBombCounter);
         
         //watch right
-        if (getBombCounter(cP.getX() + 1, cP.getY(), 0, dangerAnalysis) <= 1) {
-            dangerRight = highDanger;
-        } else {
-            currentBombCounter = getMinBombCounter(cP.getX() +1, cP.getY() -1, 2, 3, dangerAnalysis);
-            dangerRight = evaluateBombCounter(currentBombCounter);
-        }
+        deadlyRight =  (getBombCounter(cP.getX() + 1, cP.getY(), 0, dangerAnalysis) <= 1);
+        currentBombCounter = getMinBombCounter(cP.getX() +1, cP.getY() -1, 2, 3, dangerAnalysis);
+        dangerRight = evaluateBombCounter(currentBombCounter);
 
         
         result += (dangerCurrent + Math.pow(countZoneStatus, 0));
@@ -477,17 +471,23 @@ public abstract class Environment implements EnvironmentInterface
     */ /************************************************************* */
     protected int evaluateBombCounter(int currentBombCounter) {
         int noDanger    = 0;
-        int maybeDanger = 1;        
+        int maybeDanger = 1;
+        int highDanger  = 2;
         
-        int counterMaybeDanger = 2;
+        int counterHighDanger = 2;
+        int counterMaybeDanger = 5;
         
         int result = noDanger;
         
-        if ((currentBombCounter == 99) || !(currentBombCounter >= counterMaybeDanger)) {
-            result = noDanger;
+        if ((currentBombCounter != 99) && (currentBombCounter <= counterHighDanger)) {
+            result = highDanger;
         }
         else {
-            result = maybeDanger;
+            if ((currentBombCounter == 99) || (currentBombCounter > counterMaybeDanger)) {
+                result = noDanger;
+            } else {
+                result = maybeDanger; 
+            }            
         }
         
         return result;
@@ -512,5 +512,25 @@ public abstract class Environment implements EnvironmentInterface
         }             
         
         return result;
+    }
+    
+    /* ************************************************************** */
+    /**
+     * determinePlayerOnBomb
+     * @return
+    */ /************************************************************* */
+    protected int determinePlayerOnBomb() {
+        Player cP = this.determineCurrentPlayer();
+        Iterator<Bomb> bombs = board.getBombs().iterator();
+        Bomb currentBomb = null;
+        
+        while (bombs.hasNext()) {
+            currentBomb = bombs.next();
+            if (currentBomb.getX() == cP.getX() && currentBomb.getY() == cP.getY()) {
+                return 1;
+            }
+        }            
+            
+        return 0;
     }
 }
