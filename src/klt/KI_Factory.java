@@ -130,6 +130,8 @@ public class KI_Factory
     public static KI getFighterA(int id) {
         try
         {
+            //return new KI(id, new Agent_SARSALambda("KI_FighterLambdaA.rgo", 0.95, 0.4, true, DebugState.NO_DEBUG, 10), new Environment_Fighter(DebugState.NO_DEBUG));
+            
             return new KI(id, new Agent_SARSA("KI_FighterA.rgo", 0.95, true, DebugState.NO_DEBUG), new Environment_Fighter(DebugState.NO_DEBUG));
         } catch (Exception e)
         {
@@ -148,6 +150,8 @@ public class KI_Factory
     public static KI getFighterB(int id) {
         try
         {
+            //return new KI(id, new Agent_SARSALambda("KI_FighterLambdaB.rgo", 0.95, 0.4, true, DebugState.NO_DEBUG, 10), new Environment_Fighter(DebugState.NO_DEBUG));
+            
             return new KI(id, new Agent_SARSA("KI_FighterB.rgo", 0.95, true, DebugState.NO_DEBUG), new Environment_Fighter(DebugState.NO_DEBUG));
         } catch (Exception e)
         {

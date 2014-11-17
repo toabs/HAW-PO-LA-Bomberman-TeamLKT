@@ -10,11 +10,13 @@ public class Playboard {
 	private Set<Player> players = new HashSet<>();
 	private Set<Bomb> bombs = new HashSet<>();
 	private int stepsLeft;
+	private int explosionRadius;
 	private final Set<Integer> POSSIBLE_ACTIONS = new HashSet<>(Arrays.asList(new Integer[]{ 0, 1, 2, 3, 4, 5 }));
 		
-	public Playboard(Field[][] board, int stepsLeft) {
+	public Playboard(Field[][] board, int stepsLeft, int explosionRadius) {
 		this.board = board;
 		this.stepsLeft = stepsLeft;
+		this.explosionRadius = explosionRadius;
 	}
 	
 	private Playboard(Playboard playboard) {
@@ -78,6 +80,11 @@ public class Playboard {
 	public void setBombs(Set<Bomb> bombs) {
 		this.bombs = bombs;
 		
-	}	
+	}
+
+    public int getExplosionRadius()
+    {
+        return explosionRadius;
+    }	
 	
 }

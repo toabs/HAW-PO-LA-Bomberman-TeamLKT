@@ -22,6 +22,9 @@ public class Game {
 	private int maxSteps;
 	private long stepSleep;
 	
+	private long explosionTime = 0;
+	private long iterationTime = 0;
+	
 
 	public Game(List<User> usersList, int boardSize, int bombCounter, int explosionArea, int maxSteps, long stepSleep) {
 		this.boardSize = boardSize;		
@@ -63,7 +66,7 @@ public class Game {
 				}
 			}
 		}
-		this.playboard = new Playboard(board, maxSteps);
+		this.playboard = new Playboard(board, maxSteps, explosionRadius);
 	}
 	
 	public int getMaxSteps() {
@@ -102,10 +105,13 @@ public class Game {
 	}
 
 	public void doIteration() throws InterruptedException {
+	    this.iterationTime = System.nanoTime();
 		Thread.sleep(stepSleep);
 		playerActions();	
 		updatePlayboard();
 		checkGameOver();
+		this.iterationTime = System.nanoTime() - this.iterationTime;
+		System.out.println("IT: " + this.iterationTime + ", ET:" + this.explosionTime);
 	}
 
 	private void checkGameOver() {
@@ -196,8 +202,10 @@ public class Game {
 
 
 	private Set<Field> explodingFields() {
+	    this.explosionTime = System.nanoTime();
 		Set<Field> explodedFields = new HashSet<>();
 		Set<Bomb> bombs = playboard.getBombs();
+		
 		explodedFields = chainExplosions(explodedFields);
 		Set<Bomb> bombsToRemove = new HashSet<>();
 		for (Bomb bomb : bombs) {
@@ -208,8 +216,10 @@ public class Game {
 				bomb.countDown();
 			}
 		}
+		
 		bombs.removeAll(bombsToRemove);
 		playboard.setBombs(bombs);
+		this.explosionTime = System.nanoTime() - this.explosionTime;
 		return explodedFields;
 	}
 	
