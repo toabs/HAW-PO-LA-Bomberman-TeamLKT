@@ -79,7 +79,7 @@ public class Agent_Simple extends Agent
     public Action agent_start(Observation arg0)
     {
         Action returnAction = new Action(1, 0, 0);
-        returnAction.intArray[0] = this.getBestAction(arg0, NUMBEROFACTIONS);
+        returnAction.intArray[0] = this.getBestAction(arg0, ((ObservationWithActions) arg0).getActions());
         
         lastObs = arg0;
         lastAction = returnAction.intArray[0];
@@ -116,7 +116,7 @@ public class Agent_Simple extends Agent
         
         //calculate next action
         Action returnAction = new Action(1, 0, 0);
-        returnAction.intArray[0] = this.getBestAction(arg1, NUMBEROFACTIONS);
+        returnAction.intArray[0] = this.getBestAction(arg1, ((ObservationWithActions) arg1).getActions());
         
         lastObs = arg1;
         lastAction = returnAction.intArray[0];

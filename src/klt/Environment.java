@@ -229,12 +229,12 @@ public abstract class Environment implements EnvironmentInterface
         
         int result = 1;
         
-        this.topfree =   (validY(currentPlayer.getY()+1) ? !board.getBoard()[currentPlayer.getX()][currentPlayer.getY()+1].isWall()
-                                                            && !bombPosition[currentPlayer.getX()][currentPlayer.getY()+1] : false);
+        this.topfree =   (validY(currentPlayer.getY()-1) ? !board.getBoard()[currentPlayer.getX()][currentPlayer.getY()-1].isWall()
+                                                            && !bombPosition[currentPlayer.getX()][currentPlayer.getY()-1] : false);
         this.rightfree = (validX(currentPlayer.getX()+1) ? !board.getBoard()[currentPlayer.getX()+1][currentPlayer.getY()].isWall()
                                                             && !bombPosition[currentPlayer.getX()+1][currentPlayer.getY()]: false);
-        this.botfree =   (validY(currentPlayer.getY()-1) ? !board.getBoard()[currentPlayer.getX()][currentPlayer.getY()-1].isWall()
-                                                            && !bombPosition[currentPlayer.getX()][currentPlayer.getY()-1]: false);
+        this.botfree =   (validY(currentPlayer.getY()+1) ? !board.getBoard()[currentPlayer.getX()][currentPlayer.getY()+1].isWall()
+                                                            && !bombPosition[currentPlayer.getX()][currentPlayer.getY()+1]: false);
         this.leftfree =  (validX(currentPlayer.getX()-1) ? !board.getBoard()[currentPlayer.getX()-1][currentPlayer.getY()].isWall()
                                                             && !bombPosition[currentPlayer.getX()-1][currentPlayer.getY()]: false);
         
@@ -362,7 +362,6 @@ public abstract class Environment implements EnvironmentInterface
         Player cP = this.determineCurrentPlayer();
         int[][] dangerAnalysis = new int[board.getBoard().length][board.getBoard()[0].length];
         int currentBombCounter = 0;
-        int highDanger = 2;
         
         int countZoneStatus = 3; // count of possible danger
         
@@ -390,10 +389,9 @@ public abstract class Environment implements EnvironmentInterface
             this.environmentLogln("");
         } 
         
-        //current Position        
-        deadlyCurrent =  (currentBombCounter <= 1);
-        
+        //current Position             
         currentBombCounter = dangerAnalysis[cP.getX()][cP.getY()];
+        deadlyCurrent =  (currentBombCounter <= 1);
         dangerCurrent = evaluateBombCounter(currentBombCounter);
         
         //TODO: Remove, its still used in bomb-avoider

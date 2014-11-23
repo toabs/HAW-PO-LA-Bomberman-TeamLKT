@@ -4,7 +4,6 @@ import org.rlcommunity.rlglue.codec.types.Action;
 import org.rlcommunity.rlglue.codec.types.Observation;
 
 import java.io.IOException;
-import java.util.HashMap;
 
 import klt.util.Actions_E;
 

@@ -139,7 +139,6 @@ public class Environment_Fighter extends Environment
         if (this.leftfree && !this.deadlyLeft) { currentObs.addAction(Actions_E.LEFT); }
         if (this.rightfree && !this.deadlyRight) { currentObs.addAction(Actions_E.RIGHT); }
         if (playerOnBomb == 0)  { currentObs.addAction(Actions_E.BOMB); }
-        System.out.println(currentObs.getActions().toString());
         
         
         //currentObs.intArray[0] = freeDirection;

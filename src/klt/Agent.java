@@ -30,7 +30,8 @@ public abstract class Agent implements AgentInterface
     private DebugState debugState;
     protected double INITIALQVALUE = 50.0;
     protected Random randGenerator = new Random();
-    protected int maxRandonAction = 5;
+    protected int maxRandomAction = 5;
+    protected int ActionsCount = 6;
 
     Agent(String saveFilePath, DebugState debugState) throws IOException, ClassNotFoundException {
         this(saveFilePath);
@@ -66,15 +67,15 @@ public abstract class Agent implements AgentInterface
      */ /************************************************************* */
     protected int getBestAction(Observation currentObs, Set<Actions_E> allowedActions)
     {
-        Iterator<Actions_E> actions = allowedActions.iterator();
+        Iterator<Actions_E> actions = null;
         int currentAction = 0;
-//        Double bestValue = -1 * Double.MAX_VALUE;
         Double bestValue = -9999999.0;
         ArrayList<Integer> bestActions = new ArrayList<Integer>();
         int bestActionCount = 0;
 
         if (this.observationStorage.containsKey(currentObs.toString()) && (allowedActions.size() > 0))
         {
+            actions = allowedActions.iterator();
             //determine highest value
             while(actions.hasNext())
             {
@@ -117,7 +118,6 @@ public abstract class Agent implements AgentInterface
             if (actionArray.length <= 0) {
                 this.agentLogln("No possible Action! -> Stay");
             } else {
-
                 int randomActionIndex = this.randGenerator.nextInt(actionArray.length);
                 currentAction = actionArray[randomActionIndex].ordinal();
             }
@@ -151,14 +151,14 @@ public abstract class Agent implements AgentInterface
             }
         }
     }
+    
 
-    protected void fillInUnknownObservations(String observation, Set<Actions_E> allowedActions){
-        Iterator<Actions_E> actions = allowedActions.iterator();
+    protected void fillInUnknownObservations(String observation){
         //add the unknown observation
         observationStorage.put(observation, new HashMap<Integer, Double>());
         
-        while(actions.hasNext()) {
-            observationStorage.get(observation).put(actions.next().ordinal(), INITIALQVALUE);
+        for(int i = 0; i < Actions_E.getActionCount(); i++) {
+            observationStorage.get(observation).put(i, INITIALQVALUE);
         }
     }
 
