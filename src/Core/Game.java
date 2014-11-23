@@ -111,7 +111,6 @@ public class Game {
 		updatePlayboard();
 		checkGameOver();
 		this.iterationTime = System.nanoTime() - this.iterationTime;
-		System.out.println("IT: " + this.iterationTime + ", ET:" + this.explosionTime);
 	}
 
 	private void checkGameOver() {
