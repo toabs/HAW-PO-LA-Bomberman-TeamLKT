@@ -27,6 +27,7 @@ public class Game {
 	private long playerActionTime = 0;
 	private long updateBoardTime = 0;
 	private long gameOverTime = 0;
+	private long actionTime = 0;
 	
 
 	public Game(List<User> usersList, int boardSize, int bombCounter, int explosionArea, int maxSteps, long stepSleep) {
@@ -120,11 +121,11 @@ public class Game {
 		checkGameOver();
 		this.gameOverTime = System.nanoTime() - this.gameOverTime;
 		this.iterationTime = System.nanoTime() - this.iterationTime;
-		System.out.println("IterationTime: " + this.iterationTime);
-		System.out.println("playerActionTime" + this.playerActionTime);
-		System.out.println("updateBoardTime" + this.updateBoardTime);
-		System.out.println("gameoverTime" + this.gameOverTime);
-		System.out.println("ExplosionTime:" + this.explosionTime);
+		//System.out.println("IterationTime: " + this.iterationTime);
+		//System.out.println("playerActionTime" + this.playerActionTime);
+		//System.out.println("updateBoardTime" + this.updateBoardTime);
+		//System.out.println("gameoverTime" + this.gameOverTime);
+		//System.out.println("ExplosionTime:" + this.explosionTime);
 	}
 
 	private void checkGameOver() {
@@ -156,7 +157,6 @@ public class Game {
 	}
 
 	private void playerActions() {
-	    long actionTime = 0;
 	    int userAction = 0;
 	    //Get the playboard only once
 	    Playboard currentBoard = playboard.clone();
@@ -168,7 +168,6 @@ public class Game {
 			actionTime = System.nanoTime();
 			userAction = user.getAction(currentBoard);
 			actionTime = System.nanoTime() - actionTime;
-			System.out.println("actionTime: " + actionTime);
 			switch (userAction) {
 			case 1:
 				if (field.getY() - PLAYER_RANGE >= MIN_FIELD) {

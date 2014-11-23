@@ -12,4 +12,9 @@ package klt.util;
 public enum Actions_E
 {
    STAY, UP, DOWN, LEFT, RIGHT, BOMB;
+   
+   
+   public static int getActionCount() {
+       return 6;
+   }
 }

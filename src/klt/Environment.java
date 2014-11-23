@@ -30,7 +30,7 @@ public abstract class Environment implements EnvironmentInterface
     protected final int oppenentDirections = 9; //equal, top, left, topleft, ...
     protected final int bombSituations = 125;
     protected double maxDistanceToOpponent = 0; //to be calculated
-    protected final int numIntegers = 3;
+    protected final int numIntegers = 4;
     protected final int numDoubles = 1;
     
     //helper variables filled by the functions

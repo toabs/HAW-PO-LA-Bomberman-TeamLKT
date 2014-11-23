@@ -102,7 +102,8 @@ public class Environment_Fighter extends Environment
         result.intArray[0] = opponentDirection;
         result.intArray[1] = bombSituation;
         result.intArray[2] = playerOnBomb;
-        result.doubleArray[2] = distanceToOpponent;
+        result.intArray[3] = freeDirection;
+        result.doubleArray[0] = distanceToOpponent;
         
         this.lastDistance = distanceToOpponent;
         this.lastX = currentPlayer.getX();
@@ -138,11 +139,14 @@ public class Environment_Fighter extends Environment
         if (this.leftfree && !this.deadlyLeft) { currentObs.addAction(Actions_E.LEFT); }
         if (this.rightfree && !this.deadlyRight) { currentObs.addAction(Actions_E.RIGHT); }
         if (playerOnBomb == 0)  { currentObs.addAction(Actions_E.BOMB); }
+        System.out.println(currentObs.getActions().toString());
+        
         
         //currentObs.intArray[0] = freeDirection;
         currentObs.intArray[0] = opponentDirection;
         currentObs.intArray[1] = bombSituation;
         currentObs.intArray[2] = playerOnBomb;
+        currentObs.intArray[3] = freeDirection;
         currentObs.doubleArray[0] = distanceToOpponent; 
         
         //this.environmentLogln("Distance: " + distanceToOpponent);

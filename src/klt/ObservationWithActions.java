@@ -3,6 +3,7 @@
  */
 package klt;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import klt.util.Actions_E;
@@ -17,7 +18,7 @@ import org.rlcommunity.rlglue.codec.types.Observation;
 /* *********************************************************** */
 public class ObservationWithActions extends Observation
 {
-    private Set<Actions_E> actions;
+    private Set<Actions_E> actions = new HashSet<Actions_E>();
     
     /* ************************************************************** */
     /**

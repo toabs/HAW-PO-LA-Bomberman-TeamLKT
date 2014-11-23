@@ -9,7 +9,11 @@ import org.rlcommunity.rlglue.codec.types.Observation;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Random;
+import java.util.Set;
+
+import klt.util.Actions_E;
 
 /* ************************************************************** */
 /**
@@ -24,9 +28,9 @@ public abstract class Agent implements AgentInterface
     protected HashMap<String, HashMap<Integer, Double>> observationStorage; 
     private String saveFilePath;
     private DebugState debugState;
-    protected int NUMBEROFACTIONS = 6;
     protected double INITIALQVALUE = 50.0;
     protected Random randGenerator = new Random();
+    protected int maxRandonAction = 5;
 
     Agent(String saveFilePath, DebugState debugState) throws IOException, ClassNotFoundException {
         this(saveFilePath);
@@ -60,34 +64,37 @@ public abstract class Agent implements AgentInterface
      * @param currentObs
      * @return
      */ /************************************************************* */
-    protected int getBestAction(Observation currentObs, int actionCount)
+    protected int getBestAction(Observation currentObs, Set<Actions_E> allowedActions)
     {
+        Iterator<Actions_E> actions = allowedActions.iterator();
         int currentAction = 0;
 //        Double bestValue = -1 * Double.MAX_VALUE;
         Double bestValue = -9999999.0;
         ArrayList<Integer> bestActions = new ArrayList<Integer>();
         int bestActionCount = 0;
 
-        if (this.observationStorage.containsKey(currentObs.toString()))
+        if (this.observationStorage.containsKey(currentObs.toString()) && (allowedActions.size() > 0))
         {
             //determine highest value
-            for(int i = 0; i < actionCount; i++)
+            while(actions.hasNext())
             {
-            	agentLogln("Reward["+i+"]:" + this.observationStorage.get(currentObs.toString()).get(i));
-                if (this.observationStorage.get(currentObs.toString()).get(i) > bestValue)
+                Actions_E action = actions.next();
+            	agentLogln("Reward["+action.ordinal()+"]:" + this.observationStorage.get(currentObs.toString()).get(action.ordinal()));
+                if (this.observationStorage.get(currentObs.toString()).get(action.ordinal()) > bestValue)
                 {                	
-                    bestValue = this.observationStorage.get(currentObs.toString()).get(i);
+                    bestValue = this.observationStorage.get(currentObs.toString()).get(action.ordinal());
                 }
             }
             
             agentLogln("bestValue:" + bestValue);
-            
+            actions = allowedActions.iterator();
             //get Actions with that value (must be at least one)
-            for(int i = 0; i < actionCount; i++)
+            while(actions.hasNext())
             {
-                if (this.observationStorage.get(currentObs.toString()).get(i).equals(bestValue))
+                Actions_E action = actions.next();
+                if (this.observationStorage.get(currentObs.toString()).get(action.ordinal()).equals(bestValue))
                 {
-                    bestActions.add(i);
+                    bestActions.add(action.ordinal());
                 }
             }
             
@@ -106,7 +113,14 @@ public abstract class Agent implements AgentInterface
         }
         else
         {
-            currentAction = this.randGenerator.nextInt(actionCount);
+            Actions_E[] actionArray =  allowedActions.toArray(new Actions_E[0]);
+            if (actionArray.length <= 0) {
+                this.agentLogln("No possible Action! -> Stay");
+            } else {
+
+                int randomActionIndex = this.randGenerator.nextInt(actionArray.length);
+                currentAction = actionArray[randomActionIndex].ordinal();
+            }
         }
 
         agentLogln("Action chosen:" + currentAction);
@@ -125,27 +139,26 @@ public abstract class Agent implements AgentInterface
         }
     }
 
-    protected void setRewardForActionObservation(double reward, String observation, int action){
+    protected void setRewardForActionObservation(double reward, String observation, int action, Set<Actions_E> allowedActions){
         if (observationStorage.containsKey(observation)) {
-
             observationStorage.get(observation).put(action, reward);
-
         } else {
             //add the unknown observation
             observationStorage.put(observation, new HashMap<Integer, Double>());
 
-            for (int i = 0; i < NUMBEROFACTIONS; i++) {
+            for(int i = 0; i < Actions_E.getActionCount(); i++) {
                 observationStorage.get(observation).put(i, (i == action) ? reward : INITIALQVALUE);
             }
         }
     }
 
-    protected void fillInUnknownObservations(String observation){
+    protected void fillInUnknownObservations(String observation, Set<Actions_E> allowedActions){
+        Iterator<Actions_E> actions = allowedActions.iterator();
         //add the unknown observation
         observationStorage.put(observation, new HashMap<Integer, Double>());
-
-        for (int i = 0; i < NUMBEROFACTIONS; i++) {
-            observationStorage.get(observation).put(i, INITIALQVALUE);
+        
+        while(actions.hasNext()) {
+            observationStorage.get(observation).put(actions.next().ordinal(), INITIALQVALUE);
         }
     }
 
