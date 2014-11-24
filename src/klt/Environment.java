@@ -227,7 +227,7 @@ public abstract class Environment implements EnvironmentInterface
             bombPosition[currentBomb.getX()][currentBomb.getY()] = true;
         }
         
-        int result = 1;
+        int result = 0;
         
         this.topfree =   (validY(currentPlayer.getY()-1) ? !board.getBoard()[currentPlayer.getX()][currentPlayer.getY()-1].isWall()
                                                             && !bombPosition[currentPlayer.getX()][currentPlayer.getY()-1] : false);

@@ -101,7 +101,7 @@ public class Agent_SARSA extends Agent{
             setRewardForActionObservation(reward, lastObservation.toString(), lastAction, ((ObservationWithActions) lastObservation).getActions());
 
             {        //lower the explorationrate
-                epsilon -= 0.003;
+                epsilon -= 0.0003;
                 if (epsilon < EPSILONMINIMUM) {
                     epsilon = EPSILONMINIMUM;
                 }

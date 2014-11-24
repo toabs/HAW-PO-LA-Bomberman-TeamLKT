@@ -14,14 +14,17 @@ import org.rlcommunity.rlglue.codec.types.Observation;
 import org.rlcommunity.rlglue.codec.types.Reward_observation_terminal;
 
 /* ************************************************************** */
-/**
+/** Advances ist erweitert um Abstand und Richtung zum Rand
  * @author LarsE
  * 19.10.2014
  */
 /* *********************************************************** */
-public class Environment_Fighter extends Environment
+public class Environment_Fighter_Advanced extends Environment
 {    
-	Environment_Fighter(DebugState debugState) {
+    protected int numberOfSpacesToEdge = 0;
+    protected final int numIntegers = 5;
+    
+	Environment_Fighter_Advanced(DebugState debugState) {
 	   super(debugState);
 	}
 	
@@ -45,6 +48,8 @@ public class Environment_Fighter extends Environment
     public String env_init()
     {
         maxDistanceToOpponent = Math.sqrt(Math.pow(board.getBoard().length, 2) + Math.pow(board.getBoard()[0].length, 2));
+        int tempMax = (board.getBoard().length > board.getBoard()[0].length) ? board.getBoard().length : board.getBoard()[0].length;
+        numberOfSpacesToEdge = tempMax / 2;
         this.environmentLogln("maxDistance is : " + maxDistanceToOpponent);
         
         TaskSpecVRLGLUE3 theTaskSpecObject = new TaskSpecVRLGLUE3();
@@ -52,6 +57,7 @@ public class Environment_Fighter extends Environment
         theTaskSpecObject.addDiscreteObservation(new IntRange(1, freeDirections));
         theTaskSpecObject.addDiscreteObservation(new IntRange(1, oppenentDirections));
         theTaskSpecObject.addDiscreteObservation(new IntRange(1, bombSituations));
+        theTaskSpecObject.addDiscreteObservation(new IntRange(1, numberOfSpacesToEdge));
         theTaskSpecObject.addContinuousObservation(new DoubleRange(0, maxDistanceToOpponent, board.getBoard().length*board.getBoard()[0].length));
         theTaskSpecObject.setEpisodic();
         theTaskSpecObject.setRewardRange(new DoubleRange(-20, 20));
@@ -86,7 +92,8 @@ public class Environment_Fighter extends Environment
         int freeDirection = this.determinefreeDirections();
         int playerOnBomb = this.determinePlayerOnBomb();
         int opponentDirection = this.determineOppenentDirection();
-        int bombSituation = determineBombSituation();
+        int bombSituation = this.determineBombSituation();
+        int spacesToEdge = this.determineSpacesToEdge();
         double distanceToOpponent = this.determineDistanceToOpponent();
         
         ObservationWithActions result = new ObservationWithActions(numIntegers, numDoubles);
@@ -103,6 +110,7 @@ public class Environment_Fighter extends Environment
         result.intArray[1] = bombSituation;
         result.intArray[2] = playerOnBomb;
         result.intArray[3] = freeDirection;
+        result.intArray[4] = spacesToEdge;
         result.doubleArray[0] = distanceToOpponent;
         
         this.lastDistance = distanceToOpponent;
@@ -130,6 +138,7 @@ public class Environment_Fighter extends Environment
         double distanceToOpponent = this.determineDistanceToOpponent();
         int bombSituation = determineBombSituation();
         int playerOnBomb = this.determinePlayerOnBomb();
+        int spacesToEdge = this.determineSpacesToEdge();
         
         ObservationWithActions currentObs = new ObservationWithActions(numIntegers, numDoubles);
         
@@ -145,6 +154,7 @@ public class Environment_Fighter extends Environment
         currentObs.intArray[1] = bombSituation;
         currentObs.intArray[2] = playerOnBomb;
         currentObs.intArray[3] = freeDirection;
+        currentObs.intArray[4] = spacesToEdge;
         currentObs.doubleArray[0] = distanceToOpponent; 
         
         //this.environmentLogln("Distance: " + distanceToOpponent);
@@ -196,4 +206,24 @@ public class Environment_Fighter extends Environment
         
         return new Reward_observation_terminal(theReward,currentObs,episodeOver);
     }    
+    
+    /* ************************************************************** */
+    /**
+     * determineSpacesToEdge
+     * @return
+    */ /************************************************************* */
+    protected int determineSpacesToEdge() {
+        int result = 0;
+        Player cP = this.determineCurrentPlayer();
+        
+        int maxX = board.getBoard().length -1; 
+        int maxY = board.getBoard()[0].length -1;
+        
+        int minDiffX = (Math.abs(cP.getX() - 0) < Math.abs(cP.getX() - maxX) ? Math.abs(cP.getX() - 0) : Math.abs(cP.getX() - maxX));
+        int minDiffY = (Math.abs(cP.getY() - 0) < Math.abs(cP.getY() - maxY) ? Math.abs(cP.getY() - 0) : Math.abs(cP.getY() - maxY));
+                
+        result = (minDiffX < minDiffY) ? minDiffX : minDiffY;
+        
+        return result;
+    }
 }
