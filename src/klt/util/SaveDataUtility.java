@@ -11,6 +11,8 @@ public class SaveDataUtility {
     @SuppressWarnings("unchecked")
 	public static HashMap<String, HashMap<Integer, Double>> updateData(HashMap<String, HashMap<Integer, Double>> first, HashMap<String, HashMap<Integer, Double>> second) {
 
+        System.out.println("Start to merge!");
+
         HashMap<String, HashMap<Integer, Double>> result = new HashMap<>();
 
         for (String keyFirst : first.keySet()) {
@@ -20,6 +22,7 @@ public class SaveDataUtility {
                     double value = (first.get(keyFirst).get(keyFirstAction) + second.get(keyFirst).get(keyFirstAction)) / 2.0;
                     temp.put(keyFirstAction, value);
                 }
+                result.put(keyFirst, temp);
             } else {
                 result.put(keyFirst, (HashMap<Integer, Double>) first.get(keyFirst).clone());
             }
@@ -30,6 +33,10 @@ public class SaveDataUtility {
                 result.put(keySecond, (HashMap<Integer, Double>) second.get(keySecond).clone());
             }
         }
+
+        System.out.println("Number of observations: " + result.keySet().size());
+
+        System.out.println("Merge Successful!");
 
         return result;
     }
@@ -51,6 +58,7 @@ public class SaveDataUtility {
     }
 
     public static void writeStorage(HashMap<String, HashMap<Integer, Double>> toSave, String storagePath){
+        System.out.println("Start to write storagefile: " + storagePath);
         try
         {
             FileOutputStream fout = new FileOutputStream(storagePath);
@@ -62,11 +70,14 @@ public class SaveDataUtility {
             System.out.println("Error saving observationStorage: " + e.getMessage());
             e.printStackTrace();
         }
+        System.out.println("Successfully wrote storagefile: " + storagePath);
     }
 
     @SuppressWarnings("unchecked")
 	public static HashMap<String, HashMap<Integer, Double>> loadStorage(String filePath){
         File f = new File(filePath);
+
+        System.out.println("Start to load file: " + filePath);
 
         if (f.exists() && !f.isDirectory())
         {
@@ -80,6 +91,8 @@ public class SaveDataUtility {
             } catch (ClassNotFoundException | IOException e) {
                 e.printStackTrace();
             }
+
+            System.out.println("Successfully loaded File: " + filePath);
 
             return otherStorage;
         }
