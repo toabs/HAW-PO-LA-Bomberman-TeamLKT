@@ -99,8 +99,8 @@ public class Agent_SARSA extends Agent{
             //distribute reward
             if (this.observationStorage.containsKey(lastObservation)) {
                 currentQ = observationStorage.get(lastObservation).get(lastAction);
-                reward = currentQ + alpha * (v - currentQ);
             }
+            reward = currentQ + alpha * (v - currentQ);
 
             currentLogElem.setValueNextAction(0);
             currentLogElem.setValueBefore(currentQ);
@@ -130,14 +130,14 @@ public class Agent_SARSA extends Agent{
         double qThis = INITIALQVALUE;
 
         //distribute reward
-        if (this.observationStorage.containsKey(beforeLastObservation))
-        {
+        if (this.observationStorage.containsKey(beforeLastObservation)){
             qThis = observationStorage.get(beforeLastObservation).get(beforeLastAction);
-            if (observationStorage.containsKey(lastObservation)) {
-                qNext = observationStorage.get(lastObservation).get(lastAction);
-            }
-            reward = qThis + alpha * (r + gamma * qNext - qThis);
         }
+        if (observationStorage.containsKey(lastObservation)) {
+            qNext = observationStorage.get(lastObservation).get(lastAction);
+        }
+        reward = qThis + alpha * (r + gamma * qNext - qThis);
+
         currentElem.setValueAfter(reward);
         currentElem.setValueBefore(qThis);
         currentElem.setReward(r);

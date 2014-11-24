@@ -114,7 +114,7 @@ public class SarsaLogElement {
             }
 
             if (i == action){
-                value = valueBefore;
+                value = valueAfter;
             }
 
             System.out.print(i + ": " + value + " | ");
