@@ -22,6 +22,7 @@ public class SaveDataUtility {
                     double value = (first.get(keyFirst).get(keyFirstAction) + second.get(keyFirst).get(keyFirstAction)) / 2.0;
                     temp.put(keyFirstAction, value);
                 }
+                result.put(keyFirst, temp);
             } else {
                 result.put(keyFirst, (HashMap<Integer, Double>) first.get(keyFirst).clone());
             }
