@@ -29,6 +29,18 @@ public class KI_Factory
         }
     }
 
+    public static KI getGoToAgent(int id){
+        try
+        {
+            return new KI(id, new Agent_SARSA("KI_GoToSARSA.rgo"), new Environment_GoTo());
+        } catch (Exception e)
+        {
+            System.out.println("Exception at KI-Creation: " + e.getMessage());
+            e.printStackTrace();
+            return null;
+        }
+    }
+
     /* ************************************************************** */
     /**
      * getKI_Escape

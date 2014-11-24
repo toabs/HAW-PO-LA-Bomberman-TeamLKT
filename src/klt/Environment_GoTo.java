@@ -1,6 +1,7 @@
 package klt;
 
 import Core.Player;
+import klt.util.Actions_E;
 import org.rlcommunity.rlglue.codec.taskspec.TaskSpec;
 import org.rlcommunity.rlglue.codec.taskspec.TaskSpecVRLGLUE3;
 import org.rlcommunity.rlglue.codec.taskspec.ranges.DoubleRange;
@@ -35,6 +36,7 @@ public class Environment_GoTo extends Environment {
                 destinationY=0;
             }
         }
+        System.out.println("Destination now is x: " + destinationX + " y: " + destinationY);
     }
 
 	/* ************************************************************** */
@@ -101,7 +103,13 @@ public class Environment_GoTo extends Environment {
         int destinationDirection = determineDestinationDirection();
         double distanceToDestination = determineDistanceToDestination();
 
-        Observation result = new Observation(numIntegers, numDoubles);
+        ObservationWithActions result = new ObservationWithActions(numIntegers, numDoubles);
+        result.addAction(Actions_E.STAY);
+        if (this.topfree) { result.addAction(Actions_E.UP); }
+        if (this.botfree) { result.addAction(Actions_E.DOWN); }
+        if (this.leftfree) { result.addAction(Actions_E.LEFT); }
+        if (this.rightfree) { result.addAction(Actions_E.RIGHT); }
+
         result.intArray[0] = freeDirection;
         result.intArray[1] = destinationDirection;
         result.doubleArray[0] = distanceToDestination;
@@ -165,7 +173,13 @@ public class Environment_GoTo extends Environment {
         int opponentDirection = this.determineOppenentDirection();
         double distanceToOpponent = this.determineDistanceToOpponent();
 
-        Observation currentObs = new Observation(numIntegers, numDoubles);
+        ObservationWithActions currentObs = new ObservationWithActions(numIntegers, numDoubles);
+        currentObs.addAction(Actions_E.STAY);
+        if (this.topfree) { currentObs.addAction(Actions_E.UP); }
+        if (this.botfree) { currentObs.addAction(Actions_E.DOWN); }
+        if (this.leftfree) { currentObs.addAction(Actions_E.LEFT); }
+        if (this.rightfree) { currentObs.addAction(Actions_E.RIGHT); }
+
         currentObs.intArray[0] = freeDirection;
         currentObs.intArray[1] = opponentDirection;
         currentObs.doubleArray[0] = distanceToOpponent;
@@ -197,15 +211,11 @@ public class Environment_GoTo extends Environment {
             theReward = 200;
         }
 
-        System.out.println("this.lastX:" + this.lastX);
-        System.out.println("this.lastY:" + this.lastY);
-        System.out.println("this.lastDistance:" + this.lastDistance);
 
         this.lastDistance = distanceToOpponent;
         this.lastX = currentPlayer.getX();
         this.lastY = currentPlayer.getY();
 
-        return new Reward_observation_terminal(theReward, currentObs,
-                episodeOver);
+        return new Reward_observation_terminal(theReward, currentObs, episodeOver);
     }
 }
