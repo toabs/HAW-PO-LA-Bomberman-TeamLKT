@@ -3,6 +3,7 @@
  */
 package klt;
 
+import klt.util.Actions_E;
 import Core.Player;
 import org.rlcommunity.rlglue.codec.taskspec.TaskSpec;
 import org.rlcommunity.rlglue.codec.taskspec.TaskSpecVRLGLUE3;
@@ -22,7 +23,7 @@ public class Environment_Avoidbomb_Zone extends Environment
 {
     private final int freeDirections = (int) Math.pow(2, 4); //4 direction, blocked, not blocked
     private final int bombSituations = 125;
-    private final int numIntegers = 2;
+    private final int numIntegers = 3;
     private final int numDoubles = 0;
     
     /* ************************************************************** */
@@ -89,10 +90,18 @@ public class Environment_Avoidbomb_Zone extends Environment
         
         int freeDirection = this.determinefreeDirections();
         int bombSituation = determineBombSituation();
+        int playerOnBomb = this.determinePlayerOnBomb();
         
-        Observation result = new Observation(numIntegers, numDoubles);
+        ObservationWithActions result = new ObservationWithActions(numIntegers, numDoubles);
+        if (!this.deadlyCurrent) { result.addAction(Actions_E.STAY); }
+        if (this.topfree && !this.deadlyTop) { result.addAction(Actions_E.UP); }
+        if (this.botfree && !this.deadlyBot) { result.addAction(Actions_E.DOWN); }
+        if (this.leftfree && !this.deadlyLeft) { result.addAction(Actions_E.LEFT); }
+        if (this.rightfree && !this.deadlyRight) { result.addAction(Actions_E.RIGHT); } 
+        
         result.intArray[0] = freeDirection;
         result.intArray[1] = bombSituation;
+        result.intArray[2] = playerOnBomb;
         
         this.lastX = currentPlayer.getX();
         this.lastY = currentPlayer.getY();
@@ -110,63 +119,27 @@ public class Environment_Avoidbomb_Zone extends Environment
     {
         double theReward=0.0d;
         boolean episodeOver = false;
-        Player currentPlayer = determineCurrentPlayer();
-        
+        Player currentPlayer = determineCurrentPlayer();        
         int freeDirection = this.determinefreeDirections();
         int bombSituation = determineBombSituation();
+        int playerOnBomb = this.determinePlayerOnBomb();
         
-        Observation currentObs = new Observation(numIntegers, numDoubles);
+        ObservationWithActions currentObs = new ObservationWithActions(numIntegers, numDoubles);
+        
+        if (!this.deadlyCurrent) { currentObs.addAction(Actions_E.STAY); }
+        if (this.topfree && !this.deadlyTop) { currentObs.addAction(Actions_E.UP); }
+        if (this.botfree && !this.deadlyBot) { currentObs.addAction(Actions_E.DOWN); }
+        if (this.leftfree && !this.deadlyLeft) { currentObs.addAction(Actions_E.LEFT); }
+        if (this.rightfree && !this.deadlyRight) { currentObs.addAction(Actions_E.RIGHT); }  
+        
         currentObs.intArray[0] = freeDirection;
         currentObs.intArray[1] = bombSituation;
+        currentObs.intArray[2] = playerOnBomb;
         
-        //high negative reward if moved against a wall or bomb
-        if (lastX == currentPlayer.getX() && lastY == currentPlayer.getY() && arg0.intArray[0] != 0)
+        if (currentDanger < lastDanger)
         {
-            theReward = -500;
-        } 
-        else
-        {
-            if (currentDanger < lastDanger)
-            {
-                theReward = 100;
-            }
-        }
-        /*
-        if (currentDanger == 0 && lastDanger == 0) {
-            //reward if staying in place
-            if (arg0.intArray[0] == 0) {
-                theReward = 50;
-            }
-            else {
-                theReward = -50;
-            }
-        }
-        else
-        {
-            if (arg0.intArray[0] == 0 && lastDanger != 0) {
-                theReward = - 100;
-            }
-            else
-            {
-                if (currentDanger < lastDanger && lastDanger != 0)
-                {
-                    theReward = 100;
-                }
-                else 
-                {
-                    theReward = 50;
-                }
-            }
-        }
-        */
-        
-       
-        
-        this.lastX = currentPlayer.getX();
-        this.lastY = currentPlayer.getY();
-        
-        System.out.println("reward:" + theReward);
-        System.out.println("cd:" + currentDanger);
+            theReward = 100;
+        }     
         
         return new Reward_observation_terminal(theReward,currentObs,episodeOver);
     }

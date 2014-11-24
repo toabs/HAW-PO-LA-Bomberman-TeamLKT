@@ -39,6 +39,12 @@ public abstract class Environment implements EnvironmentInterface
     protected boolean leftfree = false;
     protected boolean rightfree = false;
     
+    protected int dangerCurrent   = 0;
+    protected int dangerTop       = 0;
+    protected int dangerBot       = 0;
+    protected int dangerLeft      = 0;
+    protected int dangerRight     = 0;
+    
     protected boolean deadlyCurrent   = false;
     protected boolean deadlyTop       = false;
     protected boolean deadlyBot       = false;
@@ -365,11 +371,11 @@ public abstract class Environment implements EnvironmentInterface
         
         int countZoneStatus = 3; // count of possible danger
         
-        int dangerCurrent   = 0;
-        int dangerTop       = 0;
-        int dangerBot       = 0;
-        int dangerLeft      = 0;
-        int dangerRight     = 0;
+        dangerCurrent   = 0;
+        dangerTop       = 0;
+        dangerBot       = 0;
+        dangerLeft      = 0;
+        dangerRight     = 0;
         
         int result = 0;
         

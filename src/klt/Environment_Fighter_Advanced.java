@@ -23,6 +23,7 @@ public class Environment_Fighter_Advanced extends Environment
 {    
     protected int numberOfSpacesToEdge = 0;
     protected final int numIntegers = 5;
+    protected int bombSituation = 0;
     
 	Environment_Fighter_Advanced(DebugState debugState) {
 	   super(debugState);
@@ -89,10 +90,12 @@ public class Environment_Fighter_Advanced extends Environment
     {
         Player currentPlayer = determineCurrentPlayer();
         
+        int lastBombSituation = bombSituation;
+        
         int freeDirection = this.determinefreeDirections();
         int playerOnBomb = this.determinePlayerOnBomb();
         int opponentDirection = this.determineOppenentDirection();
-        int bombSituation = this.determineBombSituation();
+        this.bombSituation = this.determineBombSituation();
         int spacesToEdge = this.determineSpacesToEdge();
         double distanceToOpponent = this.determineDistanceToOpponent();
         
@@ -103,7 +106,7 @@ public class Environment_Fighter_Advanced extends Environment
         if (this.botfree && !this.deadlyBot) { result.addAction(Actions_E.DOWN); }
         if (this.leftfree && !this.deadlyLeft) { result.addAction(Actions_E.LEFT); }
         if (this.rightfree && !this.deadlyRight) { result.addAction(Actions_E.RIGHT); }
-        if (playerOnBomb == 0)  { result.addAction(Actions_E.BOMB); }
+        if (playerOnBomb == 0 && !this.deadlyCurrent)  { result.addAction(Actions_E.BOMB); }
         
         //result.intArray[] = freeDirection;
         result.intArray[0] = opponentDirection;
@@ -130,13 +133,15 @@ public class Environment_Fighter_Advanced extends Environment
     {
         double theReward=0.0d;
         boolean episodeOver = false;
+        int lastBombSituation = bombSituation;
+        
         Player currentPlayer = determineCurrentPlayer();
         Player opponentPlayer = determineOppenentPlayer();
         
         int freeDirection = this.determinefreeDirections();
         int opponentDirection = this.determineOppenentDirection();
         double distanceToOpponent = this.determineDistanceToOpponent();
-        int bombSituation = determineBombSituation();
+        this.bombSituation = determineBombSituation();
         int playerOnBomb = this.determinePlayerOnBomb();
         int spacesToEdge = this.determineSpacesToEdge();
         
@@ -158,10 +163,10 @@ public class Environment_Fighter_Advanced extends Environment
         currentObs.doubleArray[0] = distanceToOpponent; 
         
         //this.environmentLogln("Distance: " + distanceToOpponent);
-        if (distanceToOpponent < lastDistance)
+        if (distanceToOpponent < lastDistance && lastBombSituation == 0)
         {
             theReward = 1; 
-        } 
+        }
         /*
         if (distanceToOpponent > lastDistance)
         {
@@ -198,7 +203,10 @@ public class Environment_Fighter_Advanced extends Environment
         //negative reward for placing bombs without sense
         if (arg0.intArray[0] == 5 && distanceToOpponent > this.board.getExplosionRadius()+2) {
             theReward = -50;
-        }  
+        } else
+        {
+            theReward = 1; //Positive reward for placing a bomb in range
+        }
         
         this.lastDistance = distanceToOpponent;
         this.lastX = currentPlayer.getX();
@@ -214,13 +222,13 @@ public class Environment_Fighter_Advanced extends Environment
     */ /************************************************************* */
     protected int determineSpacesToEdge() {
         int result = 0;
-        Player cP = this.determineCurrentPlayer();
+        Player oP = this.determineOppenentPlayer();
         
         int maxX = board.getBoard().length -1; 
         int maxY = board.getBoard()[0].length -1;
         
-        int minDiffX = (Math.abs(cP.getX() - 0) < Math.abs(cP.getX() - maxX) ? Math.abs(cP.getX() - 0) : Math.abs(cP.getX() - maxX));
-        int minDiffY = (Math.abs(cP.getY() - 0) < Math.abs(cP.getY() - maxY) ? Math.abs(cP.getY() - 0) : Math.abs(cP.getY() - maxY));
+        int minDiffX = (Math.abs(oP.getX() - 0) < Math.abs(oP.getX() - maxX) ? Math.abs(oP.getX() - 0) : Math.abs(oP.getX() - maxX));
+        int minDiffY = (Math.abs(oP.getY() - 0) < Math.abs(oP.getY() - maxY) ? Math.abs(oP.getY() - 0) : Math.abs(oP.getY() - maxY));
                 
         result = (minDiffX < minDiffY) ? minDiffX : minDiffY;
         

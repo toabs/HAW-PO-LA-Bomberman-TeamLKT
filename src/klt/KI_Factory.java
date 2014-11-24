@@ -74,7 +74,7 @@ public class KI_Factory
     {
         try
         {
-            return new KI(id, new Agent_Simple("KI_AvoidBombSimple.rgo", DebugState.NO_DEBUG), new Environment_Avoidbomb_Zone(DebugState.AGENT_ENVIRONMENT_DEBUG));
+            return new KI(id, new Agent_Simple("KI_AvoidBombSimple.rgo", DebugState.NO_DEBUG), new Environment_Avoidbomb_Zone(DebugState.NO_DEBUG));
         } catch (Exception e)
         {
             System.out.println("Exception at KI-Creation: " + e.getMessage());
@@ -153,7 +153,9 @@ public class KI_Factory
         {
             //return new KI(id, new Agent_SARSALambda("KI_FighterLambdaB.rgo", 0.95, 0.4, true, DebugState.NO_DEBUG, 10), new Environment_Fighter(DebugState.NO_DEBUG));
             
-            return new KI(id, new Agent_SARSALambda("KI_FighterBL.rgo", 0, 0.8, false, DebugState.NO_DEBUG, 20), new Environment_Fighter(DebugState.NO_DEBUG));
+            //return new KI(id, new Agent_SARSALambda("KI_FighterBL.rgo", 0, 0.8, false, DebugState.NO_DEBUG, 20), new Environment_Fighter(DebugState.NO_DEBUG));
+            return new KI(id, new Agent_SARSA(20, "KI_FighterB.rgo",  0.95, true, DebugState.NO_DEBUG), new Environment_Fighter(DebugState.NO_DEBUG));
+
         } catch (Exception e)
         {
             System.out.println("Exception at KI-Creation: " + e.getMessage());
@@ -164,8 +166,10 @@ public class KI_Factory
     
     public static KI getFighterAdvA(int id) {
         try
-        {         
-            return new KI(id, new Agent_SARSA("KI_FighterAdvA.rgo", 0.95, true, DebugState.NO_DEBUG), new Environment_Fighter_Advanced(DebugState.NO_DEBUG));
+        {   
+            return new KI(id, new Agent_SARSALambda("KI_FighterAdvA_Lambda.rgo", 0.95, 0.8, true, DebugState.NO_DEBUG, 12), new Environment_Fighter_Advanced(DebugState.NO_DEBUG));
+
+            //return new KI(id, new Agent_SARSA("KI_FighterAdvA.rgo", 0.95, true, DebugState.NO_DEBUG), new Environment_Fighter_Advanced(DebugState.NO_DEBUG));
         } catch (Exception e)
         {
             System.out.println("Exception at KI-Creation: " + e.getMessage());

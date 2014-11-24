@@ -57,9 +57,9 @@ public class Agent_SARSALambda extends Agent {
 
     private void updateValues(double r){
         double delta = r + gamma * INITIALQVALUE - INITIALQVALUE;
-        if (observationStorage.containsKey(lastObservation)){
+        if (observationStorage.containsKey(beforeLastObservation)){
 
-            if(observationStorage.containsKey(beforeLastObservation)) {
+            if(observationStorage.containsKey(lastObservation)) {
 
             double lastQ = observationStorage.get(beforeLastObservation).get(beforeLastAction);
             double currentQ = observationStorage.get(lastObservation).get(lastAction);
@@ -67,11 +67,11 @@ public class Agent_SARSALambda extends Agent {
 
             }
             else{
-                fillInUnknownObservations(beforeLastObservation.toString());
+                fillInUnknownObservations(lastObservation.toString());
             }
         }
         else{
-            fillInUnknownObservations(lastObservation.toString());
+            fillInUnknownObservations(beforeLastObservation.toString());
         }
 
         if (queue.contains(beforeLastObservation, beforeLastAction)){
