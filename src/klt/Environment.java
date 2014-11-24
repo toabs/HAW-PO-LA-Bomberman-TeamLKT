@@ -79,19 +79,19 @@ public abstract class Environment implements EnvironmentInterface
     }
 
     protected void environmentLogln(String output){
-    	if (debugState != null) {
-	        if (debugState.getEnvironmentDebugState()){
-	            System.out.println(output);
-	        }
-    	}
+        if (debugState != null) {
+            if (debugState.getEnvironmentDebugState()){
+                System.out.println(output);
+            }
+        }
     }
 
     protected void environmentLog(String output){
-    	if (debugState != null) {
-	        if (debugState.getEnvironmentDebugState()){
-	            System.out.print(output);
-	        }
-    	}
+        if (debugState != null) {
+            if (debugState.getEnvironmentDebugState()){
+                System.out.print(output);
+            }
+        }
     }
     
     /* ************************************************************** */
@@ -99,19 +99,19 @@ public abstract class Environment implements EnvironmentInterface
      * determineCurrentPlayer
      * @return
      */ /************************************************************* */
-	protected Player determineCurrentPlayer() {
-	    Iterator<Player> it = board.getPlayers().iterator();
-	
-	    Player thisplayer = null;
-	    while(it.hasNext())
-	    {
-	        thisplayer = it.next();
-	        if(thisplayer.getId() == this.userID)
-	            break;
-	    }
-	
-	    return thisplayer;
-	}
+    protected Player determineCurrentPlayer() {
+        Iterator<Player> it = board.getPlayers().iterator();
+    
+        Player thisplayer = null;
+        while(it.hasNext())
+        {
+            thisplayer = it.next();
+            if(thisplayer.getId() == this.userID)
+                break;
+        }
+    
+        return thisplayer;
+    }
 
     /* ************************************************************** */
     /**
@@ -119,20 +119,20 @@ public abstract class Environment implements EnvironmentInterface
      * @param currentPlayer
      * @return
      */ /************************************************************* */
-	protected Player determineOppenentPlayer() {
-	    Iterator<Player> it = board.getPlayers().iterator();
-	
-	    Player player = null;
-	    while(it.hasNext())
-	    {
-	        player = it.next();
-	        if(player.getId() != this.userID)
-	            break;
-	    }
-	
-	    return player;
-	}
-	
+    protected Player determineOppenentPlayer() {
+        Iterator<Player> it = board.getPlayers().iterator();
+    
+        Player player = null;
+        while(it.hasNext())
+        {
+            player = it.next();
+            if(player.getId() != this.userID)
+                break;
+        }
+    
+        return player;
+    }
+    
     /* ************************************************************** */
     /**
      * determineOppenentDirection
@@ -168,43 +168,43 @@ public abstract class Environment implements EnvironmentInterface
      * determineDistanceToOpponent
      * @return
      */ /************************************************************* */
-	protected double determineDistanceToOpponent()
-	{
-	    Player cP = determineCurrentPlayer();
-	    Player oP = determineOppenentPlayer();
-	
-	    int diffx = cP.getX() - oP.getX();
-	    int diffy = cP.getY() - oP.getY();
-	
-	    return Math.sqrt(Math.pow(diffx, 2) + Math.pow(diffy, 2));
-	}
+    protected double determineDistanceToOpponent()
+    {
+        Player cP = determineCurrentPlayer();
+        Player oP = determineOppenentPlayer();
     
-	/* ************************************************************** */
-	/**
-	 * validX
-	 * @param x
-	 * @return
-	*/ /************************************************************* */
-	protected boolean validX(int x) {
-	   return ((x < board.getBoard().length) && (x >= 0));
-	}
-	  
-	/* ************************************************************** */
-	/**
-	 * validY
-	 * @param y
-	 * @return
-	*/ /************************************************************* */
-	protected boolean validY(int y) {
-	    return ((y < board.getBoard()[0].length) && (y >= 0 ));
-	}
-	
-	/* ************************************************************** */
+        int diffx = cP.getX() - oP.getX();
+        int diffy = cP.getY() - oP.getY();
+    
+        return Math.sqrt(Math.pow(diffx, 2) + Math.pow(diffy, 2));
+    }
+    
+    /* ************************************************************** */
+    /**
+     * validX
+     * @param x
+     * @return
+    */ /************************************************************* */
+    protected boolean validX(int x) {
+       return ((x < board.getBoard().length) && (x >= 0));
+    }
+      
+    /* ************************************************************** */
+    /**
+     * validY
+     * @param y
+     * @return
+    */ /************************************************************* */
+    protected boolean validY(int y) {
+        return ((y < board.getBoard()[0].length) && (y >= 0 ));
+    }
+    
+    /* ************************************************************** */
     /**
      * determinefreeDirections
      * @return
     */ /************************************************************* */
-	protected int determinefreeDirections() {
+    protected int determinefreeDirections() {
         Player currentPlayer = determineCurrentPlayer();
         boolean[][] bombPosition = new boolean[board.getBoard().length][board.getBoard()[0].length];
         Bomb currentBomb = null;
@@ -245,7 +245,7 @@ public abstract class Environment implements EnvironmentInterface
         
         return result;
     }
-	
+    
     /* ************************************************************** */
     /**
      * determineBombZones

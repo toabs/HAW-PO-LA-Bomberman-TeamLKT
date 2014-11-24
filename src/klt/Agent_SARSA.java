@@ -1,5 +1,7 @@
 package klt;
 
+import klt.util.AgentLogUtil;
+import klt.util.SarsaLogElement;
 import org.rlcommunity.rlglue.codec.types.Action;
 import org.rlcommunity.rlglue.codec.types.Observation;
 
@@ -16,6 +18,8 @@ public class Agent_SARSA extends Agent{
     //private List<Pair<Pair<String,Integer>,Double>> episode;
     private Observation lastObservation;
     private Observation beforeLastObservation;
+    private AgentLogUtil agentLogUtil = new AgentLogUtil(0);
+
     private Integer lastAction;
     private Integer beforeLastAction;
     private double alpha = 0.4; //Lernrate
@@ -41,9 +45,14 @@ public class Agent_SARSA extends Agent{
         this.trainingMode = trainingMode;
     }
 
+    public Agent_SARSA(int logLastN, String saveFilePath, double explorationRate, boolean trainingMode, DebugState debugState) throws IOException, ClassNotFoundException {
+        this(saveFilePath, explorationRate, trainingMode, debugState);
+        this.agentLogUtil = new AgentLogUtil(logLastN);
+    }
+
     @Override
     public void agent_init(String s) {
-        //episode = new ArrayList<Pair<Pair<String, Integer>,Double>>();
+        agentLogUtil.clear();
     }
 
     @Override
@@ -90,14 +99,25 @@ public class Agent_SARSA extends Agent{
     @Override
     public void agent_end(double v) {
         if(trainingMode) {
-            updateValues(v);
+            //updateValues(v);
+
+            agentLogUtil.add(lastObservation.toString(), lastAction);
+            SarsaLogElement currentLogElem = agentLogUtil.getLastElem();
 
             double reward = v;
+            double currentQ = INITIALQVALUE;
             //distribute reward
             if (this.observationStorage.containsKey(lastObservation)) {
-                double currentQ = observationStorage.get(lastObservation).get(lastAction);
+                currentQ = observationStorage.get(lastObservation).get(lastAction);
                 reward = currentQ + alpha * (v - currentQ);
             }
+
+
+            currentLogElem.setValueNextAction(0);
+            currentLogElem.setValueBefore(currentQ);
+            currentLogElem.setReward(v);
+            currentLogElem.setValueAfter(reward);
+
             setRewardForActionObservation(reward, lastObservation.toString(), lastAction, ((ObservationWithActions) lastObservation).getActions());
 
             {        //lower the explorationrate
@@ -106,22 +126,34 @@ public class Agent_SARSA extends Agent{
                     epsilon = EPSILONMINIMUM;
                 }
             }
+            agentLogUtil.logLastQValueUodates(observationStorage);
         }
     }
 
     private void updateValues(double r){
 
+        agentLogUtil.add(beforeLastObservation.toString(), beforeLastAction);
+        SarsaLogElement currentElem = agentLogUtil.getLastElem();
+        currentElem.setReward(r);
+
         double reward = r;
+        double qNext = INITIALQVALUE;
+        double qThis = INITIALQVALUE;
+
         //distribute reward
         if (this.observationStorage.containsKey(beforeLastObservation))
         {
-            double qThis = observationStorage.get(beforeLastObservation).get(beforeLastAction);
-            double qNext = INITIALQVALUE;
+            qThis = observationStorage.get(beforeLastObservation).get(beforeLastAction);
             if (observationStorage.containsKey(lastObservation)) {
                 qNext = observationStorage.get(lastObservation).get(lastAction);
             }
             reward = qThis + alpha * (r + gamma * qNext - qThis);
         }
+        
+        currentElem.setValueAfter(reward);
+        currentElem.setValueBefore(qThis);
+        currentElem.setReward(r);
+        currentElem.setValueNextAction(qNext);
         setRewardForActionObservation(reward, beforeLastObservation.toString(), beforeLastAction, ((ObservationWithActions) beforeLastObservation).getActions());
     }
 

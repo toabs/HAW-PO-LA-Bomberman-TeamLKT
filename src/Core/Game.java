@@ -111,15 +111,9 @@ public class Game {
 	public void doIteration() throws InterruptedException {
 	    this.iterationTime = System.nanoTime();
 		Thread.sleep(stepSleep);
-		this.playerActionTime = System.nanoTime();
-		playerActions();
-		this.playerActionTime = System.nanoTime() - this.playerActionTime;
-		this.updateBoardTime = System.nanoTime();
+		playerActions();	
 		updatePlayboard();
-		this.updateBoardTime = System.nanoTime() - this.updateBoardTime;
-		this.gameOverTime = System.nanoTime();
 		checkGameOver();
-		this.gameOverTime = System.nanoTime() - this.gameOverTime;
 		this.iterationTime = System.nanoTime() - this.iterationTime;
 		//System.out.println("IterationTime: " + this.iterationTime);
 		//System.out.println("playerActionTime" + this.playerActionTime);
@@ -158,6 +152,7 @@ public class Game {
 
 	private void playerActions() {
 	    int userAction = 0;
+
 	    //Get the playboard only once
 	    Playboard currentBoard = playboard.clone();
 	    

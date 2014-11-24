@@ -84,9 +84,9 @@ public class Environment_Fighter extends Environment
         Player currentPlayer = determineCurrentPlayer();
         
         int freeDirection = this.determinefreeDirections();
-        int playerOnBomb = this.determinePlayerOnBomb();
         int opponentDirection = this.determineOppenentDirection();
-        int bombSituation = determineBombSituation();
+        int bombSituation = this.determineBombSituation();
+        int playerOnBomb = this.determinePlayerOnBomb();
         double distanceToOpponent = this.determineDistanceToOpponent();
         
         ObservationWithActions result = new ObservationWithActions(numIntegers, numDoubles);
@@ -98,11 +98,9 @@ public class Environment_Fighter extends Environment
         if (this.rightfree && !this.deadlyRight) { result.addAction(Actions_E.RIGHT); }
         if (playerOnBomb == 0)  { result.addAction(Actions_E.BOMB); }
         
-        //result.intArray[] = freeDirection;
-        result.intArray[0] = opponentDirection;
-        result.intArray[1] = bombSituation;
-        result.intArray[2] = playerOnBomb;
-        result.intArray[3] = freeDirection;
+        result.intArray[0] = freeDirection;
+        result.intArray[1] = opponentDirection;
+        result.intArray[2] = bombSituation;
         result.doubleArray[0] = distanceToOpponent;
         
         this.lastDistance = distanceToOpponent;
@@ -188,7 +186,14 @@ public class Environment_Fighter extends Environment
         //negative reward for placing bombs without sense
         if (arg0.intArray[0] == 5 && distanceToOpponent > this.board.getExplosionRadius()+2) {
             theReward = -50;
-        }  
+        }
+        
+        //negative reward if not moved, if move was not "stay" or "bomb"
+        if (lastX == currentPlayer.getX() && lastY == currentPlayer.getY() && arg0.intArray[0] != 0 && arg0.intArray[0] != 5)
+        {
+            this.environmentLogln("--");
+            theReward = -100;
+        }      
         
         this.lastDistance = distanceToOpponent;
         this.lastX = currentPlayer.getX();

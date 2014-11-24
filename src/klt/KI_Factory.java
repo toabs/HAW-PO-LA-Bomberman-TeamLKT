@@ -112,7 +112,8 @@ public class KI_Factory
     {
         try
         {
-            return new KI(id, new Agent_SARSALambda("KI_FollowerSARSAL.rgo"), new Environment_Follower());
+            //return new KI(id, new Agent_SARSALambda("KI_FollowerSARSAL.rgo"), new Environment_Follower());
+            return null;
         } catch (Exception e)
         {
             System.out.println("Exception at KI-Creation: " + e.getMessage());
@@ -132,7 +133,7 @@ public class KI_Factory
         {
             //return new KI(id, new Agent_SARSALambda("KI_FighterLambdaA.rgo", 0.95, 0.4, true, DebugState.NO_DEBUG, 10), new Environment_Fighter(DebugState.NO_DEBUG));
             
-            return new KI(id, new Agent_SARSA("KI_FighterA.rgo", 0.95, true, DebugState.NO_DEBUG), new Environment_Fighter(DebugState.NO_DEBUG));
+            return new KI(id, new Agent_SARSA(20, "KI_FighterA.rgo", 0, true, DebugState.NO_DEBUG), new Environment_Fighter(DebugState.NO_DEBUG));
         } catch (Exception e)
         {
             System.out.println("Exception at KI-Creation: " + e.getMessage());
@@ -152,7 +153,7 @@ public class KI_Factory
         {
             //return new KI(id, new Agent_SARSALambda("KI_FighterLambdaB.rgo", 0.95, 0.4, true, DebugState.NO_DEBUG, 10), new Environment_Fighter(DebugState.NO_DEBUG));
             
-            return new KI(id, new Agent_SARSA("KI_FighterB.rgo", 0.95, true, DebugState.NO_DEBUG), new Environment_Fighter(DebugState.NO_DEBUG));
+            return new KI(id, new Agent_SARSALambda("KI_FighterBL.rgo", 0, 0.8, false, DebugState.NO_DEBUG, 20), new Environment_Fighter(DebugState.NO_DEBUG));
         } catch (Exception e)
         {
             System.out.println("Exception at KI-Creation: " + e.getMessage());

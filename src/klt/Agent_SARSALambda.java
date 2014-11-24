@@ -31,25 +31,6 @@ public class Agent_SARSALambda extends Agent {
     private final double EPSILONMINIMUM = 0.1;
     private RingBuffer<SarsaLambdaQueueElement> queue;
 
-    public Agent_SARSALambda(String saveFilePath) throws IOException, ClassNotFoundException {
-        this(saveFilePath, DebugState.NO_DEBUG);
-    }
-
-    public Agent_SARSALambda(String saveFilePath, DebugState debugState) throws IOException, ClassNotFoundException {
-        this(saveFilePath, true, debugState);
-    }
-
-    public Agent_SARSALambda(String saveFilePath, boolean trainingMode, DebugState debugState) throws IOException, ClassNotFoundException {
-        this(saveFilePath, 0.9,  0.4, trainingMode, debugState);
-    }
-
-    public Agent_SARSALambda(String saveFilePath, double explorationRate, double lambda, DebugState debugState) throws IOException, ClassNotFoundException {
-        this(saveFilePath, explorationRate, lambda, true, debugState);
-    }
-
-    public Agent_SARSALambda(String saveFilePath, double explorationRate, double lambda, boolean trainingMode, DebugState debugState) throws IOException, ClassNotFoundException {
-        this(saveFilePath, explorationRate, lambda, trainingMode, debugState, 50);
-    }
 
     public Agent_SARSALambda(String saveFilePath, double explorationRate, double lambda, boolean trainingMode, DebugState debugState, int queueLenght) throws IOException, ClassNotFoundException {
         super(saveFilePath, debugState);
