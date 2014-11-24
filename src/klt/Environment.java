@@ -26,10 +26,11 @@ public abstract class Environment implements EnvironmentInterface
     
     //Variables used for state-count-determination
     protected final int freeDirections = (int) Math.pow(2, 4); //4 direction, blocked, not blocked
+    protected final int playerOnBombValues = 1;
     protected final int oppenentDirections = 9; //equal, top, left, topleft, ...
     protected final int bombSituations = 125;
     protected double maxDistanceToOpponent = 0; //to be calculated
-    protected final int numIntegers = 3;
+    protected final int numIntegers = 4;
     protected final int numDoubles = 1;
     
     //helper variables filled by the functions
@@ -37,6 +38,12 @@ public abstract class Environment implements EnvironmentInterface
     protected boolean botfree = false;
     protected boolean leftfree = false;
     protected boolean rightfree = false;
+    
+    protected boolean deadlyCurrent   = false;
+    protected boolean deadlyTop       = false;
+    protected boolean deadlyBot       = false;
+    protected boolean deadlyLeft      = false;
+    protected boolean deadlyRight     = false;
     
     //Variables used for reward-determination
     protected Double lastDistance = 0.0;
@@ -72,19 +79,19 @@ public abstract class Environment implements EnvironmentInterface
     }
 
     protected void environmentLogln(String output){
-    	if (debugState != null) {
-	        if (debugState.getEnvironmentDebugState()){
-	            System.out.println(output);
-	        }
-    	}
+        if (debugState != null) {
+            if (debugState.getEnvironmentDebugState()){
+                System.out.println(output);
+            }
+        }
     }
 
     protected void environmentLog(String output){
-    	if (debugState != null) {
-	        if (debugState.getEnvironmentDebugState()){
-	            System.out.print(output);
-	        }
-    	}
+        if (debugState != null) {
+            if (debugState.getEnvironmentDebugState()){
+                System.out.print(output);
+            }
+        }
     }
     
     /* ************************************************************** */
@@ -92,19 +99,19 @@ public abstract class Environment implements EnvironmentInterface
      * determineCurrentPlayer
      * @return
      */ /************************************************************* */
-	protected Player determineCurrentPlayer() {
-	    Iterator<Player> it = board.getPlayers().iterator();
-	
-	    Player thisplayer = null;
-	    while(it.hasNext())
-	    {
-	        thisplayer = it.next();
-	        if(thisplayer.getId() == this.userID)
-	            break;
-	    }
-	
-	    return thisplayer;
-	}
+    protected Player determineCurrentPlayer() {
+        Iterator<Player> it = board.getPlayers().iterator();
+    
+        Player thisplayer = null;
+        while(it.hasNext())
+        {
+            thisplayer = it.next();
+            if(thisplayer.getId() == this.userID)
+                break;
+        }
+    
+        return thisplayer;
+    }
 
     /* ************************************************************** */
     /**
@@ -112,20 +119,20 @@ public abstract class Environment implements EnvironmentInterface
      * @param currentPlayer
      * @return
      */ /************************************************************* */
-	protected Player determineOppenentPlayer() {
-	    Iterator<Player> it = board.getPlayers().iterator();
-	
-	    Player player = null;
-	    while(it.hasNext())
-	    {
-	        player = it.next();
-	        if(player.getId() != this.userID)
-	            break;
-	    }
-	
-	    return player;
-	}
-	
+    protected Player determineOppenentPlayer() {
+        Iterator<Player> it = board.getPlayers().iterator();
+    
+        Player player = null;
+        while(it.hasNext())
+        {
+            player = it.next();
+            if(player.getId() != this.userID)
+                break;
+        }
+    
+        return player;
+    }
+    
     /* ************************************************************** */
     /**
      * determineOppenentDirection
@@ -161,43 +168,43 @@ public abstract class Environment implements EnvironmentInterface
      * determineDistanceToOpponent
      * @return
      */ /************************************************************* */
-	protected double determineDistanceToOpponent()
-	{
-	    Player cP = determineCurrentPlayer();
-	    Player oP = determineOppenentPlayer();
-	
-	    int diffx = cP.getX() - oP.getX();
-	    int diffy = cP.getY() - oP.getY();
-	
-	    return Math.sqrt(Math.pow(diffx, 2) + Math.pow(diffy, 2));
-	}
+    protected double determineDistanceToOpponent()
+    {
+        Player cP = determineCurrentPlayer();
+        Player oP = determineOppenentPlayer();
     
-	/* ************************************************************** */
-	/**
-	 * validX
-	 * @param x
-	 * @return
-	*/ /************************************************************* */
-	protected boolean validX(int x) {
-	   return ((x < board.getBoard().length) && (x >= 0));
-	}
-	  
-	/* ************************************************************** */
-	/**
-	 * validY
-	 * @param y
-	 * @return
-	*/ /************************************************************* */
-	protected boolean validY(int y) {
-	    return ((y < board.getBoard()[0].length) && (y >= 0 ));
-	}
-	
-	/* ************************************************************** */
+        int diffx = cP.getX() - oP.getX();
+        int diffy = cP.getY() - oP.getY();
+    
+        return Math.sqrt(Math.pow(diffx, 2) + Math.pow(diffy, 2));
+    }
+    
+    /* ************************************************************** */
+    /**
+     * validX
+     * @param x
+     * @return
+    */ /************************************************************* */
+    protected boolean validX(int x) {
+       return ((x < board.getBoard().length) && (x >= 0));
+    }
+      
+    /* ************************************************************** */
+    /**
+     * validY
+     * @param y
+     * @return
+    */ /************************************************************* */
+    protected boolean validY(int y) {
+        return ((y < board.getBoard()[0].length) && (y >= 0 ));
+    }
+    
+    /* ************************************************************** */
     /**
      * determinefreeDirections
      * @return
     */ /************************************************************* */
-	protected int determinefreeDirections() {
+    protected int determinefreeDirections() {
         Player currentPlayer = determineCurrentPlayer();
         boolean[][] bombPosition = new boolean[board.getBoard().length][board.getBoard()[0].length];
         Bomb currentBomb = null;
@@ -220,14 +227,14 @@ public abstract class Environment implements EnvironmentInterface
             bombPosition[currentBomb.getX()][currentBomb.getY()] = true;
         }
         
-        int result = 1;
+        int result = 0;
         
-        this.topfree =   (validY(currentPlayer.getY()+1) ? !board.getBoard()[currentPlayer.getX()][currentPlayer.getY()+1].isWall()
-                                                            && !bombPosition[currentPlayer.getX()][currentPlayer.getY()+1] : false);
+        this.topfree =   (validY(currentPlayer.getY()-1) ? !board.getBoard()[currentPlayer.getX()][currentPlayer.getY()-1].isWall()
+                                                            && !bombPosition[currentPlayer.getX()][currentPlayer.getY()-1] : false);
         this.rightfree = (validX(currentPlayer.getX()+1) ? !board.getBoard()[currentPlayer.getX()+1][currentPlayer.getY()].isWall()
                                                             && !bombPosition[currentPlayer.getX()+1][currentPlayer.getY()]: false);
-        this.botfree =   (validY(currentPlayer.getY()-1) ? !board.getBoard()[currentPlayer.getX()][currentPlayer.getY()-1].isWall()
-                                                            && !bombPosition[currentPlayer.getX()][currentPlayer.getY()-1]: false);
+        this.botfree =   (validY(currentPlayer.getY()+1) ? !board.getBoard()[currentPlayer.getX()][currentPlayer.getY()+1].isWall()
+                                                            && !bombPosition[currentPlayer.getX()][currentPlayer.getY()+1]: false);
         this.leftfree =  (validX(currentPlayer.getX()-1) ? !board.getBoard()[currentPlayer.getX()-1][currentPlayer.getY()].isWall()
                                                             && !bombPosition[currentPlayer.getX()-1][currentPlayer.getY()]: false);
         
@@ -238,7 +245,7 @@ public abstract class Environment implements EnvironmentInterface
         
         return result;
     }
-	
+    
     /* ************************************************************** */
     /**
      * determineBombZones
@@ -355,7 +362,6 @@ public abstract class Environment implements EnvironmentInterface
         Player cP = this.determineCurrentPlayer();
         int[][] dangerAnalysis = new int[board.getBoard().length][board.getBoard()[0].length];
         int currentBombCounter = 0;
-        int highDanger = 2;
         
         int countZoneStatus = 3; // count of possible danger
         
@@ -383,48 +389,34 @@ public abstract class Environment implements EnvironmentInterface
             this.environmentLogln("");
         } 
         
-        //current Position
+        //current Position             
         currentBombCounter = dangerAnalysis[cP.getX()][cP.getY()];
-        if (currentBombCounter <= 1) {
-            dangerCurrent = highDanger;
-        } else {
-            dangerCurrent = evaluateBombCounter(currentBombCounter);
-        }
+        deadlyCurrent =  (currentBombCounter <= 1);
+        dangerCurrent = evaluateBombCounter(currentBombCounter);
+        
+        //TODO: Remove, its still used in bomb-avoider
         this.lastDanger = this.currentDanger;
         this.currentDanger = dangerCurrent;
         
         //watch top
-        if (getBombCounter(cP.getX(), cP.getY() - 1, 0, dangerAnalysis) <= 1) {
-            dangerTop = highDanger;
-        } else {
-            currentBombCounter = getMinBombCounter(cP.getX() -1, cP.getY() - 2, 3, 2, dangerAnalysis);
-            this.environmentLogln("currentBombCounterTop=" + currentBombCounter);
-            dangerTop = evaluateBombCounter(currentBombCounter);
-        }
+        deadlyTop = (getBombCounter(cP.getX(), cP.getY() - 1, 0, dangerAnalysis) <= 1);
+        currentBombCounter = getMinBombCounter(cP.getX() -1, cP.getY() - 2, 3, 2, dangerAnalysis);
+        dangerTop = evaluateBombCounter(currentBombCounter);
         
         //watch bot
-        if (getBombCounter(cP.getX(), cP.getY() + 1, 0, dangerAnalysis) <= 1) {
-            dangerBot = highDanger;
-        } else {
-            currentBombCounter = getMinBombCounter(cP.getX() - 1, cP.getY() + 1, 3, 2, dangerAnalysis);
-            dangerBot = evaluateBombCounter(currentBombCounter);
-        }
+        deadlyBot = (getBombCounter(cP.getX(), cP.getY() + 1, 0, dangerAnalysis) <= 1);                
+        currentBombCounter = getMinBombCounter(cP.getX() - 1, cP.getY() + 1, 3, 2, dangerAnalysis);
+        dangerBot = evaluateBombCounter(currentBombCounter);
         
         //watch left
-        if (getBombCounter(cP.getX() - 1, cP.getY(), 0, dangerAnalysis) <= 1) {
-            dangerLeft = highDanger;
-        } else {
-            currentBombCounter = getMinBombCounter(cP.getX() -2, cP.getY() - 1, 2, 3, dangerAnalysis);
-            dangerLeft = evaluateBombCounter(currentBombCounter);
-        }
+        deadlyLeft = (getBombCounter(cP.getX() - 1, cP.getY(), 0, dangerAnalysis) <= 1);        
+        currentBombCounter = getMinBombCounter(cP.getX() -2, cP.getY() - 1, 2, 3, dangerAnalysis);
+        dangerLeft = evaluateBombCounter(currentBombCounter);
         
         //watch right
-        if (getBombCounter(cP.getX() + 1, cP.getY(), 0, dangerAnalysis) <= 1) {
-            dangerRight = highDanger;
-        } else {
-            currentBombCounter = getMinBombCounter(cP.getX() +1, cP.getY() -1, 2, 3, dangerAnalysis);
-            dangerRight = evaluateBombCounter(currentBombCounter);
-        }
+        deadlyRight =  (getBombCounter(cP.getX() + 1, cP.getY(), 0, dangerAnalysis) <= 1);
+        currentBombCounter = getMinBombCounter(cP.getX() +1, cP.getY() -1, 2, 3, dangerAnalysis);
+        dangerRight = evaluateBombCounter(currentBombCounter);
 
         
         result += (dangerCurrent + Math.pow(countZoneStatus, 0));
@@ -477,17 +469,23 @@ public abstract class Environment implements EnvironmentInterface
     */ /************************************************************* */
     protected int evaluateBombCounter(int currentBombCounter) {
         int noDanger    = 0;
-        int maybeDanger = 1;        
+        int maybeDanger = 1;
+        int highDanger  = 2;
         
-        int counterMaybeDanger = 2;
+        int counterHighDanger = 2;
+        int counterMaybeDanger = 5;
         
         int result = noDanger;
         
-        if ((currentBombCounter == 99) || !(currentBombCounter >= counterMaybeDanger)) {
-            result = noDanger;
+        if ((currentBombCounter != 99) && (currentBombCounter <= counterHighDanger)) {
+            result = highDanger;
         }
         else {
-            result = maybeDanger;
+            if ((currentBombCounter == 99) || (currentBombCounter > counterMaybeDanger)) {
+                result = noDanger;
+            } else {
+                result = maybeDanger; 
+            }            
         }
         
         return result;
@@ -512,5 +510,25 @@ public abstract class Environment implements EnvironmentInterface
         }             
         
         return result;
+    }
+    
+    /* ************************************************************** */
+    /**
+     * determinePlayerOnBomb
+     * @return
+    */ /************************************************************* */
+    protected int determinePlayerOnBomb() {
+        Player cP = this.determineCurrentPlayer();
+        Iterator<Bomb> bombs = board.getBombs().iterator();
+        Bomb currentBomb = null;
+        
+        while (bombs.hasNext()) {
+            currentBomb = bombs.next();
+            if (currentBomb.getX() == cP.getX() && currentBomb.getY() == cP.getY()) {
+                return 1;
+            }
+        }            
+            
+        return 0;
     }
 }

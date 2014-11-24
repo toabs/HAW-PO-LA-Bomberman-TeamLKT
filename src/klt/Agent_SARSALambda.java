@@ -1,6 +1,5 @@
 package klt;
 
-import klt.util.Pair;
 import klt.util.RingBuffer;
 import klt.util.SarsaLambdaQueueElement;
 import org.rlcommunity.rlglue.codec.types.Action;
@@ -50,7 +49,7 @@ public class Agent_SARSALambda extends Agent {
     public Action agent_start(Observation observation) {
         lastObservation = observation.toString();
         Action returnAction = new Action(1, 0, 0);
-        returnAction.intArray[0] = this.getBestAction(observation, NUMBEROFACTIONS);
+        returnAction.intArray[0] = this.getBestAction(observation, ((ObservationWithActions) observation).getActions());
 
         lastAction = returnAction.intArray[0];
         return returnAction;
@@ -68,11 +67,11 @@ public class Agent_SARSALambda extends Agent {
 
             }
             else{
-                fillInUnknownObservations(beforeLastObservation);
+                fillInUnknownObservations(beforeLastObservation.toString());
             }
         }
         else{
-            fillInUnknownObservations(lastObservation);
+            fillInUnknownObservations(lastObservation.toString());
         }
 
         if (queue.contains(beforeLastObservation, beforeLastAction)){
@@ -111,7 +110,7 @@ public class Agent_SARSALambda extends Agent {
 
         lastObservation = observation.toString();
         Action returnAction = new Action(1, 0, 0);
-        returnAction.intArray[0] = this.getBestAction(observation, NUMBEROFACTIONS);
+        returnAction.intArray[0] = this.getBestAction(observation, ((ObservationWithActions) observation).getActions());
 
         lastAction = returnAction.intArray[0];
 

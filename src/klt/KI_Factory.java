@@ -144,7 +144,7 @@ public class KI_Factory
     
     /* ************************************************************** */
     /**
-     * getFighterA
+     * getFighterB
      * @param id
      * @return
     */ /************************************************************* */
@@ -154,6 +154,18 @@ public class KI_Factory
             //return new KI(id, new Agent_SARSALambda("KI_FighterLambdaB.rgo", 0.95, 0.4, true, DebugState.NO_DEBUG, 10), new Environment_Fighter(DebugState.NO_DEBUG));
             
             return new KI(id, new Agent_SARSALambda("KI_FighterBL.rgo", 0, 0.8, false, DebugState.NO_DEBUG, 20), new Environment_Fighter(DebugState.NO_DEBUG));
+        } catch (Exception e)
+        {
+            System.out.println("Exception at KI-Creation: " + e.getMessage());
+            e.printStackTrace();
+            return null;
+        }        
+    }
+    
+    public static KI getFighterAdvA(int id) {
+        try
+        {         
+            return new KI(id, new Agent_SARSA("KI_FighterAdvA.rgo", 0.95, true, DebugState.NO_DEBUG), new Environment_Fighter_Advanced(DebugState.NO_DEBUG));
         } catch (Exception e)
         {
             System.out.println("Exception at KI-Creation: " + e.getMessage());
