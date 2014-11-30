@@ -447,11 +447,11 @@ public abstract class Environment implements EnvironmentInterface
         dangerRight = evaluateBombCounter(currentBombCounter);
 
         
-        result += (dangerCurrent + Math.pow(countZoneStatus, 0));
-        result += (dangerTop     + Math.pow(countZoneStatus, 1));
-        result += (dangerBot     + Math.pow(countZoneStatus, 2));
-        result += (dangerLeft    + Math.pow(countZoneStatus, 3));
-        result += (dangerRight   + Math.pow(countZoneStatus, 4));
+        result += (dangerCurrent * Math.pow(countZoneStatus, 0));
+        result += (dangerTop     * Math.pow(countZoneStatus, 1));
+        result += (dangerBot     * Math.pow(countZoneStatus, 2));
+        result += (dangerLeft    * Math.pow(countZoneStatus, 3));
+        result += (dangerRight   * Math.pow(countZoneStatus, 4));
         
         this.environmentLogln("DangerCurrent=" + dangerCurrent);
         this.environmentLogln("DangerTop=" + dangerTop);
