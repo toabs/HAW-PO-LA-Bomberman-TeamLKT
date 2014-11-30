@@ -8,6 +8,7 @@ import Core.Playboard;
 import Core.Player;
 import org.rlcommunity.rlglue.codec.EnvironmentInterface;
 
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.TreeMap;
@@ -232,6 +233,27 @@ public abstract class Environment implements EnvironmentInterface
             currentBomb = bIt.next();
             bombPosition[currentBomb.getX()][currentBomb.getY()] = true;
         }
+        
+        /*
+        int dimsize = 15;
+        Set<Double> test = new HashSet<Double>();
+        for(int x1 = 0; x1 < dimsize; x1++) {
+            for(int y1 = 0; y1 < dimsize; y1++) {
+                for(int x2 = 0; x2 < dimsize; x2++) {
+                    for(int y2 = 0; y2 < dimsize; y2++) {
+                        int diffx = x1 - x2;
+                        int diffy = y1 - y2;
+                        if (!board.getBoard()[x1][y1].isWall() && !board.getBoard()[x2][y2].isWall())  
+                        {
+                            test.add(Math.sqrt(Math.pow(diffx, 2) + Math.pow(diffy, 2)));
+                        }
+                    }
+                }             
+            }
+        } 
+        
+        System.out.println("Max Abstände: " + test.size());
+        */
         
         int result = 0;
         

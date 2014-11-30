@@ -203,9 +203,6 @@ public class Environment_Fighter_Advanced extends Environment
         //negative reward for placing bombs without sense
         if (arg0.intArray[0] == 5 && distanceToOpponent > this.board.getExplosionRadius()+2) {
             theReward = -50;
-        } else
-        {
-            theReward = 1; //Positive reward for placing a bomb in range
         }
         
         this.lastDistance = distanceToOpponent;
