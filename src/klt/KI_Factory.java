@@ -133,6 +133,18 @@ public class KI_Factory
             return null;
         }
     }
+
+    public static KI getFighterAdvSL(int id, double explorationRate, boolean trainMode){
+        try
+        {
+            return new KI(id, new Agent_SARSALambda("KI_FighterAdvSL.rgo", explorationRate, 0.7, trainMode, DebugState.NO_DEBUG, 10, 4), new Environment_Fighter_Advanced(DebugState.NO_DEBUG));
+        } catch (Exception e)
+        {
+            System.out.println("Exception at KI-Creation: " + e.getMessage());
+            e.printStackTrace();
+            return null;
+        }
+    }
     
     /* ************************************************************** */
     /**

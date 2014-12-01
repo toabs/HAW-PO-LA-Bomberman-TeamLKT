@@ -1,13 +1,12 @@
 package klt;
 
+import klt.util.Actions_E;
 import klt.util.AgentLogUtil;
 import klt.util.SarsaLogElement;
 import org.rlcommunity.rlglue.codec.types.Action;
 import org.rlcommunity.rlglue.codec.types.Observation;
 
 import java.io.IOException;
-
-import klt.util.Actions_E;
 
 /**
  * Created by Tobi on 26.10.2014.
@@ -121,8 +120,8 @@ public class Agent_SARSA extends Agent{
             setRewardForActionObservation(reward, lastObservation.toString(), lastAction, ((ObservationWithActions) lastObservation).getActions());
 
             {        //lower the explorationrate
-                //epsilon -= 0.0003;
-                epsilon -= 0.03;
+                epsilon -= 0.000001;
+                //epsilon -= 0.03;
                 if (epsilon < EPSILONMINIMUM) {
                     epsilon = EPSILONMINIMUM;
                 }

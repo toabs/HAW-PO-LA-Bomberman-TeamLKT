@@ -14,9 +14,9 @@ public class StorageMerger {
     }
 
     public static void main(String[] args) {
-        String FIRST = "KI_FighterA.rgo";
-        String SECOND = "KI_FighterBL.rgo";
-        String OUTPUT = "Merged.rgo";
+        String FIRST = "KI_FighterAdvA.rgo";
+        String SECOND = "KI_FighterAdvB.rgo";
+        String OUTPUT = "KI_FighterAdv.rgo";
 
 
         merge(FIRST,SECOND, OUTPUT);

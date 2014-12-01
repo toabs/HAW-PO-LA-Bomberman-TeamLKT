@@ -3,17 +3,12 @@
  */
 package klt;
 
+import klt.util.Actions_E;
 import org.rlcommunity.rlglue.codec.AgentInterface;
 import org.rlcommunity.rlglue.codec.types.Observation;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Random;
-import java.util.Set;
-
-import klt.util.Actions_E;
+import java.util.*;
 
 /* ************************************************************** */
 /**
@@ -175,8 +170,9 @@ public abstract class Agent implements AgentInterface
     }
 
 	public void agent_exit() {
-		this.agentLogln("Exit Called");
-		//save progress
+        System.out.println("Exit Called");
+        System.out.println("Storage contains: " + observationStorage.size() + " Observations");
+        //save progress
         try
         {
             FileOutputStream fout = new FileOutputStream(saveFilePath);

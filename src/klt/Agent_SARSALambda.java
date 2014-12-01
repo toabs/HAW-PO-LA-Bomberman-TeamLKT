@@ -1,7 +1,9 @@
 package klt;
 
+import klt.util.AgentLogUtilSLambda;
 import klt.util.RingBuffer;
 import klt.util.SarsaLambdaQueueElement;
+import klt.util.SarsaLogElement;
 import org.rlcommunity.rlglue.codec.types.Action;
 import org.rlcommunity.rlglue.codec.types.Observation;
 
@@ -30,6 +32,7 @@ public class Agent_SARSALambda extends Agent {
     private final double EPSILON = 0.00001; //the epsilon for the close to zero comparisions
     private final double EPSILONMINIMUM = 0.1;
     private RingBuffer<SarsaLambdaQueueElement> queue;
+    private AgentLogUtilSLambda logUtil;
 
 
     public Agent_SARSALambda(String saveFilePath, double explorationRate, double lambda, boolean trainingMode, DebugState debugState, int queueLenght) throws IOException, ClassNotFoundException {
@@ -38,6 +41,12 @@ public class Agent_SARSALambda extends Agent {
         this.lambda = lambda;
         this.trainingMode = trainingMode;
         queue = new RingBuffer<>(queueLenght);
+        logUtil = new AgentLogUtilSLambda(0, queueLenght);
+    }
+
+    public Agent_SARSALambda(String saveFilePath, double explorationRate, double lambda, boolean trainingMode, DebugState debugState, int queueLenght, int logLastNChanges) throws IOException, ClassNotFoundException {
+        this(saveFilePath, explorationRate, lambda, trainingMode, debugState, queueLenght);
+
     }
 
     @Override
@@ -56,27 +65,30 @@ public class Agent_SARSALambda extends Agent {
     }
 
     private void updateValues(double r){
-        double delta = r + gamma * INITIALQVALUE - INITIALQVALUE;
+        logUtil.addNewLogChain();
+
+        double lastQ = INITIALQVALUE;
+        double currentQ = INITIALQVALUE;
+
         if (observationStorage.containsKey(beforeLastObservation)){
-
-            if(observationStorage.containsKey(lastObservation)) {
-
-            double lastQ = observationStorage.get(beforeLastObservation).get(beforeLastAction);
-            double currentQ = observationStorage.get(lastObservation).get(lastAction);
-            delta = r + gamma * currentQ - lastQ;
-
-            }
-            else{
-                fillInUnknownObservations(lastObservation.toString());
-            }
+            lastQ = observationStorage.get(beforeLastObservation).get(beforeLastAction);
         }
         else{
             fillInUnknownObservations(beforeLastObservation.toString());
         }
 
+        if(observationStorage.containsKey(lastObservation)) {
+            currentQ = observationStorage.get(lastObservation).get(lastAction);
+        }
+        else {
+            fillInUnknownObservations(lastObservation.toString());
+        }
+
+        double delta = r + gamma * currentQ - lastQ;
+
         if (queue.contains(beforeLastObservation, beforeLastAction)){
             SarsaLambdaQueueElement element = queue.getElement(beforeLastObservation, beforeLastAction);
-            element.setValue(element.getValue() + 1);
+            element.setValue(1);
             queue.add(element);
         }
         else{
@@ -84,12 +96,20 @@ public class Agent_SARSALambda extends Agent {
         }
 
         for (SarsaLambdaQueueElement stepElement : queue){
+            logUtil.add(stepElement.getObservation(), stepElement.getAction());
+            SarsaLogElement logElement = logUtil.getLastElem();
+
             double oldValE = stepElement.getValue();
-            if (oldValE >= EPSILON){
-                double oldValQ = observationStorage.get(stepElement.getObservation()).get(stepElement.getAction());
-                observationStorage.get(stepElement.getObservation()).put(stepElement.getAction(), (oldValQ + alpha * delta * oldValE));
-                stepElement.setValue(gamma * lambda * oldValE);
-            }
+            double oldValQ = observationStorage.get(stepElement.getObservation()).get(stepElement.getAction());
+            double newValQ = oldValQ + alpha * delta * oldValE;
+
+            logElement.setEpsilon(oldValE);
+            logElement.setReward(r);
+            logElement.setValueBefore(oldValQ);
+            logElement.setValueAfter(newValQ);
+            logElement.setValueNextAction(currentQ);
+            observationStorage.get(stepElement.getObservation()).put(stepElement.getAction(), newValQ);
+            stepElement.setValue(gamma * lambda * oldValE);
         }
         /*for(String keyObservation : observationStorage.keySet()){
             for (Integer keyAction : observationStorage.get(keyObservation).keySet()){
@@ -126,6 +146,9 @@ public class Agent_SARSALambda extends Agent {
 
     @Override
     public void agent_end(double v) {
+        beforeLastAction = lastAction;
+        beforeLastObservation = lastObservation;
+
         if (trainingMode) {            //lower the exploration rate
             epsilon -= 0.002;
             if (epsilon < EPSILONMINIMUM) {
@@ -133,6 +156,9 @@ public class Agent_SARSALambda extends Agent {
             }
         }
         updateValues(v);
+
+        logUtil.logLastQValueUodates(observationStorage);
+
     }
 
     @Override

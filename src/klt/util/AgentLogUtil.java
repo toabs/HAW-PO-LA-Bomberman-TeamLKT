@@ -11,10 +11,16 @@ public class AgentLogUtil implements Iterable{
     private LinkedList<SarsaLogElement> lastLogObjects;
     private int maximumSize;
     private SarsaLogElement lastElem;
+    private boolean sarsaLambdaMode = false;
 
     public AgentLogUtil(int n_Logs){
         lastLogObjects = new LinkedList<>();
         this.maximumSize = n_Logs;
+    }
+
+    public AgentLogUtil(int n_Logs, boolean sarsaLambdaMode){
+        this(n_Logs);
+        this.sarsaLambdaMode = sarsaLambdaMode;
     }
 
     public boolean add(SarsaLogElement elem){
@@ -47,11 +53,19 @@ public class AgentLogUtil implements Iterable{
     }
 
     public void logLastQValueUodates(HashMap<String, HashMap<Integer, Double>> storage){
-        System.out.println("-----------------------------------------------------LOG START!---------------------------------------------------------------------");
+        if (sarsaLambdaMode){
+            System.out.println("-----------------------------------------------------CHAIN START!-------------------------------------");
+        }else {
+            System.out.println("-----------------------------------------------------LOG START!---------------------------------------------------------------------");
+        }
         for (SarsaLogElement elem : lastLogObjects){
-            elem.logElem(storage);
+            elem.logElem(storage, sarsaLambdaMode);
             System.out.println("------------------------------------------------------NEXT ENTRY!---------------------------------------------------------------");
         }
-        System.out.println("-----------------------------------------LOG END!-------------------------------------------------");
+        if (sarsaLambdaMode){
+            System.out.println("-------------------------------------------------CHAIN END!---------------------------------------------------");
+        }else {
+            System.out.println("-----------------------------------------LOG END!-------------------------------------------------");
+        }
     }
 }
