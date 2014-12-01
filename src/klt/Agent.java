@@ -8,7 +8,10 @@ import org.rlcommunity.rlglue.codec.AgentInterface;
 import org.rlcommunity.rlglue.codec.types.Observation;
 
 import java.io.*;
+import klt.util.Actions_E;
 import java.util.*;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
 
 /* ************************************************************** */
 /**
@@ -44,7 +47,8 @@ public abstract class Agent implements AgentInterface
         if (f.exists() && !f.isDirectory()) 
         {
             FileInputStream fin = new FileInputStream(saveFilePath);
-            ObjectInputStream ois = new ObjectInputStream(fin);
+            GZIPInputStream gzip = new GZIPInputStream(fin);
+            ObjectInputStream ois = new ObjectInputStream(gzip);
             this.observationStorage = (HashMap<String, HashMap<Integer, Double>>) ois.readObject();
             ois.close();
         }
@@ -52,6 +56,7 @@ public abstract class Agent implements AgentInterface
         {
             this.observationStorage = new HashMap<String, HashMap<Integer, Double>>();
         }
+        System.out.println("Storage:" + this.observationStorage.size());
     }
 
     /* ************************************************************** */
@@ -176,7 +181,8 @@ public abstract class Agent implements AgentInterface
         try
         {
             FileOutputStream fout = new FileOutputStream(saveFilePath);
-            ObjectOutputStream oos = new ObjectOutputStream(fout);        
+            GZIPOutputStream zipOut = new GZIPOutputStream(fout);
+            ObjectOutputStream oos = new ObjectOutputStream(zipOut);        
             oos.writeObject(observationStorage);
             oos.close();
         } catch (IOException e)
