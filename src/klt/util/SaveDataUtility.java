@@ -1,5 +1,7 @@
 package klt.util;
 
+import klt.ObservationWithActions;
+
 import java.io.*;
 import java.util.HashMap;
 
@@ -39,6 +41,19 @@ public class SaveDataUtility {
         System.out.println("Merge Successful!");
 
         return result;
+    }
+
+    public static HashMap<String, HashMap<Integer, Double>> patchOldStorages(HashMap<String, HashMap<Integer, Double>> oldStorage){
+        HashMap<String, HashMap<Integer, Double>> res = new HashMap<>();
+
+        System.out.println("Number of Observations: " + oldStorage.keySet().size());
+
+        String newObsString;
+        for (String observation : oldStorage.keySet()){
+            newObsString = ObservationWithActions.trimObservationString(observation);
+            res.put(newObsString, oldStorage.get(observation));
+        }
+        return res;
     }
 
     public static HashMap<String, HashMap<Integer, Double>> mergeQTableWithData(HashMap<String, HashMap<Integer, Double>> toMerge, String filePathOfOtherData){

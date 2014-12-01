@@ -64,7 +64,7 @@ public class Agent_SARSALambda extends Agent {
         return returnAction;
     }
 
-    private void updateValues(double r){
+    private void updateValues(double r, boolean lastUpdate){
         logUtil.addNewLogChain();
 
         double lastQ = INITIALQVALUE;
@@ -77,11 +77,14 @@ public class Agent_SARSALambda extends Agent {
             fillInUnknownObservations(beforeLastObservation.toString());
         }
 
-        if(observationStorage.containsKey(lastObservation)) {
-            currentQ = observationStorage.get(lastObservation).get(lastAction);
-        }
-        else {
-            fillInUnknownObservations(lastObservation.toString());
+        if(!lastUpdate) {
+            if (observationStorage.containsKey(lastObservation)) {
+                currentQ = observationStorage.get(lastObservation).get(lastAction);
+            } else {
+                fillInUnknownObservations(lastObservation.toString());
+            }
+        }else{
+            currentQ = 0;
         }
 
         double delta = r + gamma * currentQ - lastQ;
@@ -140,7 +143,7 @@ public class Agent_SARSALambda extends Agent {
             }
         }
 
-        updateValues(v);
+        updateValues(v, false);
         return returnAction;
     }
 
@@ -155,7 +158,7 @@ public class Agent_SARSALambda extends Agent {
                 epsilon = EPSILONMINIMUM;
             }
         }
-        updateValues(v);
+        updateValues(v, true);
 
         logUtil.logLastQValueUodates(observationStorage);
 

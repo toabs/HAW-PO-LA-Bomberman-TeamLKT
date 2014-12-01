@@ -15,7 +15,7 @@ import java.io.IOException;
 public class Agent_SARSA extends Agent{
 
     //private List<Pair<Pair<String,Integer>,Double>> episode;
-    private Observation lastObservation;
+    private ObservationWithActions lastObservation;
     private Observation beforeLastObservation;
     private AgentLogUtil agentLogUtil = new AgentLogUtil(0);
 
@@ -56,7 +56,7 @@ public class Agent_SARSA extends Agent{
 
     @Override
     public Action agent_start(Observation observation) {
-        lastObservation = observation;;
+        lastObservation = (ObservationWithActions) observation;;
         Action returnAction = new Action(1, 0, 0);
         returnAction.intArray[0] = this.getBestAction(observation, ((ObservationWithActions) observation).getActions());
 
@@ -68,7 +68,7 @@ public class Agent_SARSA extends Agent{
     public Action agent_step(double v, Observation observation) {
         beforeLastAction = lastAction;
         beforeLastObservation = lastObservation;
-        lastObservation = observation;
+        lastObservation = (ObservationWithActions) observation;
 
         Action returnAction = new Action(1, 0, 0);
         returnAction.intArray[0] = this.getBestAction(observation, ((ObservationWithActions) observation).getActions());
@@ -117,7 +117,7 @@ public class Agent_SARSA extends Agent{
             currentLogElem.setReward(v);
             currentLogElem.setValueAfter(reward);
 
-            setRewardForActionObservation(reward, lastObservation.toString(), lastAction, ((ObservationWithActions) lastObservation).getActions());
+            setRewardForActionObservation(reward, lastObservation.toString(), lastAction, lastObservation.getActions());
 
             {        //lower the explorationrate
                 epsilon -= 0.000001;
@@ -136,7 +136,7 @@ public class Agent_SARSA extends Agent{
         SarsaLogElement currentElem = agentLogUtil.getLastElem();
         currentElem.setReward(r);
 
-        double reward = r;
+        double reward;
         double qNext = INITIALQVALUE;
         double qThis = INITIALQVALUE;
 
