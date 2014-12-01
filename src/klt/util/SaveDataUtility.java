@@ -4,6 +4,8 @@ import klt.ObservationWithActions;
 
 import java.io.*;
 import java.util.HashMap;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
 
 /**
  * Created by Tobi on 03.11.2014.
@@ -88,7 +90,23 @@ public class SaveDataUtility {
         System.out.println("Successfully wrote storagefile: " + storagePath);
     }
 
-    @SuppressWarnings("unchecked")
+    public static void writeCompresedStorage(HashMap<String, HashMap<Integer, Double>> toSave, String storagePath){
+        System.out.println("Start to write compresed storagefile: " + storagePath);
+        try
+        {
+            FileOutputStream fout = new FileOutputStream(storagePath);
+            GZIPOutputStream gzip = new GZIPOutputStream(fout);
+            ObjectOutputStream oos = new ObjectOutputStream(gzip);
+            oos.writeObject(toSave);
+            oos.close();
+        } catch (IOException e)
+        {
+            System.out.println("Error saving observationStorage: " + e.getMessage());
+            e.printStackTrace();
+        }
+        System.out.println("Successfully wrote storagefile: " + storagePath);
+    }
+
 	public static HashMap<String, HashMap<Integer, Double>> loadStorage(String filePath){
         File f = new File(filePath);
 
@@ -101,6 +119,36 @@ public class SaveDataUtility {
             try {
                 fin = new FileInputStream(filePath);
                 ObjectInputStream ois = new ObjectInputStream(fin);
+                otherStorage = (HashMap<String, HashMap<Integer, Double>>) ois.readObject();
+                ois.close();
+            } catch (ClassNotFoundException | IOException e) {
+                e.printStackTrace();
+            }
+
+            System.out.println("Successfully loaded File: " + filePath);
+
+            return otherStorage;
+        }
+        else
+        {
+            System.err.println("There is no Data to read! Path:" + filePath);
+            return null;
+        }
+    }
+
+    public static HashMap<String, HashMap<Integer, Double>> loadCompresedStorage(String filePath){
+        File f = new File(filePath);
+
+        System.out.println("Start to load file: " + filePath);
+
+        if (f.exists() && !f.isDirectory())
+        {
+            HashMap<String, HashMap<Integer, Double>> otherStorage = null;
+            FileInputStream fin = null;
+            try {
+                fin = new FileInputStream(filePath);
+                GZIPInputStream gzip = new GZIPInputStream(fin);
+                ObjectInputStream ois = new ObjectInputStream(gzip);
                 otherStorage = (HashMap<String, HashMap<Integer, Double>>) ois.readObject();
                 ois.close();
             } catch (ClassNotFoundException | IOException e) {

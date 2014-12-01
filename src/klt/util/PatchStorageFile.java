@@ -9,13 +9,14 @@ import java.util.HashMap;
 public class PatchStorageFile {
 
     public static void patch(String input, String output){
-        HashMap<String, HashMap<Integer, Double>> inputStorage = SaveDataUtility.loadStorage(input);
+        HashMap<String, HashMap<Integer, Double>> inputStorage = SaveDataUtility.loadCompresedStorage(input);
         HashMap<String, HashMap<Integer, Double>> outputStorge = SaveDataUtility.patchOldStorages(inputStorage);
-        SaveDataUtility.writeStorage(outputStorge, output);
+        SaveDataUtility.writeCompresedStorage(outputStorge, output);
     }
     public static void main(String[] args) {
-        String INPUT = "KI_FighterAdvA.rgo";
-        String OUTPUT = "KI_FighterAdvPatched.rgo";
+        String INPUT = "KI_FighterAdvCompresed.rgo";
+        String OUTPUT = "KI_FighterAdvCompressedPatched.rgo";
         patch(INPUT, OUTPUT);
+        //SaveDataUtility.writeCompresedStorage(SaveDataUtility.loadStorage(INPUT), OUTPUT);
     }
 }
