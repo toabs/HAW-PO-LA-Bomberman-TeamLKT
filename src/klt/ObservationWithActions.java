@@ -47,4 +47,20 @@ public class ObservationWithActions extends Observation
     public Set<Actions_E> getActions() {
         return actions;
     }
+
+    /**
+     * Modified the toString method to reduce the size of the observation string so they consume less memory in total
+     * @return
+     */
+    @Override
+    public String toString(){
+        String raw = super.toString();
+        return trimObservationString(raw);
+    }
+
+    public static String trimObservationString(String input){
+        String[] temp = input.split("\n");
+        String res = temp[temp.length-1].trim();
+        return res;
+    }
 }

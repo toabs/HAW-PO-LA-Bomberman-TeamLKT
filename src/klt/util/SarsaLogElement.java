@@ -13,15 +13,19 @@ public class SarsaLogElement {
     private double valueAfter;
     private double valueNextAction;
     private double reward;
+    private double epsilon;
 
     public SarsaLogElement(String obs, Integer action){
         this.observation = obs;
         this.action = action;
-        this.valueBefore = valueBefore;
     }
 
     public void setValueAfter(double valueAfter){
         this.valueAfter = valueAfter;
+    }
+
+    public void setEpsilon(double epsilon) {
+        this.epsilon = epsilon;
     }
 
     public void setValueBefore(double valueBefore){
@@ -44,10 +48,6 @@ public class SarsaLogElement {
         return action;
     }
 
-    public double getValueBefore() {
-        return valueBefore;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -68,20 +68,7 @@ public class SarsaLogElement {
         return result;
     }
 
-    public double getValueAfter() {
-
-        return valueAfter;
-    }
-
-    public double getValueNextAction() {
-        return valueNextAction;
-    }
-
-    public double getReward() {
-        return reward;
-    }
-
-    public void logElem(HashMap<String, HashMap<Integer, Double>> storage){
+    public void logElem(HashMap<String, HashMap<Integer, Double>> storage, boolean sarsaLMode){
         System.out.println("Observation: " + observation + " Action: " + action + "\n");
         HashMap<Integer, Double> actionQValues = storage.get(observation);
         System.out.print("Value before: ");
@@ -101,8 +88,11 @@ public class SarsaLogElement {
         }
 
         System.out.println("\n\n\t\t\t ||");
-        System.out.println("\t\t\t ||" + "\t\t Reward: " + reward + "\t QValueNextAction: " + valueNextAction);
-        System.out.println("\t\t\t \\/\n");
+        System.out.print("\t\t\t ||" + "\t\t Reward: " + reward + "\t QValueNextAction: " + valueNextAction);
+        if(sarsaLMode){
+            System.out.print("\t epsilon: " + epsilon);
+        }
+        System.out.println("\n\t\t\t \\/\n");
         System.out.print("Value after: ");
 
         for (int i = 0; i < 6; i++){

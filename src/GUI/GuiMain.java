@@ -1,7 +1,6 @@
 package GUI;
 
 import Core.Game;
-import Core.Human;
 import Core.User;
 import klt.KI_Factory;
 
@@ -15,7 +14,10 @@ public class GuiMain {
 		//users.add(KI_Factory.getKI_Avoidbomb_Zone(2));
 		users.add(KI_Factory.getFighterAdvA(1, 0.0, true));
 		users.add(KI_Factory.getFighterAdvB(2, 0.0, true));
-		
+
+		//users.add(KI_Factory.getFighterAdvSL(1, 0.1, true));
+		//users.add(KI_Factory.getFighterA(2));
+
 		//users.add(new Human(1));	
 		//users.add(new Human(2));
 		//users.add(KI_Factory.getKI_Avoidbomb_Zone(2));
