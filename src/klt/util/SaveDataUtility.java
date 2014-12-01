@@ -90,7 +90,7 @@ public class SaveDataUtility {
         System.out.println("Successfully wrote storagefile: " + storagePath);
     }
 
-    public static void writeCompresedStorage(HashMap<String, HashMap<Integer, Double>> toSave, String storagePath){
+    public static void writeCompressedStorage(HashMap<String, HashMap<Integer, Double>> toSave, String storagePath){
         System.out.println("Start to write compresed storagefile: " + storagePath);
         try
         {
@@ -136,7 +136,7 @@ public class SaveDataUtility {
         }
     }
 
-    public static HashMap<String, HashMap<Integer, Double>> loadCompresedStorage(String filePath){
+    public static HashMap<String, HashMap<Integer, Double>> loadCompressedStorage(String filePath){
         File f = new File(filePath);
 
         System.out.println("Start to load file: " + filePath);

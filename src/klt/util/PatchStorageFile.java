@@ -9,9 +9,9 @@ import java.util.HashMap;
 public class PatchStorageFile {
 
     public static void patch(String input, String output){
-        HashMap<String, HashMap<Integer, Double>> inputStorage = SaveDataUtility.loadCompresedStorage(input);
+        HashMap<String, HashMap<Integer, Double>> inputStorage = SaveDataUtility.loadCompressedStorage(input);
         HashMap<String, HashMap<Integer, Double>> outputStorge = SaveDataUtility.patchOldStorages(inputStorage);
-        SaveDataUtility.writeCompresedStorage(outputStorge, output);
+        SaveDataUtility.writeCompressedStorage(outputStorge, output);
     }
     public static void main(String[] args) {
         String INPUT = "KI_FighterAdvCompresed.rgo";
