@@ -215,4 +215,48 @@ public class KI_Factory
             return null;
         }        
     }
+    
+
+    /* ************************************************************** */
+    /**
+     * getKI_Q_Follower
+     * @param id
+     * @param explorationRate
+     * @param trainMode
+     * @return
+    */ /************************************************************* */
+    public static KI getKI_Q_Follower(int id, double explorationRate, boolean trainMode)
+    {
+        try
+        {
+            return new KI(id, new Agent_Qlearning("KI_Q_Follower.rgo", 0.3, 0.8, explorationRate, trainMode), new Environment_Follower());
+        } catch (Exception e)
+        {
+            System.out.println("Exception at KI-Creation: " + e.getMessage());
+            e.printStackTrace();
+            return null;
+        }
+    }
+    
+
+    /* ************************************************************** */
+    /**
+     * getKI_Q_Fighter
+     * @param id
+     * @param explorationRate
+     * @param trainMode
+     * @return
+    */ /************************************************************* */
+    public static KI getKI_Q_Fighter(int id, double explorationRate, boolean trainMode)
+    {
+        try
+        {
+            return new KI(id, new Agent_Qlearning("KI_Q_Fighter.rgo", 0.3, 0.8, explorationRate, trainMode), new Environment_Fighter_Advanced(DebugState.NO_DEBUG));
+        } catch (Exception e)
+        {
+            System.out.println("Exception at KI-Creation: " + e.getMessage());
+            e.printStackTrace();
+            return null;
+        }
+    }
 }

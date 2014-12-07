@@ -190,4 +190,21 @@ public abstract class Agent implements AgentInterface
             System.out.println("Error saving observationStorage: " + e.getMessage());
         }
 	}
+	
+	protected double getMaxRewardForObs(String observation) {
+	    double result = Double.MIN_VALUE;
+	    
+	    HashMap<Integer, Double> qValues = this.observationStorage.get(observation.toString());
+	    
+	    if (qValues == null) {
+	        //return InitialValue if observation has not been stored
+	        return INITIALQVALUE;
+	    } else {	        
+    	    for(Double reward : qValues.values()) {
+    	        result = (reward > result) ? reward : result;
+    	    }
+	    }
+	    
+	    return result;
+	}
 }

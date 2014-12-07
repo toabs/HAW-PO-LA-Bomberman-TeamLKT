@@ -81,7 +81,6 @@ public class Agent_SARSA extends Agent{
                     this.agentLogln("No possible Action! -> Stay");
                     returnAction.intArray[0] = 0;
                 } else {
-
                     int randomActionIndex = this.randGenerator.nextInt(actionArray.length);
                     returnAction.intArray[0] = actionArray[randomActionIndex].ordinal();
                 }
@@ -120,7 +119,7 @@ public class Agent_SARSA extends Agent{
             setRewardForActionObservation(reward, lastObservation.toString(), lastAction, lastObservation.getActions());
 
             {        //lower the explorationrate
-                epsilon -= 0.000001;
+                epsilon -= 0.0003;
                 //epsilon -= 0.03;
                 if (epsilon < EPSILONMINIMUM) {
                     epsilon = EPSILONMINIMUM;
