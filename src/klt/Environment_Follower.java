@@ -3,6 +3,7 @@
  */
 package klt;
 
+import klt.util.Actions_E;
 import Core.Player;
 import org.rlcommunity.rlglue.codec.taskspec.TaskSpec;
 import org.rlcommunity.rlglue.codec.taskspec.TaskSpecVRLGLUE3;
@@ -92,10 +93,16 @@ public class Environment_Follower extends Environment {
 		int opponentDirection = this.determineOppenentDirection();
 		double distanceToOpponent = this.determineDistanceToOpponent();
 
-		Observation result = new Observation(numIntegers, numDoubles);
+		ObservationWithActions result = new ObservationWithActions(numIntegers, numDoubles);		
 		result.intArray[0] = freeDirection;
 		result.intArray[1] = opponentDirection;
 		result.doubleArray[0] = distanceToOpponent;
+		
+        result.addAction(Actions_E.STAY);
+        if (this.topfree) { result.addAction(Actions_E.UP); }
+        if (this.botfree) { result.addAction(Actions_E.DOWN); }
+        if (this.leftfree) { result.addAction(Actions_E.LEFT); }
+        if (this.rightfree) { result.addAction(Actions_E.RIGHT); } 
 
 		this.lastDistance = distanceToOpponent;
 		this.lastX = currentPlayer.getX();
@@ -121,36 +128,30 @@ public class Environment_Follower extends Environment {
 		int opponentDirection = this.determineOppenentDirection();
 		double distanceToOpponent = this.determineDistanceToOpponent();
 
-		Observation currentObs = new Observation(numIntegers, numDoubles);
+		ObservationWithActions currentObs = new ObservationWithActions(numIntegers, numDoubles);
 		currentObs.intArray[0] = freeDirection;
 		currentObs.intArray[1] = opponentDirection;
 		currentObs.doubleArray[0] = distanceToOpponent;
+		
+		currentObs.addAction(Actions_E.STAY);
+        if (this.topfree) { currentObs.addAction(Actions_E.UP); }
+        if (this.botfree) { currentObs.addAction(Actions_E.DOWN); }
+        if (this.leftfree) { currentObs.addAction(Actions_E.LEFT); }
+        if (this.rightfree) { currentObs.addAction(Actions_E.RIGHT); } 
+
 
 		// this.environmentLogln("Distance: " + distanceToOpponent);
 
 		if (distanceToOpponent < lastDistance) {
-			theReward = 1;
+			theReward = 10;
 			// this.environmentLogln("+");
 		} else {
-
-			if (distanceToOpponent > lastDistance) {
-				theReward = -1;
-				// this.environmentLogln("-");
-			} else {
-
-				// negative reward if not moved
-				if (lastX == currentPlayer.getX()
-						&& lastY == currentPlayer.getY()
-						&& !lastDistance.equals(0.0)) {
-					// this.environmentLogln("--");
-					theReward = -2;
-				}
-			}
+		    theReward = -10;
 		}
 
 		// great reward for reached enemy
-		if (distanceToOpponent < 1) {
-			theReward = 200;
+		if (distanceToOpponent == 0.0) {
+			theReward = 10;
 		}
 
 		System.out.println("this.lastX:" + this.lastX);
