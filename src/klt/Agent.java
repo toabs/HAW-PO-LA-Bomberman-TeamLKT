@@ -109,7 +109,7 @@ public abstract class Agent implements AgentInterface
         }
         else
         {
-            Actions_E[] actionArray =  allowedActions.toArray(new Actions_E[0]);
+            Actions_E[] actionArray =  allowedActions.toArray(new Actions_E[allowedActions.size()]);
             if (actionArray.length <= 0) {
                 this.agentLogln("No possible Action! -> Stay");
             } else {
@@ -179,7 +179,7 @@ public abstract class Agent implements AgentInterface
 	protected double getMaxRewardForObs(String observation) {
 	    double result = Double.MIN_VALUE;
 	    
-	    HashMap<Integer, Double> qValues = this.observationStorage.get(observation.toString());
+	    HashMap<Integer, Double> qValues = this.observationStorage.get(observation);
 	    
 	    if (qValues == null) {
 	        //return InitialValue if observation has not been stored

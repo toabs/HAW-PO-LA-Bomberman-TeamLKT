@@ -227,10 +227,8 @@ public abstract class Environment implements EnvironmentInterface
         }
         
         //fill bomb-position array
-        Iterator<Bomb> bIt = this.board.getBombs().iterator();
-        while(bIt.hasNext())
-        {
-            currentBomb = bIt.next();
+        for (Bomb bomb : this.board.getBombs()) {
+            currentBomb = bomb;
             bombPosition[currentBomb.getX()][currentBomb.getY()] = true;
         }
         
@@ -257,14 +255,14 @@ public abstract class Environment implements EnvironmentInterface
         
         int result = 0;
         
-        this.topfree =   (validY(currentPlayer.getY()-1) ? !board.getBoard()[currentPlayer.getX()][currentPlayer.getY()-1].isWall()
-                                                            && !bombPosition[currentPlayer.getX()][currentPlayer.getY()-1] : false);
-        this.rightfree = (validX(currentPlayer.getX()+1) ? !board.getBoard()[currentPlayer.getX()+1][currentPlayer.getY()].isWall()
-                                                            && !bombPosition[currentPlayer.getX()+1][currentPlayer.getY()]: false);
-        this.botfree =   (validY(currentPlayer.getY()+1) ? !board.getBoard()[currentPlayer.getX()][currentPlayer.getY()+1].isWall()
-                                                            && !bombPosition[currentPlayer.getX()][currentPlayer.getY()+1]: false);
-        this.leftfree =  (validX(currentPlayer.getX()-1) ? !board.getBoard()[currentPlayer.getX()-1][currentPlayer.getY()].isWall()
-                                                            && !bombPosition[currentPlayer.getX()-1][currentPlayer.getY()]: false);
+        this.topfree =   (validY(currentPlayer.getY() - 1) && !board.getBoard()[currentPlayer.getX()][currentPlayer.getY() - 1].isWall()
+                && !bombPosition[currentPlayer.getX()][currentPlayer.getY() - 1]);
+        this.rightfree = (validX(currentPlayer.getX() + 1) && !board.getBoard()[currentPlayer.getX() + 1][currentPlayer.getY()].isWall()
+                && !bombPosition[currentPlayer.getX() + 1][currentPlayer.getY()]);
+        this.botfree =   (validY(currentPlayer.getY() + 1) && !board.getBoard()[currentPlayer.getX()][currentPlayer.getY() + 1].isWall()
+                && !bombPosition[currentPlayer.getX()][currentPlayer.getY() + 1]);
+        this.leftfree =  (validX(currentPlayer.getX() - 1) && !board.getBoard()[currentPlayer.getX() - 1][currentPlayer.getY()].isWall()
+                && !bombPosition[currentPlayer.getX() - 1][currentPlayer.getY()]);
         
         result += (this.topfree) ? Math.pow(2, 0) : 0;
         result += (this.rightfree) ? Math.pow(2, 1) : 0;
@@ -283,7 +281,6 @@ public abstract class Environment implements EnvironmentInterface
     {
         Set<Bomb> bomblist = this.board.getBombs();
         TreeMap<Integer, Bomb> bombByTimeleft = new TreeMap<Integer, Bomb>();
-        Bomb currentBomb = null;
         int tempBombCounter = 0;
         int initValue = 99;
         
@@ -302,25 +299,24 @@ public abstract class Environment implements EnvironmentInterface
         }
         
         //sort bombs by timeleft
-        Iterator<Bomb> bIt = bomblist.iterator();
-        while(bIt.hasNext())
+        for(Bomb currentBomb : bomblist)
         {
-            currentBomb = bIt.next();
             bombByTimeleft.put(currentBomb.getCounter(), currentBomb);
         }
         
         //iterate again over the sorted treemap
-        bIt = bombByTimeleft.values().iterator();
+        Iterator<Bomb> bIt = bombByTimeleft.values().iterator();
+        Bomb currentBomb;
         while(bIt.hasNext())
         {
             topwall = false;
             botwall = false;
             leftwall = false;
             rightwall = false;
-            
+
             //for each bomb, itereate once
             currentBomb = bIt.next();
-            
+
             //Determine shortest bombcounter
             tempBombCounter = dangerAnalysis[currentBomb.getX()][currentBomb.getY()];
             
@@ -564,7 +560,7 @@ public abstract class Environment implements EnvironmentInterface
      * This method returns in which direction and how far the closest hideout is.
      *
      * Far stands for reachable in 3 moves and close for reachable in 2 moves.
-     * @return
+     * @return An integer version of all booleans combined
      */
     protected int determineEscapeRoute(){
         Player cp = this.determineCurrentPlayer();

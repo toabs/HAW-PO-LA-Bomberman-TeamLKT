@@ -59,7 +59,7 @@ public class Agent_SARSA extends Agent{
 
     @Override
     public Action agent_start(Observation observation) {
-        lastObservation = (ObservationWithActions) observation;;
+        lastObservation = (ObservationWithActions) observation;
         Action returnAction = new Action(1, 0, 0);
         returnAction.intArray[0] = this.getBestAction(observation, ((ObservationWithActions) observation).getActions());
 
@@ -78,7 +78,7 @@ public class Agent_SARSA extends Agent{
 
         if (trainingMode) {         //if the trainingmode is enabled the agent will sometimes randomly choose a random action
             if (this.randGenerator.nextDouble() < epsilon) {
-                Actions_E[] actionArray = ((ObservationWithActions) observation).getActions().toArray(new Actions_E[0]);
+                Actions_E[] actionArray = ((ObservationWithActions) observation).getActions().toArray(new Actions_E[((ObservationWithActions) observation).getActions().size()]);
                 
                 if (actionArray.length <= 0) {
                     this.agentLogln("No possible Action! -> Stay");
@@ -108,7 +108,7 @@ public class Agent_SARSA extends Agent{
                 currentLogElem = agentLogUtil.getLastElem();
             }
 
-            double reward = v;
+            double reward;
             double currentQ = INITIALQVALUE;
             //distribute reward
             if (this.observationStorage.containsKey(lastObservation)) {

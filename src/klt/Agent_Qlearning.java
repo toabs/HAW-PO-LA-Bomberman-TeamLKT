@@ -86,11 +86,11 @@ public class Agent_Qlearning extends Agent {
     private Integer chooseAction(ObservationWithActions currentObservation) {
         this.lastObservation = currentObservation;
         Integer result = 0;
-        result = this.getBestAction(currentObservation, (currentObservation).getActions());
+        result = this.getBestAction(currentObservation, currentObservation.getActions());
 
         if (trainingMode) {  //if the trainingmode is enabled the agent will sometimes randomly choose a random action
             if (this.randGenerator.nextDouble() < epsilon) {
-                Actions_E[] actionArray = (currentObservation).getActions().toArray(new Actions_E[0]);
+                Actions_E[] actionArray = currentObservation.getActions().toArray(new Actions_E[currentObservation.getActions().size()]);
                 
                 if (actionArray.length <= 0) {
                     this.agentLogln("No possible Action! -> Stay");
