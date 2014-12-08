@@ -79,7 +79,7 @@ public abstract class Environment implements EnvironmentInterface
      * setPlayboard
      * @param playboard
     */ /************************************************************* */
-    void setPlayboard(Playboard playboard, int userID)
+public void setPlayboard(Playboard playboard, int userID)
     {
         this.userID = userID;
         board = playboard;

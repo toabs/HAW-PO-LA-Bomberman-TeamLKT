@@ -1,6 +1,7 @@
 package GUI;
 
 import Core.Game;
+import Core.Human;
 import Core.User;
 import klt.KI_Factory;
 
@@ -13,13 +14,14 @@ public class GuiMain {
 		List<User> users = new ArrayList<>();
 		//users.add(KI_Factory.getKI_Avoidbomb_Zone(2));
 //		users.add(KI_Factory.getFighterAdvB(1, 0.0, true));
-		users.add(KI_Factory.getFighterAdvSLB(1, 0.0, true, 0.9, 100));
-		users.add(KI_Factory.getKI_Q_FighterB(2, 0.0, true));
+		users.add(KI_Factory.getFighterAdvSLB(1, 0.99, true, 1, 50));
+		//users.add(KI_Factory.getKI_Q_Fighter(2, 0.0, true));
+		users.add(KI_Factory.getKI_Q_FighterB(2, 0.99, true));
 
 		//users.add(KI_Factory.getFighterAdvSL(1, 0.1, true));
 		//users.add(KI_Factory.getFighterA(2));
 
-		//users.add(new Human(1));	
+		//users.add(new Human(1));
 		//users.add(new Human(2));
 		//users.add(KI_Factory.getKI_Avoidbomb_Zone(2));
 		int boardsize = 15;
@@ -28,7 +30,7 @@ public class GuiMain {
 		int maxSteps = 300;
 		long gameoverSleep = 0l;
 		long stepSleep = 0l;
-		boolean paintGUI = false;
+		boolean paintGUI = true;
 		
 		new GuiStart(new Game(users, boardsize, bombCounter, explosionArea, maxSteps, stepSleep), gameoverSleep, paintGUI);
 	}
