@@ -140,7 +140,7 @@ public class KI_Factory
     public static KI getFighterAdvSLA(int id, double explorationRate, boolean trainMode, double lambda, int queueLength){
         try
         {
-            return new KI(id, new Agent_SARSALambda("KI_FighterAdvSLA" + id + ".rgo", explorationRate, lambda, trainMode, DebugState.NO_DEBUG, queueLength), new Environment_Fighter_Advanced(DebugState.NO_DEBUG));
+            return new KI(id, new Agent_SARSALambda("KI_FighterAdvSLA.rgo", explorationRate, lambda, trainMode, DebugState.NO_DEBUG, queueLength), new Environment_Fighter_Advanced(DebugState.NO_DEBUG));
         } catch (Exception e)
         {
             System.out.println("Exception at KI-Creation: " + e.getMessage());
@@ -282,7 +282,7 @@ public class KI_Factory
     {
         try
         {
-            return new KI(id, new Agent_Qlearning("KI_Q_FighterB.rgo", 0.3, 0.8, explorationRate, trainMode), new Environment_Fighter_Advanced(DebugState.NO_DEBUG));
+            return new KI(id, new Agent_Qlearning("KI_Q_FighterB" + id + ".rgo", 0.3, 0.8, explorationRate, trainMode), new Environment_Fighter_Advanced(DebugState.NO_DEBUG));
         } catch (Exception e)
         {
             System.out.println("Exception at KI-Creation: " + e.getMessage());
