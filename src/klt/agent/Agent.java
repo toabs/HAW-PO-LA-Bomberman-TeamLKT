@@ -55,7 +55,7 @@ public abstract class Agent implements AgentInterface
 //            this.observationStorage = new HashMap<String, HashMap<Integer, Double>>();
 //        }
         this.observationStorage = SaveDataUtility.loadCompressedStorage(saveFilePath);
-        System.out.println("Storage:" + this.observationStorage.size());
+        System.out.println("Storage: " + this.observationStorage.size());
     }
 
     /* ************************************************************** */
