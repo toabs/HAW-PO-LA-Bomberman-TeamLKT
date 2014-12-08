@@ -5,6 +5,8 @@ package klt;
 
 /* ************************************************************** */
 
+import klt.agent.*;
+import klt.environment.*;
 import klt.util.DebugState;
 
 /**

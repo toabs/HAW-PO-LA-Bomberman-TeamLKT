@@ -1,8 +1,9 @@
 /**
  * 
  */
-package klt;
+package klt.environment;
 
+import klt.ObservationWithActions;
 import klt.util.Actions_E;
 import Core.Player;
 import org.rlcommunity.rlglue.codec.taskspec.TaskSpec;
@@ -93,7 +94,7 @@ public class Environment_Follower extends Environment {
 		int opponentDirection = this.determineOppenentDirection();
 		double distanceToOpponent = this.determineDistanceToOpponent();
 
-		ObservationWithActions result = new ObservationWithActions(numIntegers, numDoubles);		
+		ObservationWithActions result = new ObservationWithActions(numIntegers, numDoubles);
 		result.intArray[0] = freeDirection;
 		result.intArray[1] = opponentDirection;
 		result.doubleArray[0] = distanceToOpponent;

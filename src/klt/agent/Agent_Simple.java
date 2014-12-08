@@ -1,8 +1,9 @@
 /**
  * 
  */
-package klt;
+package klt.agent;
 
+import klt.ObservationWithActions;
 import klt.util.DebugState;
 import org.rlcommunity.rlglue.codec.types.Action;
 import org.rlcommunity.rlglue.codec.types.Observation;
@@ -29,7 +30,7 @@ public class Agent_Simple extends Agent
      * @throws IOException
      * @throws ClassNotFoundException
     */ /************************************************************* */
-    Agent_Simple(String saveFilePath, DebugState debugState) throws IOException,
+public Agent_Simple(String saveFilePath, DebugState debugState) throws IOException,
             ClassNotFoundException
     {
         super(saveFilePath, debugState);

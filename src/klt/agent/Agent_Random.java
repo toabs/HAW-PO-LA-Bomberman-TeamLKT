@@ -1,7 +1,7 @@
 /**
  * 
  */
-package klt;
+package klt.agent;
 
 import org.rlcommunity.rlglue.codec.types.Action;
 import org.rlcommunity.rlglue.codec.types.Observation;
@@ -26,7 +26,7 @@ public class Agent_Random extends Agent
      * @throws IOException
      * @throws ClassNotFoundException
     */ /************************************************************* */
-    Agent_Random(String saveFilePath) throws IOException,
+public Agent_Random(String saveFilePath) throws IOException,
             ClassNotFoundException
     {
         super(saveFilePath);

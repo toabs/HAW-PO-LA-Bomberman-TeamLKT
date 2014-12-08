@@ -1,7 +1,7 @@
 /**
  * 
  */
-package klt;
+package klt.environment;
 
 import Core.Player;
 import org.rlcommunity.rlglue.codec.taskspec.TaskSpec;

@@ -1,7 +1,7 @@
 /**
  * 
  */
-package klt;
+package klt.environment;
 
 import Core.Bomb;
 import Core.Playboard;

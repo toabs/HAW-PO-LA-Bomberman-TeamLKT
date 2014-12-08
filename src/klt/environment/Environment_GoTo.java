@@ -1,6 +1,7 @@
-package klt;
+package klt.environment;
 
 import Core.Player;
+import klt.ObservationWithActions;
 import klt.util.Actions_E;
 import org.rlcommunity.rlglue.codec.taskspec.TaskSpec;
 import org.rlcommunity.rlglue.codec.taskspec.TaskSpecVRLGLUE3;

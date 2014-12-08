@@ -5,6 +5,8 @@ package klt;
 
 import Core.Playboard;
 import Core.User;
+import klt.agent.Agent;
+import klt.environment.Environment;
 import klt.util.DebugState;
 import org.rlcommunity.rlglue.codec.types.Action;
 import org.rlcommunity.rlglue.codec.types.Observation;

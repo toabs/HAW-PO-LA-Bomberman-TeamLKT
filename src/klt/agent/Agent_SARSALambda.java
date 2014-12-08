@@ -1,5 +1,6 @@
-package klt;
+package klt.agent;
 
+import klt.ObservationWithActions;
 import klt.util.*;
 import org.rlcommunity.rlglue.codec.types.Action;
 import org.rlcommunity.rlglue.codec.types.Observation;

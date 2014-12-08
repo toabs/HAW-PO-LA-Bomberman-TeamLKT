@@ -1,5 +1,6 @@
-package klt;
+package klt.agent;
 
+import klt.ObservationWithActions;
 import klt.util.Actions_E;
 import klt.util.AgentLogUtil;
 import klt.util.DebugState;

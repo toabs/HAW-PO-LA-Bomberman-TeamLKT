@@ -1,7 +1,7 @@
 /**
  * 
  */
-package klt;
+package klt.agent;
 
 import klt.util.Actions_E;
 import klt.util.DebugState;
