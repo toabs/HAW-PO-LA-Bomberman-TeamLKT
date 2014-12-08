@@ -12,7 +12,6 @@ import java.util.zip.GZIPOutputStream;
  */
 public class SaveDataUtility {
 
-    @SuppressWarnings("unchecked")
 	public static HashMap<String, HashMap<Integer, Double>> updateData(HashMap<String, HashMap<Integer, Double>> first, HashMap<String, HashMap<Integer, Double>> second) {
 
         System.out.println("Start to merge!");
@@ -112,14 +111,14 @@ public class SaveDataUtility {
 
         System.out.println("Start to load file: " + filePath);
 
+        HashMap<String, HashMap<Integer, Double>> storage = new HashMap<>();
         if (f.exists() && !f.isDirectory())
         {
-            HashMap<String, HashMap<Integer, Double>> otherStorage = null;
             FileInputStream fin = null;
             try {
                 fin = new FileInputStream(filePath);
                 ObjectInputStream ois = new ObjectInputStream(fin);
-                otherStorage = (HashMap<String, HashMap<Integer, Double>>) ois.readObject();
+                storage = (HashMap<String, HashMap<Integer, Double>>) ois.readObject();
                 ois.close();
             } catch (ClassNotFoundException | IOException e) {
                 e.printStackTrace();
@@ -127,12 +126,12 @@ public class SaveDataUtility {
 
             System.out.println("Successfully loaded File: " + filePath);
 
-            return otherStorage;
+            return storage;
         }
         else
         {
             System.err.println("There is no Data to read! Path:" + filePath);
-            return null;
+            return storage;
         }
     }
 
@@ -141,15 +140,15 @@ public class SaveDataUtility {
 
         System.out.println("Start to load file: " + filePath);
 
+        HashMap<String, HashMap<Integer, Double>> storage = new HashMap<>();
         if (f.exists() && !f.isDirectory())
         {
-            HashMap<String, HashMap<Integer, Double>> otherStorage = null;
-            FileInputStream fin = null;
+            FileInputStream fin;
             try {
                 fin = new FileInputStream(filePath);
                 GZIPInputStream gzip = new GZIPInputStream(fin);
                 ObjectInputStream ois = new ObjectInputStream(gzip);
-                otherStorage = (HashMap<String, HashMap<Integer, Double>>) ois.readObject();
+                storage = (HashMap<String, HashMap<Integer, Double>>) ois.readObject();
                 ois.close();
             } catch (ClassNotFoundException | IOException e) {
                 e.printStackTrace();
@@ -157,12 +156,12 @@ public class SaveDataUtility {
 
             System.out.println("Successfully loaded File: " + filePath);
 
-            return otherStorage;
+            return storage;
         }
         else
         {
             System.err.println("There is no Data to read! Path:" + filePath);
-            return null;
+            return storage;
         }
     }
 }

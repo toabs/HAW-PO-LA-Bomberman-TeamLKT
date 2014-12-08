@@ -3,6 +3,7 @@
  */
 package klt;
 
+import klt.util.DebugState;
 import org.rlcommunity.rlglue.codec.types.Action;
 import org.rlcommunity.rlglue.codec.types.Observation;
 

@@ -1,9 +1,6 @@
 package klt;
 
-import klt.util.AgentLogUtilSLambda;
-import klt.util.RingBuffer;
-import klt.util.SarsaLambdaQueueElement;
-import klt.util.SarsaLogElement;
+import klt.util.*;
 import org.rlcommunity.rlglue.codec.types.Action;
 import org.rlcommunity.rlglue.codec.types.Observation;
 
@@ -32,7 +29,7 @@ public class Agent_SARSALambda extends Agent {
     private final double EPSILON = 0.00001; //the epsilon for the close to zero comparisions
     private final double EPSILONMINIMUM = 0.1;
     private RingBuffer<SarsaLambdaQueueElement> queue;
-    private AgentLogUtilSLambda logUtil;
+    private AgentLogUtilSLambda logUtil = null;
 
 
     public Agent_SARSALambda(String saveFilePath, double explorationRate, double lambda, boolean trainingMode, DebugState debugState, int queueLenght) throws IOException, ClassNotFoundException {
@@ -41,12 +38,13 @@ public class Agent_SARSALambda extends Agent {
         this.lambda = lambda;
         this.trainingMode = trainingMode;
         queue = new RingBuffer<>(queueLenght);
-        logUtil = new AgentLogUtilSLambda(0, queueLenght);
     }
 
     public Agent_SARSALambda(String saveFilePath, double explorationRate, double lambda, boolean trainingMode, DebugState debugState, int queueLenght, int logLastNChanges) throws IOException, ClassNotFoundException {
         this(saveFilePath, explorationRate, lambda, trainingMode, debugState, queueLenght);
-
+        if (debugState.isqLoggingEnabled()) {
+            logUtil = new AgentLogUtilSLambda(logLastNChanges, queueLenght);
+        }
     }
 
     @Override
@@ -65,7 +63,9 @@ public class Agent_SARSALambda extends Agent {
     }
 
     private void updateValues(double r, boolean lastUpdate){
-        logUtil.addNewLogChain();
+        if(debugState.isqLoggingEnabled()) {
+            logUtil.addNewLogChain();
+        }
 
         double lastQ = INITIALQVALUE;
         double currentQ = INITIALQVALUE;
@@ -99,18 +99,23 @@ public class Agent_SARSALambda extends Agent {
         }
 
         for (SarsaLambdaQueueElement stepElement : queue){
-            logUtil.add(stepElement.getObservation(), stepElement.getAction());
-            SarsaLogElement logElement = logUtil.getLastElem();
+            SarsaLogElement logElement = null;
+            if (debugState.isqLoggingEnabled()) {
+                logUtil.add(stepElement.getObservation(), stepElement.getAction());
+                logElement = logUtil.getLastElem();
+            }
 
             double oldValE = stepElement.getValue();
             double oldValQ = observationStorage.get(stepElement.getObservation()).get(stepElement.getAction());
             double newValQ = oldValQ + alpha * delta * oldValE;
 
-            logElement.setEpsilon(oldValE);
-            logElement.setReward(r);
-            logElement.setValueBefore(oldValQ);
-            logElement.setValueAfter(newValQ);
-            logElement.setValueNextAction(currentQ);
+            if (debugState.isqLoggingEnabled()) {
+                logElement.setEpsilon(oldValE);
+                logElement.setReward(r);
+                logElement.setValueBefore(oldValQ);
+                logElement.setValueAfter(newValQ);
+                logElement.setValueNextAction(currentQ);
+            }
             observationStorage.get(stepElement.getObservation()).put(stepElement.getAction(), newValQ);
             stepElement.setValue(gamma * lambda * oldValE);
         }
@@ -141,9 +146,9 @@ public class Agent_SARSALambda extends Agent {
             if (this.randGenerator.nextDouble() < epsilon) {
                 returnAction.intArray[0] = this.randGenerator.nextInt(NUMBEROFACTIONS);
             }
+        updateValues(v, false);
         }
 
-        updateValues(v, false);
         return returnAction;
     }
 
@@ -157,11 +162,12 @@ public class Agent_SARSALambda extends Agent {
             if (epsilon < EPSILONMINIMUM) {
                 epsilon = EPSILONMINIMUM;
             }
-        }
         updateValues(v, true);
+        }
 
-        logUtil.logLastQValueUodates(observationStorage);
-
+        if(debugState.isqLoggingEnabled()) {
+            logUtil.logLastQValueUodates(observationStorage);
+        }
     }
 
     @Override

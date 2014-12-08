@@ -6,9 +6,9 @@ package klt;
 import Core.Bomb;
 import Core.Playboard;
 import Core.Player;
+import klt.util.DebugState;
 import org.rlcommunity.rlglue.codec.EnvironmentInterface;
 
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.TreeMap;
@@ -252,7 +252,7 @@ public abstract class Environment implements EnvironmentInterface
             }
         } 
         
-        System.out.println("Max Abstände: " + test.size());
+        System.out.println("Max Abstï¿½nde: " + test.size());
         */
         
         int result = 0;
@@ -558,5 +558,100 @@ public abstract class Environment implements EnvironmentInterface
         }            
             
         return 0;
+    }
+
+    /**
+     * This method returns in which direction and how far the closest hideout is.
+     *
+     * Far stands for reachable in 3 moves and close for reachable in 2 moves.
+     * @return
+     */
+    protected int determineEscapeRoute(){
+        Player cp = this.determineCurrentPlayer();
+        int cpXPos = cp.getX();
+        int cpYPos = cp.getY();
+
+        int LOWERBORDER = 3;
+
+        int[][] dangerAnalysis = new int[board.getBoard().length][board.getBoard()[0].length];
+
+        determineBombZones(dangerAnalysis);
+
+        boolean upFar = false;
+        boolean upClose = false;
+
+        if (validX(cpXPos-3)){
+            upFar = dangerAnalysis[cpXPos-3][cpYPos] > LOWERBORDER + 1;
+        }
+        if(validX(cpXPos-2)){
+            upClose = dangerAnalysis[cpXPos-2][cpYPos] > LOWERBORDER;
+            if (!upFar && (validY(cpYPos-1) || validY(cpYPos+1))){
+                upFar = dangerAnalysis[cpXPos-2][cpYPos -1] > LOWERBORDER + 1 || dangerAnalysis[cpXPos - 2][cpYPos + 1] > LOWERBORDER + 1;
+            }
+        }
+        if (!upClose && validX(cpXPos-1) && (validY(cpYPos-1) || validY(cpYPos+1))){
+            upClose = dangerAnalysis[cpXPos-1][cpYPos-1] > 3 || dangerAnalysis[cpXPos-1][cpYPos+1] > LOWERBORDER;
+        }
+
+        boolean rightFar = false;
+        boolean rightClose = false;
+
+        if (validY(cpYPos + 3)){
+            rightFar = dangerAnalysis[cpXPos][cpYPos + 3] > LOWERBORDER + 1;
+        }
+        if(validY(cpYPos + 2)){
+            rightClose = dangerAnalysis[cpXPos][cpYPos + 2] > LOWERBORDER;
+            if (!rightFar && (validX(cpXPos + 1) || validX(cpXPos - 1))){
+                rightFar = dangerAnalysis[cpXPos - 1][cpYPos + 2] > LOWERBORDER + 1 || dangerAnalysis[cpXPos + 1][cpYPos + 2] > LOWERBORDER + 1;
+            }
+        }
+        if (!rightClose && validY(cpYPos + 1) && (validX(cpXPos - 1) || validX(cpXPos + 1))){
+            rightClose = dangerAnalysis[cpXPos+1][cpYPos+1] > 3 || dangerAnalysis[cpXPos-1][cpYPos+1] > LOWERBORDER;
+        }
+
+        boolean downFar = false;
+        boolean downClose = false;
+
+        if (validX(cpXPos+3)){
+            downFar = dangerAnalysis[cpXPos+3][cpYPos] > LOWERBORDER + 1;
+        }
+        if(validX(cpXPos+2)){
+            downClose = dangerAnalysis[cpXPos+2][cpYPos] > LOWERBORDER;
+            if (!downFar && (validY(cpYPos-1) || validY(cpYPos+1))){
+                downFar = dangerAnalysis[cpXPos+2][cpYPos -1] > LOWERBORDER + 1 || dangerAnalysis[cpXPos + 2][cpYPos + 1] > LOWERBORDER + 1;
+            }
+        }
+        if (!downClose && validX(cpXPos+1) && (validY(cpYPos-1) || validY(cpYPos+1))){
+            downClose = dangerAnalysis[cpXPos+1][cpYPos-1] > 3 || dangerAnalysis[cpXPos+1][cpYPos+1] > LOWERBORDER;
+        }
+
+        boolean leftFar = false;
+        boolean leftClose = false;
+
+        if (validY(cpYPos - 3)){
+            leftFar = dangerAnalysis[cpXPos][cpYPos - 3] > LOWERBORDER + 1;
+        }
+        if(validY(cpYPos - 2)){
+            leftClose = dangerAnalysis[cpXPos][cpYPos - 2] > LOWERBORDER;
+            if (!leftFar && (validX(cpXPos + 1) || validX(cpXPos - 1))){
+                leftFar = dangerAnalysis[cpXPos - 1][cpYPos - 2] > LOWERBORDER + 1 || dangerAnalysis[cpXPos + 1][cpYPos - 2] > LOWERBORDER + 1;
+            }
+        }
+        if (!leftClose && validY(cpYPos - 1) && (validX(cpXPos - 1) || validX(cpXPos + 1))){
+            leftClose = dangerAnalysis[cpXPos+1][cpYPos-1] > 3 || dangerAnalysis[cpXPos-1][cpYPos-1] > LOWERBORDER;
+        }
+
+        int result = 0;
+
+        result += upFar ? 1 : 0;
+        result += upClose ? 2 : 0;
+        result += rightFar ? 4 : 0;
+        result += rightClose ? 8 : 0;
+        result += downFar ? 16 : 0;
+        result += downClose ? 32 : 0;
+        result += leftFar ? 64 : 0;
+        result += leftClose ? 128 : 0;
+
+        return result;
     }
 }

@@ -2,6 +2,7 @@ package klt;
 
 import klt.util.Actions_E;
 import klt.util.AgentLogUtil;
+import klt.util.DebugState;
 import klt.util.SarsaLogElement;
 import org.rlcommunity.rlglue.codec.types.Action;
 import org.rlcommunity.rlglue.codec.types.Observation;
@@ -51,7 +52,9 @@ public class Agent_SARSA extends Agent{
 
     @Override
     public void agent_init(String s) {
-        agentLogUtil.clear();
+        if(debugState.isqLoggingEnabled()) {
+            agentLogUtil.clear();
+        }
     }
 
     @Override
@@ -99,8 +102,11 @@ public class Agent_SARSA extends Agent{
         if(trainingMode) {
             //updateValues(v);
 
-            agentLogUtil.add(lastObservation.toString(), lastAction);
-            SarsaLogElement currentLogElem = agentLogUtil.getLastElem();
+            SarsaLogElement currentLogElem = null;
+            if(debugState.isqLoggingEnabled()) {
+                agentLogUtil.add(lastObservation.toString(), lastAction);
+                currentLogElem = agentLogUtil.getLastElem();
+            }
 
             double reward = v;
             double currentQ = INITIALQVALUE;
@@ -111,29 +117,36 @@ public class Agent_SARSA extends Agent{
             reward = currentQ + alpha * (v - currentQ);
 
 
-            currentLogElem.setValueNextAction(0);
-            currentLogElem.setValueBefore(currentQ);
-            currentLogElem.setReward(v);
-            currentLogElem.setValueAfter(reward);
+            if(debugState.isqLoggingEnabled()) {
+                currentLogElem.setValueNextAction(0);
+                currentLogElem.setValueBefore(currentQ);
+                currentLogElem.setReward(v);
+                currentLogElem.setValueAfter(reward);
+            }
 
             setRewardForActionObservation(reward, lastObservation.toString(), lastAction, lastObservation.getActions());
 
-            {        //lower the explorationrate
-                epsilon -= 0.0003;
-                //epsilon -= 0.03;
-                if (epsilon < EPSILONMINIMUM) {
-                    epsilon = EPSILONMINIMUM;
-                }
+                        //lower the explorationrate
+            epsilon -= 0.0003;
+            //epsilon -= 0.03;
+            if (epsilon < EPSILONMINIMUM) {
+                epsilon = EPSILONMINIMUM;
             }
-            //agentLogUtil.logLastQValueUodates(observationStorage);
+
+            if(debugState.isqLoggingEnabled()) {
+                agentLogUtil.logLastQValueUodates(observationStorage);
+            }
         }
     }
 
     private void updateValues(double r){
 
-        agentLogUtil.add(beforeLastObservation.toString(), beforeLastAction);
-        SarsaLogElement currentElem = agentLogUtil.getLastElem();
-        currentElem.setReward(r);
+        SarsaLogElement currentElem = null;
+        if(debugState.isqLoggingEnabled()) {
+            agentLogUtil.add(beforeLastObservation.toString(), beforeLastAction);
+            currentElem = agentLogUtil.getLastElem();
+            currentElem.setReward(r);
+        }
 
         double reward;
         double qNext = INITIALQVALUE;
@@ -148,10 +161,13 @@ public class Agent_SARSA extends Agent{
         }
         reward = qThis + alpha * (r + gamma * qNext - qThis);
 
-        currentElem.setValueAfter(reward);
-        currentElem.setValueBefore(qThis);
-        currentElem.setReward(r);
-        currentElem.setValueNextAction(qNext);
+        if(debugState.isqLoggingEnabled()) {
+            currentElem.setValueAfter(reward);
+            currentElem.setValueBefore(qThis);
+            currentElem.setReward(r);
+            currentElem.setValueNextAction(qNext);
+        }
+
         setRewardForActionObservation(reward, beforeLastObservation.toString(), beforeLastAction, ((ObservationWithActions) beforeLastObservation).getActions());
     }
 

@@ -1,14 +1,10 @@
 package klt;
 
+import klt.util.Actions_E;
 import org.rlcommunity.rlglue.codec.types.Action;
 import org.rlcommunity.rlglue.codec.types.Observation;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.Set;
-
-import klt.util.Actions_E;
 
 /**
  * Created by Tobi on 27.10.2014.

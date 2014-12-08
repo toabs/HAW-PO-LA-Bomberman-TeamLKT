@@ -4,14 +4,13 @@
 package klt;
 
 import klt.util.Actions_E;
+import klt.util.DebugState;
+import klt.util.SaveDataUtility;
 import org.rlcommunity.rlglue.codec.AgentInterface;
 import org.rlcommunity.rlglue.codec.types.Observation;
 
-import java.io.*;
-import klt.util.Actions_E;
+import java.io.IOException;
 import java.util.*;
-import java.util.zip.GZIPInputStream;
-import java.util.zip.GZIPOutputStream;
 
 /* ************************************************************** */
 /**
@@ -23,9 +22,9 @@ public abstract class Agent implements AgentInterface
 {
     //The set of observation, saving a Map of Values indexed by the Action
     //Example 
-    protected HashMap<String, HashMap<Integer, Double>> observationStorage; 
+    protected HashMap<String, HashMap<Integer, Double>> observationStorage;
     private String saveFilePath;
-    private DebugState debugState;
+    protected DebugState debugState;
     protected double INITIALQVALUE = 50.0;
     protected Random randGenerator = new Random();
     protected int maxRandomAction = 5;
@@ -35,27 +34,27 @@ public abstract class Agent implements AgentInterface
         this(saveFilePath);
         this.debugState = debugState;
     }
-    
-    @SuppressWarnings("unchecked")
+
     Agent(String saveFilePath) throws IOException, ClassNotFoundException
     {
         this.debugState = DebugState.NO_DEBUG;
         this.saveFilePath = saveFilePath;
-        
-        File f = new File(saveFilePath);
-        
-        if (f.exists() && !f.isDirectory()) 
-        {
-            FileInputStream fin = new FileInputStream(saveFilePath);
-            GZIPInputStream gzip = new GZIPInputStream(fin);
-            ObjectInputStream ois = new ObjectInputStream(gzip);
-            this.observationStorage = (HashMap<String, HashMap<Integer, Double>>) ois.readObject();
-            ois.close();
-        }
-        else
-        {
-            this.observationStorage = new HashMap<String, HashMap<Integer, Double>>();
-        }
+
+//        File f = new File(saveFilePath);
+//
+//        if (f.exists() && !f.isDirectory())
+//        {
+//            FileInputStream fin = new FileInputStream(saveFilePath);
+//            GZIPInputStream gzip = new GZIPInputStream(fin);
+//            ObjectInputStream ois = new ObjectInputStream(gzip);
+//            this.observationStorage = (HashMap<String, HashMap<Integer, Double>>) ois.readObject();
+//            ois.close();
+//        }
+//        else
+//        {
+//            this.observationStorage = new HashMap<String, HashMap<Integer, Double>>();
+//        }
+        this.observationStorage = SaveDataUtility.loadCompressedStorage(saveFilePath);
         System.out.println("Storage:" + this.observationStorage.size());
     }
 
@@ -75,11 +74,9 @@ public abstract class Agent implements AgentInterface
 
         if (this.observationStorage.containsKey(currentObs.toString()) && (allowedActions.size() > 0))
         {
-            actions = allowedActions.iterator();
+
             //determine highest value
-            while(actions.hasNext())
-            {
-                Actions_E action = actions.next();
+            for(Actions_E action : allowedActions){
             	agentLogln("Reward["+action.ordinal()+"]:" + this.observationStorage.get(currentObs.toString()).get(action.ordinal()));
                 if (this.observationStorage.get(currentObs.toString()).get(action.ordinal()) > bestValue)
                 {                	
@@ -88,11 +85,9 @@ public abstract class Agent implements AgentInterface
             }
             
             agentLogln("bestValue:" + bestValue);
-            actions = allowedActions.iterator();
+
             //get Actions with that value (must be at least one)
-            while(actions.hasNext())
-            {
-                Actions_E action = actions.next();
+            for(Actions_E action : allowedActions){
                 if (this.observationStorage.get(currentObs.toString()).get(action.ordinal()).equals(bestValue))
                 {
                     bestActions.add(action.ordinal());
@@ -178,17 +173,7 @@ public abstract class Agent implements AgentInterface
         System.out.println("Exit Called");
         System.out.println("Storage contains: " + observationStorage.size() + " Observations");
         //save progress
-        try
-        {
-            FileOutputStream fout = new FileOutputStream(saveFilePath);
-            GZIPOutputStream zipOut = new GZIPOutputStream(fout);
-            ObjectOutputStream oos = new ObjectOutputStream(zipOut);        
-            oos.writeObject(observationStorage);
-            oos.close();
-        } catch (IOException e)
-        {
-            System.out.println("Error saving observationStorage: " + e.getMessage());
-        }
+        SaveDataUtility.writeCompressedStorage(observationStorage, saveFilePath);
 	}
 	
 	protected double getMaxRewardForObs(String observation) {
