@@ -33,6 +33,7 @@ public abstract class Environment implements EnvironmentInterface
     protected double maxDistanceToOpponent = 0; //to be calculated
     protected final int numIntegers = 4;
     protected final int numDoubles = 1;
+    protected final double distanceRadiusOffset = 2.0;
     
     //helper variables filled by the functions
     protected boolean topfree = false;
@@ -183,7 +184,13 @@ public void setPlayboard(Playboard playboard, int userID)
         int diffx = cP.getX() - oP.getX();
         int diffy = cP.getY() - oP.getY();
     
-        return Math.sqrt(Math.pow(diffx, 2) + Math.pow(diffy, 2));
+        double result = Math.sqrt(Math.pow(diffx, 2) + Math.pow(diffy, 2));
+        
+        if (result < this.board.getExplosionRadius() + distanceRadiusOffset) {
+            return result;
+        } else {
+            return this.board.getExplosionRadius() + distanceRadiusOffset;
+        }
     }
     
     /* ************************************************************** */
