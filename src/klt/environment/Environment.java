@@ -33,6 +33,7 @@ public abstract class Environment implements EnvironmentInterface
     protected double maxDistanceToOpponent = 0; //to be calculated
     protected final int numIntegers = 4;
     protected final int numDoubles = 1;
+    protected final int escapePaths = 256;
     
     //helper variables filled by the functions
     protected boolean topfree = false;
@@ -581,12 +582,22 @@ public void setPlayboard(Playboard playboard, int userID)
         }
         if(validX(cpXPos-2)){
             upClose = dangerAnalysis[cpXPos-2][cpYPos] > LOWERBORDER;
-            if (!upFar && (validY(cpYPos-1) || validY(cpYPos+1))){
-                upFar = dangerAnalysis[cpXPos-2][cpYPos -1] > LOWERBORDER + 1 || dangerAnalysis[cpXPos - 2][cpYPos + 1] > LOWERBORDER + 1;
+            if (!upFar){
+                if(validY(cpYPos - 1)){
+                    upFar = dangerAnalysis[cpXPos-2][cpYPos -1] > LOWERBORDER + 1;
+                }
+                if(!upFar && validY(cpYPos + 1)){
+                    upFar = dangerAnalysis[cpXPos - 2][cpYPos + 1] > LOWERBORDER + 1;
+                }
             }
         }
-        if (!upClose && validX(cpXPos-1) && (validY(cpYPos-1) || validY(cpYPos+1))){
-            upClose = dangerAnalysis[cpXPos-1][cpYPos-1] > 3 || dangerAnalysis[cpXPos-1][cpYPos+1] > LOWERBORDER;
+        if (!upClose && validX(cpXPos - 1)){
+            if(validY(cpYPos - 1)){
+                upClose = dangerAnalysis[cpXPos - 1][cpYPos -1] > LOWERBORDER + 1;
+            }
+            if(!upClose && validY(cpYPos + 1)){
+                upClose = dangerAnalysis[cpXPos - 1][cpYPos + 1] > LOWERBORDER + 1;
+            }
         }
 
         boolean rightFar = false;
@@ -597,12 +608,22 @@ public void setPlayboard(Playboard playboard, int userID)
         }
         if(validY(cpYPos + 2)){
             rightClose = dangerAnalysis[cpXPos][cpYPos + 2] > LOWERBORDER;
-            if (!rightFar && (validX(cpXPos + 1) || validX(cpXPos - 1))){
-                rightFar = dangerAnalysis[cpXPos - 1][cpYPos + 2] > LOWERBORDER + 1 || dangerAnalysis[cpXPos + 1][cpYPos + 2] > LOWERBORDER + 1;
+            if (!rightFar){
+                if(validX(cpXPos + 1)){
+                    rightFar = dangerAnalysis[cpXPos + 1][cpYPos + 2] > LOWERBORDER + 1;
+                }
+                if(!rightFar && validX(cpXPos - 1)){
+                    rightFar = dangerAnalysis[cpXPos - 1][cpYPos + 2] > LOWERBORDER + 1;
+                }
             }
         }
-        if (!rightClose && validY(cpYPos + 1) && (validX(cpXPos - 1) || validX(cpXPos + 1))){
-            rightClose = dangerAnalysis[cpXPos+1][cpYPos+1] > 3 || dangerAnalysis[cpXPos-1][cpYPos+1] > LOWERBORDER;
+        if (!rightClose && validY(cpYPos + 1)){
+            if(validX(cpXPos - 1)){
+                rightClose = dangerAnalysis[cpXPos - 1][cpYPos + 1] > LOWERBORDER + 1;
+            }
+            if(!rightClose && validX(cpXPos + 1)){
+                rightClose = dangerAnalysis[cpXPos + 1][cpYPos + 1] > LOWERBORDER + 1;
+            }
         }
 
         boolean downFar = false;
@@ -613,12 +634,22 @@ public void setPlayboard(Playboard playboard, int userID)
         }
         if(validX(cpXPos+2)){
             downClose = dangerAnalysis[cpXPos+2][cpYPos] > LOWERBORDER;
-            if (!downFar && (validY(cpYPos-1) || validY(cpYPos+1))){
-                downFar = dangerAnalysis[cpXPos+2][cpYPos -1] > LOWERBORDER + 1 || dangerAnalysis[cpXPos + 2][cpYPos + 1] > LOWERBORDER + 1;
+            if (!downFar){
+                if(validY(cpYPos - 1)){
+                    downFar = dangerAnalysis[cpXPos + 2][cpYPos -1] > LOWERBORDER + 1;
+                }
+                if(!upFar && validY(cpYPos + 1)){
+                    downFar = dangerAnalysis[cpXPos + 2][cpYPos + 1] > LOWERBORDER + 1;
+                }
             }
         }
-        if (!downClose && validX(cpXPos+1) && (validY(cpYPos-1) || validY(cpYPos+1))){
-            downClose = dangerAnalysis[cpXPos+1][cpYPos-1] > 3 || dangerAnalysis[cpXPos+1][cpYPos+1] > LOWERBORDER;
+        if (!downClose && validX(cpXPos + 1)){
+            if(validY(cpYPos - 1)){
+                downClose = dangerAnalysis[cpXPos + 1][cpYPos -1] > LOWERBORDER + 1;
+            }
+            if(!downClose && validY(cpYPos + 1)){
+                downClose = dangerAnalysis[cpXPos + 1][cpYPos + 1] > LOWERBORDER + 1;
+            }
         }
 
         boolean leftFar = false;
@@ -629,12 +660,22 @@ public void setPlayboard(Playboard playboard, int userID)
         }
         if(validY(cpYPos - 2)){
             leftClose = dangerAnalysis[cpXPos][cpYPos - 2] > LOWERBORDER;
-            if (!leftFar && (validX(cpXPos + 1) || validX(cpXPos - 1))){
-                leftFar = dangerAnalysis[cpXPos - 1][cpYPos - 2] > LOWERBORDER + 1 || dangerAnalysis[cpXPos + 1][cpYPos - 2] > LOWERBORDER + 1;
+            if (!leftFar){
+                if(validX(cpXPos + 1)){
+                    leftFar = dangerAnalysis[cpXPos + 1][cpYPos - 2] > LOWERBORDER + 1;
+                }
+                if(!leftFar && validX(cpXPos - 1)){
+                    leftFar = dangerAnalysis[cpXPos - 1][cpYPos - 2] > LOWERBORDER + 1;
+                }
             }
         }
-        if (!leftClose && validY(cpYPos - 1) && (validX(cpXPos - 1) || validX(cpXPos + 1))){
-            leftClose = dangerAnalysis[cpXPos+1][cpYPos-1] > 3 || dangerAnalysis[cpXPos-1][cpYPos-1] > LOWERBORDER;
+        if (!leftClose && validY(cpYPos - 1)){
+            if(validX(cpXPos - 1)){
+                leftClose = dangerAnalysis[cpXPos - 1][cpYPos - 1] > LOWERBORDER + 1;
+            }
+            if(!leftClose && validX(cpXPos + 1)){
+                leftClose = dangerAnalysis[cpXPos + 1][cpYPos - 1] > LOWERBORDER + 1;
+            }
         }
 
         int result = 0;

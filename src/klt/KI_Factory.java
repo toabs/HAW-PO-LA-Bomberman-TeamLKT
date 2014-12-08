@@ -213,7 +213,7 @@ public class KI_Factory
             //return new KI(id, new Agent_SARSALambda("KI_FighterAdvA_Lambda.rgo", 0.95, 0.8, true, DebugState.NO_DEBUG, 15), new Environment_Fighter_Advanced(DebugState.NO_DEBUG));
 
             DebugState.NO_DEBUG.setqLoggingEnabled(false);
-            return new KI(id, new Agent_SARSA("KI_FighterAdvAN2.rgo", explorationRate, trainMode, DebugState.NO_DEBUG), new Environment_Fighter_Advanced(DebugState.NO_DEBUG));
+            return new KI(id, new Agent_SARSA("KI_FighterAdvA.rgo", explorationRate, trainMode, DebugState.NO_DEBUG), new Environment_Fighter_Advanced(DebugState.NO_DEBUG));
         } catch (Exception e)
         {
             System.out.println("Exception at KI-Creation: " + e.getMessage());
@@ -227,7 +227,7 @@ public class KI_Factory
         {   
             //return new KI(id, new Agent_SARSALambda("KI_FighterAdvB_Lambda.rgo", 0.95, 0.8, true, DebugState.NO_DEBUG, 15), new Environment_Fighter_Advanced(DebugState.NO_DEBUG));
 
-            return new KI(id, new Agent_SARSA("KI_FighterAdvBN2.rgo", explorationRate, trainMode, DebugState.NO_DEBUG), new Environment_Fighter_Advanced(DebugState.NO_DEBUG));
+            return new KI(id, new Agent_SARSA("KI_FighterAdvB.rgo", explorationRate, trainMode, DebugState.NO_DEBUG), new Environment_Fighter_Advanced(DebugState.NO_DEBUG));
         } catch (Exception e)
         {
             System.out.println("Exception at KI-Creation: " + e.getMessage());
@@ -285,6 +285,30 @@ public class KI_Factory
         try
         {
             return new KI(id, new Agent_Qlearning("KI_Q_FighterB" + id + ".rgo", 0.3, 0.8, explorationRate, trainMode), new Environment_Fighter_Advanced(DebugState.NO_DEBUG));
+        } catch (Exception e)
+        {
+            System.out.println("Exception at KI-Creation: " + e.getMessage());
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public static KI getKI_SarsaAdv2A(int id, double explorationRate, boolean trainMode){
+        try
+        {
+            return new KI(id, new Agent_SARSA("KI_FighterAdv2A.rgo", explorationRate, trainMode, DebugState.NO_DEBUG), new Environment_Fighter_NewAdvanced(DebugState.NO_DEBUG));
+        } catch (Exception e)
+        {
+            System.out.println("Exception at KI-Creation: " + e.getMessage());
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public static KI getKI_SarsaAdv2B(int id, double explorationRate, boolean trainMode){
+        try
+        {
+            return new KI(id, new Agent_SARSA("KI_FighterAdv2B.rgo", explorationRate, trainMode, DebugState.NO_DEBUG), new Environment_Fighter_NewAdvanced(DebugState.NO_DEBUG));
         } catch (Exception e)
         {
             System.out.println("Exception at KI-Creation: " + e.getMessage());
