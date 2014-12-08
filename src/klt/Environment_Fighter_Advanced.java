@@ -166,14 +166,8 @@ public class Environment_Fighter_Advanced extends Environment
         //this.environmentLogln("Distance: " + distanceToOpponent);
         if (distanceToOpponent < lastDistance && lastBombSituation == 0)
         {
-            theReward = 1; 
+            theReward = 50 - (distanceToOpponent); 
         }
-        /*
-        if (distanceToOpponent > lastDistance)
-        {
-            theReward = -1;
-        }
-        */
         /*
         if (currentDanger < lastDanger)
         {
