@@ -26,9 +26,9 @@ public class GuiMain {
 		int bombCounter = 8;
 		int explosionArea = 4;
 		int maxSteps = 300;
-		long gameoverSleep = 0l;
-		long stepSleep = 0l;
-		boolean paintGUI = false;
+		long gameoverSleep = 0;
+		long stepSleep = 0;
+		boolean paintGUI = true;
 		
 		new GuiStart(new Game(users, boardsize, bombCounter, explosionArea, maxSteps, stepSleep), gameoverSleep, paintGUI);
 	}

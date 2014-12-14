@@ -22,6 +22,7 @@ public class Playboard {
 	private Playboard(Playboard playboard) {
 		this.board = playboard.board.clone();
 		this.stepsLeft = playboard.stepsLeft;
+		this.explosionRadius = playboard.getExplosionRadius();
 		for (Bomb bomb : playboard.bombs) {
 			this.bombs.add(bomb.clone());
 		}

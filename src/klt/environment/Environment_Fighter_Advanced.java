@@ -165,7 +165,7 @@ public class Environment_Fighter_Advanced extends Environment
         currentObs.doubleArray[0] = distanceToOpponent; 
         
         //this.environmentLogln("Distance: " + distanceToOpponent);
-        if (distanceToOpponent < lastDistance && lastBombSituation == 0)
+        if (distanceToOpponent < lastDistance && lastBombSituation == 0 && lastDistance != 0.0)
         {
             theReward = 50 - (distanceToOpponent); 
         }
@@ -197,7 +197,7 @@ public class Environment_Fighter_Advanced extends Environment
         } */
         
         //negative reward for placing bombs without sense
-        if (arg0.intArray[0] == 5 && distanceToOpponent > this.board.getExplosionRadius()+2) {
+        if (arg0.intArray[0] == 5 && distanceToOpponent >= (this.board.getExplosionRadius()+this.distanceRadiusOffset)) {
             theReward = -50;
         }
         
