@@ -37,7 +37,7 @@ public class EnvironmentFighterNewAdvanced extends Environment
     private double lastDistance;
     private int lastX;
     private int lastY;
-    private int distanceRadiusOffset;
+    private int distanceRadiusOffset = 2;
 
     public EnvironmentFighterNewAdvanced(DebugState debugState) {
         this.debugState = debugState;
