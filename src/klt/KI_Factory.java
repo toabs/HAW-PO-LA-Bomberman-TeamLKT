@@ -259,7 +259,7 @@ public class KI_Factory
     {
         try
         {
-            return new KI(id, new AgentQLearning("KI_Q_Fighter.rgo", 0.3, 0.8, explorationRate, trainMode), new EnvironmentFighterAdvanced(DebugState.NO_DEBUG));
+            return new KI(id, new AgentQLearning("KI_Q_FighterA.rgo", 0.3, 0.8, explorationRate, trainMode), new EnvironmentFighterAdvanced(DebugState.NO_DEBUG));
         } catch (Exception e)
         {
             System.out.println("Exception at KI-Creation: " + e.getMessage());
@@ -272,7 +272,7 @@ public class KI_Factory
     {
         try
         {
-            return new KI(id, new AgentQLearning("KI_Q_FighterB" + id + ".rgo", 0.3, 0.8, explorationRate, trainMode), new EnvironmentFighterAdvanced(DebugState.NO_DEBUG));
+            return new KI(id, new AgentQLearning("KI_Q_FighterB" + id + ".rgo", 0.3, 0.8, explorationRate, trainMode), new EnvironmentFighterNewAdvanced(DebugState.NO_DEBUG));
         } catch (Exception e)
         {
             System.out.println("Exception at KI-Creation: " + e.getMessage());
