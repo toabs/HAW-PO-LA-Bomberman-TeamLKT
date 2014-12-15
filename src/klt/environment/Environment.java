@@ -164,12 +164,13 @@ public abstract class Environment implements EnvironmentInterface
         return Math.sqrt(Math.pow(diffx, 2) + Math.pow(diffy, 2));
     }
     
-    /* ************************************************************** */
     /**
-     * returnCappedDistance
-     * @param distance
-     * @return
-    */ /************************************************************* */
+     * Returns the distance capped to a certain value.
+     *
+     * @param distance      The distance to cap.
+     * @param cap           The cap value.
+     * @return      The capped distance.
+    */
     protected static double returnCappedDistance(double distance, double cap) {
           if (distance < (cap)) {
             return distance;
