@@ -13,7 +13,7 @@ import java.util.HashMap;
  * Influenced by "http://artint.info/demos/rl/SarsaController.java" (1.11.2014)
  * and the theoretical implementation from "http://webdocs.cs.ualberta.ca/~sutton/book/ebook/node77.html" (1.11.2014)
  */
-public class Agent_SARSALambda extends Agent {
+public class AgentSarsaLambda extends Agent {
 
     private String lastObservation;
     private String beforeLastObservation;
@@ -33,7 +33,7 @@ public class Agent_SARSALambda extends Agent {
     private AgentLogUtilSLambda logUtil = null;
 
 
-    public Agent_SARSALambda(String saveFilePath, double explorationRate, double lambda, boolean trainingMode, DebugState debugState, int queueLenght) throws IOException, ClassNotFoundException {
+    public AgentSarsaLambda(String saveFilePath, double explorationRate, double lambda, boolean trainingMode, DebugState debugState, int queueLenght) throws IOException, ClassNotFoundException {
         super(saveFilePath, debugState);
         this.epsilon = explorationRate;
         this.lambda = lambda;
@@ -41,7 +41,7 @@ public class Agent_SARSALambda extends Agent {
         queue = new RingBuffer<>(queueLenght);
     }
 
-    public Agent_SARSALambda(String saveFilePath, double explorationRate, double lambda, boolean trainingMode, DebugState debugState, int queueLenght, int logLastNChanges) throws IOException, ClassNotFoundException {
+    public AgentSarsaLambda(String saveFilePath, double explorationRate, double lambda, boolean trainingMode, DebugState debugState, int queueLenght, int logLastNChanges) throws IOException, ClassNotFoundException {
         this(saveFilePath, explorationRate, lambda, trainingMode, debugState, queueLenght);
         if (debugState.isqLoggingEnabled()) {
             logUtil = new AgentLogUtilSLambda(logLastNChanges, queueLenght);

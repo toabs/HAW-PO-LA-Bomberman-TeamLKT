@@ -3,6 +3,7 @@
  */
 package klt.environment;
 
+import Core.Playboard;
 import Core.Player;
 import org.rlcommunity.rlglue.codec.taskspec.TaskSpec;
 import org.rlcommunity.rlglue.codec.taskspec.TaskSpecVRLGLUE3;
@@ -20,8 +21,12 @@ import java.util.Iterator;
  * 13.10.2014
  */
 /* *********************************************************** */
-public class Environment_Random extends Environment
+public class EnvironmentRandom extends Environment
 {
+    private int playerID;
+    private Playboard board;
+    private int boardX;
+    private int boardY;
     /* ************************************************************** */
     /**
      * env_init
@@ -73,7 +78,7 @@ public class Environment_Random extends Environment
         while(it.hasNext())
         {
             thisplayer = it.next();
-            if(thisplayer.getId() == this.userID)
+            if(thisplayer.getId() == playerID)
                 break;
         }
        
@@ -81,10 +86,8 @@ public class Environment_Random extends Environment
 
         Observation returnObservation=new Observation(1,0,0);
         returnObservation.intArray[0]=0;
-        
-        Reward_observation_terminal returnRewardObs=new Reward_observation_terminal(theReward,returnObservation,episodeOver);
-        
-        return returnRewardObs;
+
+        return new Reward_observation_terminal(theReward,returnObservation,episodeOver);
     }   
     
     /* ************************************************************** */
@@ -108,5 +111,13 @@ public class Environment_Random extends Environment
     {
         // TODO Auto-generated method stub
         return null;
-    } 
+    }
+
+    @Override
+    public void setPlayboard(Playboard playboard, int userID) {
+        this.playerID = userID;
+        this.board = playboard;
+        boardX = board.getBoard().length;
+        boardY = board.getBoard()[0].length;
+    }
 }

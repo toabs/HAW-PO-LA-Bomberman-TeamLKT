@@ -3,7 +3,9 @@
  */
 package klt.environment;
 
+import Core.Playboard;
 import Core.Player;
+import klt.util.DebugState;
 import org.rlcommunity.rlglue.codec.taskspec.TaskSpec;
 import org.rlcommunity.rlglue.codec.taskspec.TaskSpecVRLGLUE3;
 import org.rlcommunity.rlglue.codec.taskspec.ranges.DoubleRange;
@@ -18,8 +20,22 @@ import org.rlcommunity.rlglue.codec.types.Reward_observation_terminal;
  * 19.10.2014
  */
 /* *********************************************************** */
-public class Environment_Escape extends Environment
+public class EnvironmentEscape extends Environment
 {
+    private Playboard board;
+    private int playerID;
+    private DirectionValues dv = new DirectionValues();
+    private DebugState debugState;
+    private double lastDistance;
+    private int lastX;
+    private int lastY;
+    private int boardX;
+    private int boardY;
+
+    public EnvironmentEscape(DebugState debugState) {
+        this.debugState = debugState;
+    }
+
     /* ************************************************************** */
     /**
      * env_cleanup
@@ -28,7 +44,7 @@ public class Environment_Escape extends Environment
 	@Override
 	public void env_cleanup()
 	{
-	    System.out.println("Env_cleanup called!");
+	    environmentLogln("Env_cleanup called!", debugState);
 	}
 
     /* ************************************************************** */
@@ -75,11 +91,17 @@ public class Environment_Escape extends Environment
 	@Override
 	public Observation env_start()
 	{
-	    Player currentPlayer = determineCurrentPlayer();
-	
-	    int freeDirection = this.determinefreeDirections();
-	    int opponentDirection = this.determineOppenentDirection();
-	    double distanceToOpponent = this.determineDistanceToOpponent();
+        Player currentPlayer = determineCurrentPlayer(board, playerID);
+        int currentX = currentPlayer.getX();
+        int currentY = currentPlayer.getY();
+
+        Player opponent = determineOppenentPlayer(board, playerID);
+        int opponentX = opponent.getX();
+        int opponentY = opponent.getY();
+
+        int freeDirection = determinefreeDirections(currentX, currentY, boardX, boardY, board, dv);
+        int opponentDirection = determineOpponentDirection(currentX, currentY, opponentX, opponentY, debugState);
+        double distanceToOpponent = determineDistanceToOpponent(currentX, currentY, opponentX, opponentY);
 	
 	    Observation result = new Observation(numIntegers, numDoubles);
 	    result.intArray[0] = freeDirection;
@@ -103,11 +125,17 @@ public class Environment_Escape extends Environment
     {
         double theReward=0.0d;
         boolean episodeOver = false;
-        Player currentPlayer = determineCurrentPlayer();
+        Player currentPlayer = determineCurrentPlayer(board, playerID);
+        int currentX = currentPlayer.getX();
+        int currentY = currentPlayer.getY();
 
-        int freeDirection = this.determinefreeDirections();
-        int opponentDirection = this.determineOppenentDirection();
-        double distanceToOpponent = this.determineDistanceToOpponent();
+        Player opponent = determineOppenentPlayer(board, playerID);
+        int opponentX = opponent.getX();
+        int opponentY = opponent.getY();
+
+        int freeDirection = determinefreeDirections(currentX, currentY, boardX, boardY, board, dv);
+        int opponentDirection = determineOpponentDirection(currentX, currentY, opponentX, opponentY, debugState);
+        double distanceToOpponent = determineDistanceToOpponent(currentX, currentY, opponentX, opponentY);
 
         Observation currentObs = new Observation(numIntegers, numDoubles);
         currentObs.intArray[0] = freeDirection;
@@ -140,5 +168,13 @@ public class Environment_Escape extends Environment
         this.lastY = currentPlayer.getY();
 
         return new Reward_observation_terminal(theReward,currentObs,episodeOver);
+    }
+
+    @Override
+    public void setPlayboard(Playboard playboard, int userID) {
+        this.playerID = userID;
+        this.board = playboard;
+        boardX = board.getBoard().length;
+        boardY = board.getBoard()[0].length;
     }
 }

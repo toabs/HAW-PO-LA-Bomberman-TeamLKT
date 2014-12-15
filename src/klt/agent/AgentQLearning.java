@@ -10,7 +10,7 @@ import java.io.IOException;
 /**
  * Created by Tobi on 27.10.2014.
  */
-public class Agent_Qlearning extends Agent {
+public class AgentQLearning extends Agent {
 
     private double alpha = 0.1; //Learningrate
     private double gamma = 0.8; //discount factor
@@ -22,7 +22,7 @@ public class Agent_Qlearning extends Agent {
     private ObservationWithActions lastObservation;
     private Integer lastAction;
 
-    public Agent_Qlearning(String saveFilePath, double alpha, double gamma, double epsilon, boolean trainingMode) throws IOException, ClassNotFoundException {
+    public AgentQLearning(String saveFilePath, double alpha, double gamma, double epsilon, boolean trainingMode) throws IOException, ClassNotFoundException {
         super(saveFilePath);
         this.alpha = alpha;
         this.gamma = gamma;

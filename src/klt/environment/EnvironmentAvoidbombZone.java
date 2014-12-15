@@ -3,6 +3,7 @@
  */
 package klt.environment;
 
+import Core.Playboard;
 import klt.ObservationWithActions;
 import klt.util.Actions_E;
 import Core.Player;
@@ -21,20 +22,28 @@ import org.rlcommunity.rlglue.codec.types.Reward_observation_terminal;
  * 19.10.2014
  */
 /* *********************************************************** */
-public class Environment_Avoidbomb_Zone extends Environment
+public class EnvironmentAvoidbombZone extends Environment
 {
     private final int freeDirections = (int) Math.pow(2, 4); //4 direction, blocked, not blocked
     private final int bombSituations = 125;
     private final int numIntegers = 3;
     private final int numDoubles = 0;
+    private DebugState debugState;
+    private DirectionValues dv = new DirectionValues();
+    private Playboard board;
+    private int playerID = 0;
+    private int boardX;
+    private int boardY;
+    private int lastX;
+    private int lastY;
     
     /* ************************************************************** */
     /**
-     * Environment_Fighter
+     * EnvironmentFighter
      * @param debugState
     */ /************************************************************* */
-public Environment_Avoidbomb_Zone(DebugState debugState) {
-        super(debugState);
+    public EnvironmentAvoidbombZone(DebugState debugState) {
+        this.debugState = debugState;
      }
     
     /* ************************************************************** */
@@ -45,7 +54,7 @@ public Environment_Avoidbomb_Zone(DebugState debugState) {
     @Override
     public void env_cleanup()
     {
-        this.environmentLogln("Env_cleanup called!");        
+        this.environmentLogln("Env_cleanup called!", debugState);
     }
 
     /* ************************************************************** */
@@ -76,7 +85,6 @@ public Environment_Avoidbomb_Zone(DebugState debugState) {
     @Override
     public String env_message(String arg0)
     {
-        // TODO Auto-generated method stub
         return null;
     }
 
@@ -88,25 +96,28 @@ public Environment_Avoidbomb_Zone(DebugState debugState) {
     @Override
     public Observation env_start()
     {
-        Player currentPlayer = determineCurrentPlayer();
-        
-        int freeDirection = this.determinefreeDirections();
-        int bombSituation = determineBombSituation();
-        int playerOnBomb = this.determinePlayerOnBomb();
+        Player currentPlayer = determineCurrentPlayer(board, playerID);
+        int currentX = currentPlayer.getX();
+        int currentY = currentPlayer.getY();
+
+        int freeDirection = determinefreeDirections(currentX, currentY, boardX, boardY, board, dv);
+        int[][] dangerA = determineBombZones(boardX, boardY, board);
+        int bombSituation = determineBombSituation(boardX, boardY, currentX, currentY, dangerA, debugState, dv);
+        int playerOnBomb = determinePlayerOnBomb(currentX, currentY, board);
         
         ObservationWithActions result = new ObservationWithActions(numIntegers, numDoubles);
-        if (!this.deadlyCurrent) { result.addAction(Actions_E.STAY); }
-        if (this.topfree && !this.deadlyTop) { result.addAction(Actions_E.UP); }
-        if (this.botfree && !this.deadlyBot) { result.addAction(Actions_E.DOWN); }
-        if (this.leftfree && !this.deadlyLeft) { result.addAction(Actions_E.LEFT); }
-        if (this.rightfree && !this.deadlyRight) { result.addAction(Actions_E.RIGHT); } 
+        if (!dv.deadlyCurrent) { result.addAction(Actions_E.STAY); }
+        if (dv.upFree && !dv.deadlyUp) { result.addAction(Actions_E.UP); }
+        if (dv.downFree && !dv.deadlyDown) { result.addAction(Actions_E.DOWN); }
+        if (dv.leftFree && !dv.deadlyLeft) { result.addAction(Actions_E.LEFT); }
+        if (dv.rightFree && !dv.deadlyRight) { result.addAction(Actions_E.RIGHT); }
         
         result.intArray[0] = freeDirection;
         result.intArray[1] = bombSituation;
         result.intArray[2] = playerOnBomb;
         
-        this.lastX = currentPlayer.getX();
-        this.lastY = currentPlayer.getY();
+        lastX = currentPlayer.getX();
+        lastY = currentPlayer.getY();
         
         return result;
     }
@@ -121,28 +132,36 @@ public Environment_Avoidbomb_Zone(DebugState debugState) {
     {
         double theReward=0.0d;
         boolean episodeOver = false;
-        Player currentPlayer = determineCurrentPlayer();        
-        int freeDirection = this.determinefreeDirections();
-        int bombSituation = determineBombSituation();
-        int playerOnBomb = this.determinePlayerOnBomb();
-        
+        Player currentPlayer = determineCurrentPlayer(board, playerID);
+        int currentX = currentPlayer.getX();
+        int currentY = currentPlayer.getY();
+
+        int freeDirection = determinefreeDirections(currentX, currentY, boardX, boardY, board, dv);
+        int[][] dangerA = determineBombZones(boardX, boardY, board);
+        int bombSituation = determineBombSituation(boardX, boardY, currentX, currentY, dangerA, debugState, dv);
+        int playerOnBomb = determinePlayerOnBomb(currentX, currentY, board);
+
         ObservationWithActions currentObs = new ObservationWithActions(numIntegers, numDoubles);
-        
-        if (!this.deadlyCurrent) { currentObs.addAction(Actions_E.STAY); }
-        if (this.topfree && !this.deadlyTop) { currentObs.addAction(Actions_E.UP); }
-        if (this.botfree && !this.deadlyBot) { currentObs.addAction(Actions_E.DOWN); }
-        if (this.leftfree && !this.deadlyLeft) { currentObs.addAction(Actions_E.LEFT); }
-        if (this.rightfree && !this.deadlyRight) { currentObs.addAction(Actions_E.RIGHT); }  
+        if (!dv.deadlyCurrent) { currentObs.addAction(Actions_E.STAY); }
+        if (dv.upFree && !dv.deadlyUp) { currentObs.addAction(Actions_E.UP); }
+        if (dv.downFree && !dv.deadlyDown) { currentObs.addAction(Actions_E.DOWN); }
+        if (dv.leftFree && !dv.deadlyLeft) { currentObs.addAction(Actions_E.LEFT); }
+        if (dv.rightFree && !dv.deadlyRight) { currentObs.addAction(Actions_E.RIGHT); }
         
         currentObs.intArray[0] = freeDirection;
         currentObs.intArray[1] = bombSituation;
         currentObs.intArray[2] = playerOnBomb;
-        
-        if (currentDanger < lastDanger)
-        {
-            theReward = 100;
-        }     
+
+        //TODO find a new way for him to recognize a rise or a fall in currentDanger compared to the last iteration!
         
         return new Reward_observation_terminal(theReward,currentObs,episodeOver);
+    }
+
+    @Override
+    public void setPlayboard(Playboard playboard, int userID) {
+        this.playerID = userID;
+        this.board = playboard;
+        boardX = board.getBoard().length;
+        boardY = board.getBoard()[0].length;
     }
 }

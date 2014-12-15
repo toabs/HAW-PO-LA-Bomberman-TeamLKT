@@ -17,7 +17,7 @@ import java.util.HashMap;
  * 19.10.2014
  */
 /* *********************************************************** */
-public class Agent_Simple extends Agent
+public class AgentSimple extends Agent
 {    
     Integer lastAction;
     Observation lastObs;
@@ -30,7 +30,7 @@ public class Agent_Simple extends Agent
      * @throws IOException
      * @throws ClassNotFoundException
     */ /************************************************************* */
-public Agent_Simple(String saveFilePath, DebugState debugState) throws IOException,
+public AgentSimple(String saveFilePath, DebugState debugState) throws IOException,
             ClassNotFoundException
     {
         super(saveFilePath, debugState);

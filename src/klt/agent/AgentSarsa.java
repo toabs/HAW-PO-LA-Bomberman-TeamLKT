@@ -14,7 +14,7 @@ import java.io.IOException;
  * Created by Tobi on 26.10.2014.
  * Credit goes to "https://github.com/HAW-AI/PO-LA-2012-WS-Cliff" the general construction bases on their version
  */
-public class Agent_SARSA extends Agent{
+public class AgentSarsa extends Agent{
 
     //private List<Pair<Pair<String,Integer>,Double>> episode;
     private ObservationWithActions lastObservation;
@@ -36,17 +36,17 @@ public class Agent_SARSA extends Agent{
      * @throws IOException
      * @throws ClassNotFoundException
      */
-    public Agent_SARSA(String saveFilePath) throws IOException, ClassNotFoundException {
+    public AgentSarsa(String saveFilePath) throws IOException, ClassNotFoundException {
         this(saveFilePath, 0.0, false, DebugState.NO_DEBUG);
     }
 
-    public Agent_SARSA(String saveFilePath, double explorationRate, boolean trainingMode, DebugState debugState) throws IOException, ClassNotFoundException {
+    public AgentSarsa(String saveFilePath, double explorationRate, boolean trainingMode, DebugState debugState) throws IOException, ClassNotFoundException {
         super(saveFilePath, debugState);
         this.epsilon = explorationRate;
         this.trainingMode = trainingMode;
     }
 
-    public Agent_SARSA(int logLastN, String saveFilePath, double explorationRate, boolean trainingMode, DebugState debugState) throws IOException, ClassNotFoundException {
+    public AgentSarsa(int logLastN, String saveFilePath, double explorationRate, boolean trainingMode, DebugState debugState) throws IOException, ClassNotFoundException {
         this(saveFilePath, explorationRate, trainingMode, debugState);
         this.agentLogUtil = new AgentLogUtil(logLastN);
     }

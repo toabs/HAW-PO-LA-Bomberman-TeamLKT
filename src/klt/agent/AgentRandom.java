@@ -14,19 +14,19 @@ import java.io.IOException;
  * 13.10.2014
  */
 /* *********************************************************** */
-public class Agent_Random extends Agent
+public class AgentRandom extends Agent
 {
     Action lastAction;
     Observation lastObservation;
     
     /* ************************************************************** */
     /**
-     * Agent_Random
+     * AgentRandom
      * @param saveFilePath
      * @throws IOException
      * @throws ClassNotFoundException
     */ /************************************************************* */
-public Agent_Random(String saveFilePath) throws IOException,
+public AgentRandom(String saveFilePath) throws IOException,
             ClassNotFoundException
     {
         super(saveFilePath);

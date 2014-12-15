@@ -3,6 +3,7 @@
  */
 package klt.environment;
 
+import Core.Playboard;
 import klt.ObservationWithActions;
 import klt.util.Actions_E;
 import Core.Player;
@@ -16,19 +17,25 @@ import org.rlcommunity.rlglue.codec.types.Observation;
 import org.rlcommunity.rlglue.codec.types.Reward_observation_terminal;
 
 /* ************************************************************** */
-/** Advances ist erweitert um Abstand und Richtung zum Rand
+/**
  * @author LarsE
  * 19.10.2014
  */
 /* *********************************************************** */
-public class Environment_Fighter_Advanced extends Environment
-{    
-    protected int numberOfSpacesToEdge = 0;
-    protected final int numIntegers = 5;
-    protected int bombSituation = 0;
-    
-	public Environment_Fighter_Advanced(DebugState debugState) {
-	   super(debugState);
+public class EnvironmentFighter extends Environment
+{
+    private int playerID;
+    private DebugState debugState;
+    private Playboard board;
+    private DirectionValues dv = new DirectionValues();
+    private double lastDistance;
+    private int lastX;
+    private int lastY;
+    private int boardX;
+    private int boardY;
+
+    public EnvironmentFighter(DebugState debugState) {
+        this.debugState = debugState;
 	}
 	
     /* ************************************************************** */
@@ -39,7 +46,7 @@ public class Environment_Fighter_Advanced extends Environment
     @Override
     public void env_cleanup()
     {
-        this.environmentLogln("Env_cleanup called!");        
+        this.environmentLogln("Env_cleanup called!", debugState);
     }
 
     /* ************************************************************** */
@@ -51,16 +58,13 @@ public class Environment_Fighter_Advanced extends Environment
     public String env_init()
     {
         maxDistanceToOpponent = Math.sqrt(Math.pow(board.getBoard().length, 2) + Math.pow(board.getBoard()[0].length, 2));
-        int tempMax = (board.getBoard().length > board.getBoard()[0].length) ? board.getBoard().length : board.getBoard()[0].length;
-        numberOfSpacesToEdge = tempMax / 2;
-        this.environmentLogln("maxDistance is : " + maxDistanceToOpponent);
+        this.environmentLogln("maxDistance is : " + maxDistanceToOpponent, debugState);
         
         TaskSpecVRLGLUE3 theTaskSpecObject = new TaskSpecVRLGLUE3();
         theTaskSpecObject.addDiscreteAction(new IntRange(0, 5)); //five possible actions (without bomb-planting)
         theTaskSpecObject.addDiscreteObservation(new IntRange(1, freeDirections));
         theTaskSpecObject.addDiscreteObservation(new IntRange(1, oppenentDirections));
         theTaskSpecObject.addDiscreteObservation(new IntRange(1, bombSituations));
-        theTaskSpecObject.addDiscreteObservation(new IntRange(1, numberOfSpacesToEdge));
         theTaskSpecObject.addContinuousObservation(new DoubleRange(0, maxDistanceToOpponent, board.getBoard().length*board.getBoard()[0].length));
         theTaskSpecObject.setEpisodic();
         theTaskSpecObject.setRewardRange(new DoubleRange(-20, 20));
@@ -90,32 +94,34 @@ public class Environment_Fighter_Advanced extends Environment
     @Override
     public Observation env_start()
     {
-        Player currentPlayer = determineCurrentPlayer();
-        
-        int lastBombSituation = bombSituation;
-        
-        int freeDirection = this.determinefreeDirections();
-        int playerOnBomb = this.determinePlayerOnBomb();
-        int opponentDirection = this.determineOppenentDirection();
-        this.bombSituation = this.determineBombSituation();
-        int spacesToEdge = this.determineSpacesToEdge();
-        double distanceToOpponent = this.determineDistanceToOpponent();
+        Player currentPlayer = determineCurrentPlayer(board, playerID);
+        int currentPlayerX = currentPlayer.getX();
+        int currentPlayerY = currentPlayer.getY();
+
+        Player opponentPlayer = determineOppenentPlayer(board, playerID);
+        int opponentPlayerX = opponentPlayer.getX();
+        int opponentPlayerY = opponentPlayer.getY();
+
+        int[][] dangerA = determineBombZones(boardX, boardY, board);
+        int freeDirection = determinefreeDirections(currentPlayerX, currentPlayerY, boardX, boardY, board, dv);
+        int bombSituation = determineBombSituation(boardX, boardY, currentPlayerX, currentPlayerY, dangerA, debugState, dv);
+        int playerOnBomb = determinePlayerOnBomb(currentPlayerX, currentPlayerY, board);
+        int opponentDirection = determineOpponentDirection(currentPlayerX, currentPlayerY, opponentPlayerX, opponentPlayerY, debugState);
+        double distanceToOpponent = determineDistanceToOpponent(currentPlayerX, currentPlayerY, opponentPlayerX, opponentPlayerY);
         
         ObservationWithActions result = new ObservationWithActions(numIntegers, numDoubles);
-        
-        if (!this.deadlyCurrent) { result.addAction(Actions_E.STAY); }
-        if (this.topfree && !this.deadlyTop) { result.addAction(Actions_E.UP); }
-        if (this.botfree && !this.deadlyBot) { result.addAction(Actions_E.DOWN); }
-        if (this.leftfree && !this.deadlyLeft) { result.addAction(Actions_E.LEFT); }
-        if (this.rightfree && !this.deadlyRight) { result.addAction(Actions_E.RIGHT); }
-        if (playerOnBomb == 0 && !this.deadlyCurrent)  { result.addAction(Actions_E.BOMB); }
-        
-        //result.intArray[] = freeDirection;
+
+        if (!dv.deadlyCurrent) { result.addAction(Actions_E.STAY); }
+        if (dv.upFree && !dv.deadlyUp) { result.addAction(Actions_E.UP); }
+        if (dv.downFree && !dv.deadlyDown) { result.addAction(Actions_E.DOWN); }
+        if (dv.leftFree && !dv.deadlyLeft) { result.addAction(Actions_E.LEFT); }
+        if (dv.rightFree && !dv.deadlyRight) { result.addAction(Actions_E.RIGHT); }
+        if (playerOnBomb == 0)  { result.addAction(Actions_E.BOMB); }
+
         result.intArray[0] = opponentDirection;
         result.intArray[1] = bombSituation;
         result.intArray[2] = playerOnBomb;
         result.intArray[3] = freeDirection;
-        result.intArray[4] = spacesToEdge;
         result.doubleArray[0] = distanceToOpponent;
         
         this.lastDistance = distanceToOpponent;
@@ -135,40 +141,48 @@ public class Environment_Fighter_Advanced extends Environment
     {
         double theReward=0.0d;
         boolean episodeOver = false;
-        int lastBombSituation = bombSituation;
-        
-        Player currentPlayer = determineCurrentPlayer();
-        Player opponentPlayer = determineOppenentPlayer();
-        
-        int freeDirection = this.determinefreeDirections();
-        int opponentDirection = this.determineOppenentDirection();
-        double distanceToOpponent = this.determineDistanceToOpponent();
-        this.bombSituation = determineBombSituation();
-        int playerOnBomb = this.determinePlayerOnBomb();
-        int spacesToEdge = this.determineSpacesToEdge();
+        Player currentPlayer = determineCurrentPlayer(board, playerID);
+        int currentPlayerX = currentPlayer.getX();
+        int currentPlayerY = currentPlayer.getY();
+
+        Player opponentPlayer = determineOppenentPlayer(board, playerID);
+        int opponentPlayerX = opponentPlayer.getX();
+        int opponentPlayerY = opponentPlayer.getY();
+
+        int[][] dangerA = determineBombZones(boardX, boardY, board);
+        int freeDirection = determinefreeDirections(currentPlayerX, currentPlayerY, boardX, boardY, board, dv);
+        int bombSituation = determineBombSituation(boardX, boardY, currentPlayerX, currentPlayerY, dangerA, debugState, dv);
+        int playerOnBomb = determinePlayerOnBomb(currentPlayerX, currentPlayerY, board);
+        int opponentDirection = determineOpponentDirection(currentPlayerX, currentPlayerY, opponentPlayerX, opponentPlayerY, debugState);
+        double distanceToOpponent = determineDistanceToOpponent(currentPlayerX, currentPlayerY, opponentPlayerX, opponentPlayerY);
         
         ObservationWithActions currentObs = new ObservationWithActions(numIntegers, numDoubles);
-        
-        if (!this.deadlyCurrent) { currentObs.addAction(Actions_E.STAY); }
-        if (this.topfree && !this.deadlyTop) { currentObs.addAction(Actions_E.UP); }
-        if (this.botfree && !this.deadlyBot) { currentObs.addAction(Actions_E.DOWN); }
-        if (this.leftfree && !this.deadlyLeft) { currentObs.addAction(Actions_E.LEFT); }
-        if (this.rightfree && !this.deadlyRight) { currentObs.addAction(Actions_E.RIGHT); }
-        if (playerOnBomb == 0)  { currentObs.addAction(Actions_E.BOMB); }        
+
+        if (!dv.deadlyCurrent) { currentObs.addAction(Actions_E.STAY); }
+        if (dv.upFree && !dv.deadlyUp) { currentObs.addAction(Actions_E.UP); }
+        if (dv.downFree && !dv.deadlyDown) { currentObs.addAction(Actions_E.DOWN); }
+        if (dv.leftFree && !dv.deadlyLeft) { currentObs.addAction(Actions_E.LEFT); }
+        if (dv.rightFree && !dv.deadlyRight) { currentObs.addAction(Actions_E.RIGHT); }
+        if (playerOnBomb == 0)  { currentObs.addAction(Actions_E.BOMB); }
         
         //currentObs.intArray[0] = freeDirection;
         currentObs.intArray[0] = opponentDirection;
         currentObs.intArray[1] = bombSituation;
         currentObs.intArray[2] = playerOnBomb;
         currentObs.intArray[3] = freeDirection;
-        currentObs.intArray[4] = spacesToEdge;
         currentObs.doubleArray[0] = distanceToOpponent; 
         
         //this.environmentLogln("Distance: " + distanceToOpponent);
-        if (distanceToOpponent < lastDistance && lastBombSituation == 0 && lastDistance != 0.0)
+        if (distanceToOpponent < lastDistance)
         {
-            theReward = 50 - (distanceToOpponent); 
+            theReward = 1; 
+        } 
+        /*
+        if (distanceToOpponent > lastDistance)
+        {
+            theReward = -1;
         }
+        */
         /*
         if (currentDanger < lastDanger)
         {
@@ -197,34 +211,29 @@ public class Environment_Fighter_Advanced extends Environment
         } */
         
         //negative reward for placing bombs without sense
-        if (arg0.intArray[0] == 5 && distanceToOpponent >= (this.board.getExplosionRadius()+this.distanceRadiusOffset)) {
+        if (arg0.intArray[0] == 5 && distanceToOpponent > this.board.getExplosionRadius()+2) {
             theReward = -50;
         }
+        
+        //negative reward if not moved, if move was not "stay" or "bomb"
+        if (lastX == currentPlayer.getX() && lastY == currentPlayer.getY() && arg0.intArray[0] != 0 && arg0.intArray[0] != 5)
+        {
+            this.environmentLogln("--", debugState);
+            theReward = -100;
+        }      
         
         this.lastDistance = distanceToOpponent;
         this.lastX = currentPlayer.getX();
         this.lastY = currentPlayer.getY();
         
         return new Reward_observation_terminal(theReward,currentObs,episodeOver);
-    }    
-    
-    /* ************************************************************** */
-    /**
-     * determineSpacesToEdge
-     * @return
-    */ /************************************************************* */
-    protected int determineSpacesToEdge() {
-        int result = 0;
-        Player oP = this.determineOppenentPlayer();
-        
-        int maxX = board.getBoard().length -1; 
-        int maxY = board.getBoard()[0].length -1;
-        
-        int minDiffX = (Math.abs(oP.getX() - 0) < Math.abs(oP.getX() - maxX) ? Math.abs(oP.getX() - 0) : Math.abs(oP.getX() - maxX));
-        int minDiffY = (Math.abs(oP.getY() - 0) < Math.abs(oP.getY() - maxY) ? Math.abs(oP.getY() - 0) : Math.abs(oP.getY() - maxY));
-                
-        result = (minDiffX < minDiffY) ? minDiffX : minDiffY;
-        
-        return result;
+    }
+
+    @Override
+    public void setPlayboard(Playboard playboard, int userID) {
+        this.playerID = userID;
+        this.board = playboard;
+        boardX = board.getBoard().length;
+        boardY = board.getBoard()[0].length;
     }
 }
