@@ -13,12 +13,14 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.TreeMap;
 
-/* ************************************************************** */
 /**
  * @author LarsE
  * 13.10.2014
+ *
+ * This is the abstract main class for all environments.
+ * Here we collected all methods we use more than once and frequent in all extending environments.
+ * The methods are static so they are more easy to test with JUnit tests.
  */
-/* *********************************************************** */
 public abstract class Environment implements EnvironmentInterface
 {
     
@@ -32,8 +34,20 @@ public abstract class Environment implements EnvironmentInterface
     protected final int numDoubles = 1;
     protected final int escapePaths = 256;
 
+    /**
+     * These informations are crucial for almost all methods in this class. That's why all extending classes need those informations too.
+     *
+     * @param playboard     Is the playboard provided by the KI after the creation.
+     * @param userID        Is the userID provided by the KI after the creation.
+     */
     public abstract void setPlayboard(Playboard playboard, int userID);
 
+    /**
+     * Prints the output over the standart output if logging is enabled for environments in the DebugState for this KI.
+     *
+     * @param output        The output as a string.
+     * @param debugState    The debugState.
+     */
     protected static void environmentLogln(String output, DebugState debugState){
         if (debugState != null) {
             if (debugState.getEnvironmentDebugState()){
@@ -42,6 +56,12 @@ public abstract class Environment implements EnvironmentInterface
         }
     }
 
+    /**
+     * Prints the output over the standart output if logging is enabled for environments in the DebugState for this KI.
+     *
+     * @param output        The output as a string.
+     * @param debugState    The debugState.
+     */
     protected static void environmentLog(String output, DebugState debugState){
         if (debugState != null) {
             if (debugState.getEnvironmentDebugState()){
@@ -49,12 +69,14 @@ public abstract class Environment implements EnvironmentInterface
             }
         }
     }
-    
-    /* ************************************************************** */
+
     /**
-     * determineCurrentPlayer
-     * @return
-     */ /************************************************************* */
+     * Finds and returns the player with the provided userID.
+     *
+     * @param board     The playboard instance you work with at the moment.
+     * @param userID    The userID you search for.
+     * @return          The Player with the provided userID. Returns null if the user is not found.
+     */
     protected static Player determineCurrentPlayer(Playboard board, int userID) {
         Iterator<Player> it = board.getPlayers().iterator();
     
@@ -69,12 +91,13 @@ public abstract class Environment implements EnvironmentInterface
         return thisplayer;
     }
 
-    /* ************************************************************** */
     /**
-     * determineOppenentPlayer
-     * @param currentPlayer
-     * @return
-     */ /************************************************************* */
+     * Finds and returns the player who does not use the provided userID.
+     *
+     * @param board     The playboard instance you work with at the moment.
+     * @param userID    The userID you search for.
+     * @return          The Player who does not use the provided userID. Returns null if the user is not found.
+     */
     protected static Player determineOppenentPlayer(Playboard board, int userID) {
         Iterator<Player> it = board.getPlayers().iterator();
     
@@ -88,12 +111,18 @@ public abstract class Environment implements EnvironmentInterface
     
         return player;
     }
-    
-    /* ************************************************************** */
+
     /**
-     * determineOpponentDirection
-     * @return
-    */ /************************************************************* */
+     * Determines in which direction the Opponent is compared to the player.
+     * The directions are like those on a compass. 2 = N, 3 = NW, 4 = NE, 5 = E, 6 = W, 7 = S, 8 = SW, 9 = SE and 1 for the case that they're both on the same spot.
+     *
+     * @param currentPlayerX    The current players X coordinate.
+     * @param currentPlayerY    The current players Y coordinate.
+     * @param opponentX         The opponents X coordinate.
+     * @param opponentY         The opponents Y coordinate.
+     * @param debugState        The debugState.
+     * @return      An integer for 1 to 9 (including) with the values as stated above.
+     */
     protected static int determineOpponentDirection(int currentPlayerX, int currentPlayerY, int opponentX, int opponentY, DebugState debugState) {
         
         if (currentPlayerX == opponentX && currentPlayerY == opponentY) return 1; //equal
@@ -115,13 +144,17 @@ public abstract class Environment implements EnvironmentInterface
         
         environmentLogln("OpponentDirection error.", debugState);
         return 0;
-    }    
+    }
 
-    /* ************************************************************** */
     /**
-     * determineDistanceToOpponent
-     * @return
-     */ /************************************************************* */
+     * Calcutlates the distance to the opponent.
+     *
+     * @param currentPlayerX    The current players X coordinate.
+     * @param currentPlayerY    The current players Y coordinate.
+     * @param opponentX         The opponents X coordinate.
+     * @param opponentY         The opponents Y coordinate.
+     * @return          The distance to the opponent.
+     */
     protected static double determineDistanceToOpponent(int currentPlayerX, int currentPlayerY, int opponentX, int opponentY)
     {
     
@@ -138,31 +171,46 @@ public abstract class Environment implements EnvironmentInterface
             return (this.board.getExplosionRadius() + this.distanceRadiusOffset);
         } */
     }
-    
-    /* ************************************************************** */
+
     /**
-     * validX
-     * @param x
-     * @return
-    */ /************************************************************* */
+     * Checks if the provided X value is still an index found on the board.
+     *
+     * @param x                 The value to check.
+     * @param boardLengthX      The length of the board in X dimension.
+     * @return      True for 0 =< x < boardLengthX.
+     */
     protected static boolean validX(int x, int boardLengthX) {
        return ((x < boardLengthX) && (x >= 0));
     }
-      
-    /* ************************************************************** */
+
     /**
-     * validY
-     * @param y
-     * @return
-    */ /************************************************************* */
+     * Checks if the provided Y value is still an index found on the board.
+     *
+     * @param y                 The value to check.
+     * @param boardLengthY      The length of the board in Y dimension.
+     * @return      True for 0 =< y < boardLengthY
+     */
     protected static boolean validY(int y, int boardLengthY) {
         return ((y < boardLengthY) && (y >= 0 ));
     }
-    
 
-    protected static int determinefreeDirections(int currentPlayerX, int currentPlayerY, int boardXLength, int boardYLength, Playboard board, DirectionValues directionValues) {
+    /**
+     * Determines which of the four directions are free.
+     * The binary version of the int number looks like this: 0b(leftFree)(downFree)(rightFree)(upFree)
+     *
+     *
+     * @param currentPlayerX    The current players X coordinate.
+     * @param currentPlayerY    The current players Y coordinate.
+     * @param boardXLength      The length of the board in X dimension.
+     * @param boardYLength      The length of the board in Y dimension.
+     * @param board             The current playboard.
+     * @param directionValues   The current instance of DirectionValues to store the values in.
+     * @return      An integer which tells directly which direction is free and which is not.
+     */
+    protected static int determinefreeDirections(int currentPlayerX, int currentPlayerY, int boardXLength, int boardYLength, Playboard board, DirectionValues directionValues)
+    {
         boolean[][] bombPosition = new boolean[boardXLength][boardYLength];
-        Bomb currentBomb = null;
+        Bomb currentBomb;
         
         //initilize with false
         //initilize with initValue
@@ -220,11 +268,14 @@ public abstract class Environment implements EnvironmentInterface
         return result;
     }
 
-    /* ************************************************************** */
     /**
-     * determineBombZones
-     * @param dangerAnalysis
-    */ /************************************************************* */
+     * Determines how many steps are left on every field of the board before an explosion hits the field.
+     *
+     * @param boardXLength  The length of the board in X dimension.
+     * @param boardYLength  The length of the board in Y dimension.
+     * @param board         The current playboard.
+     * @return      Returns an two dimensional array which contains the steps left before an explosion hits a field.
+     */
     protected static int[][] determineBombZones(int boardXLength, int boardYLength, Playboard board)
     {
         int[][] dangerAnalysis = new int[boardXLength][boardYLength];
@@ -280,7 +331,6 @@ public abstract class Environment implements EnvironmentInterface
             dangerAnalysis[currentBombX][currentBombY] = tempBombCounter;
 
             //radius
-            //todo: one var for each way, to check for walls and stop
             for (int i = 1; i < currentBombExplosionRadius; i++) {
                 //top
                 if (validY(currentBombY + i, boardYLength) && !topwall) {
@@ -335,6 +385,18 @@ public abstract class Environment implements EnvironmentInterface
         return dangerAnalysis;
     }
 
+    /**
+     * Determines how dangerous it is to go in a certian direction according to the distribution and the status of the bombs on the board.
+     *
+     * @param boardXLength      The length of the board in X dimension.
+     * @param boardYLength      The length of the board in Y dimension.
+     * @param currentPlayerX    The current players X coordinate.
+     * @param currentPlayerY    The current players Y coordinate.
+     * @param dangerAnalysis    The current status of how much steps are left on each field till it explodes.
+     * @param debugState        The debugState.
+     * @param directionValues   The current instance of DirectionValues to store the values in.
+     * @return      Returns an int which encodes for each direction (including the current position) how dangerous it is.
+     */
     protected static int determineBombSituation(int boardXLength, int boardYLength, int currentPlayerX, int currentPlayerY, int[][] dangerAnalysis, DebugState debugState, DirectionValues directionValues)
     {
         int currentBombCounter = 0;
@@ -363,7 +425,7 @@ public abstract class Environment implements EnvironmentInterface
             environmentLogln("", debugState);
         }
 
-        //TODO: Figure out a good way to relocate the deadly-(direction) function. We still need it!
+
         //current Position
         currentBombCounter = dangerAnalysis[currentPlayerX][currentPlayerY];
         directionValues.deadlyCurrent =  (currentBombCounter <= 1);
@@ -405,16 +467,17 @@ public abstract class Environment implements EnvironmentInterface
         return result;
     }
 
-    /* ************************************************************** */
     /**
-     * getMinBombCounter
-     * @param startX
-     * @param startY
-     * @param spanX
-     * @param spanY
-     * @param dangerAnalysis
-     * @return
-    */ /************************************************************* */
+     * Returns the smallest value in a defined rectangle in the two dimensional array.
+     * It's used in this case to find the shortest remaining time till an explosion happens in a predefined extract of the board.
+     *
+     * @param startX    X startpoint for the evaluation.
+     * @param startY    Y startpoint for the evaluation.
+     * @param spanX     Delta to check in in the X dimension.
+     * @param spanY     Delta to check in in the Y dimension.
+     * @param dangerAnalysis    The array to search in.
+     * @return      The smallest number in the defined region in the delivered array.
+     */
     protected static int getMinBombCounter(int startX, int startY, int spanX, int spanY, int[][] dangerAnalysis) {
         int initCounter = 99; //just a high value to start evaluation
         int result = initCounter;
@@ -432,12 +495,12 @@ public abstract class Environment implements EnvironmentInterface
         return result;
     }
 
-    /* ************************************************************** */
-    /** Returns a value from 0-2, depening on how dangerous the counter is
-     * evaluateBombCounter
-     * @param currentBombCounter
-     * @return
-    */ /************************************************************* */
+    /**
+     * Returns a value from 0-2, depending on how dangerous the counter is.
+     *
+     * @param currentBombCounter    The counter to evaluate.
+     * @return      The value the counter was assigned to.
+    */
     protected static int evaluateBombCounter(int currentBombCounter) {
         int noDanger    = 0;
         int maybeDanger = 1;
@@ -462,16 +525,15 @@ public abstract class Environment implements EnvironmentInterface
         return result;
     }
 
-    /* ************************************************************** */
     /**
-     * getMinBombCounter
-     * @param startX
-     * @param startY
-     * @param spanX
-     * @param spanY
-     * @param dangerAnalysis
-     * @return
-    */ /************************************************************* */
+     * Returns the steps left till explosion on a certain field regarding the steps it took to get there.
+     *
+     * @param x                 The x coordinate to check.
+     * @param y                 The y coordinate to check.
+     * @param stepsaway         The steps it takes to get there.
+     * @param dangerAnalysis    The steps left till explosion on all fields on the board.
+     * @return      The steps left on that field.
+     */
     protected static int getBombCounter(int x, int y, int stepsaway, int[][] dangerAnalysis) {
         int initCounter = 99; //just a high value to start evaluation
         int result = initCounter;
@@ -483,11 +545,14 @@ public abstract class Environment implements EnvironmentInterface
         return result;
     }
 
-    /* ************************************************************** */
     /**
-     * determinePlayerOnBomb
-     * @return
-    */ /************************************************************* */
+     * Checks if a player is currently on a bomb.
+     *
+     * @param currentPlayerX    X coordinate to check.
+     * @param currentPlayerY    Y coordinate to check.
+     * @param board             The current playboard.
+     * @return      Is there a bomb on the specified field?
+     */
     protected static int determinePlayerOnBomb(int currentPlayerX, int currentPlayerY, Playboard board) {
         Iterator<Bomb> bombs = board.getBombs().iterator();
         Bomb currentBomb = null;
@@ -506,7 +571,13 @@ public abstract class Environment implements EnvironmentInterface
      * This method returns in which direction and how far the closest hideout is.
      *
      * Far stands for reachable in 3 moves and close for reachable in 2 moves.
-     * @return An integer version of all booleans combined
+     *
+     * @param currentPlayerX    The current players X coordinate.
+     * @param currentPlayerY    The current players Y coordinate.
+     * @param dangerAnalysis    The steps left till explosion on all fields on the board.
+     * @param boardXLength      The length of the board in X dimension.
+     * @param boardYLength      The length of the board in Y dimension.
+     * @return      Returns an integer which shows in which direction a possible escape route is.
      */
     protected static int determineEscapeRoute(int currentPlayerX, int currentPlayerY, int[][] dangerAnalysis, int boardXLength, int boardYLength){
         int cpXPos = currentPlayerX;
@@ -632,11 +703,20 @@ public abstract class Environment implements EnvironmentInterface
         return result;
     }
 
-    protected static int determineSpacesToEdge(int opponentPlayerX, int opponentPlayerY, int boardX, int boardY) {
+    /**
+     * Checks how much fields are left to the closest playboard border.
+     *
+     * @param opponentPlayerX         The opponents X coordinate.
+     * @param opponentPlayerY         The opponents Y coordinate.
+     * @param boardXLength      The length of the board in X dimension.
+     * @param boardYLength      The length of the board in Y dimension.
+     * @return      Fields to the closest playboard border.
+     */
+    protected static int determineSpacesToEdge(int opponentPlayerX, int opponentPlayerY, int boardXLength, int boardYLength) {
         int result = 0;
 
-        int maxX = boardX;
-        int maxY = boardY;
+        int maxX = boardXLength;
+        int maxY = boardYLength;
 
         int minDiffX = (Math.abs(opponentPlayerX - 0) < Math.abs(opponentPlayerX - maxX) ? Math.abs(opponentPlayerX - 0) : Math.abs(opponentPlayerX - maxX));
         int minDiffY = (Math.abs(opponentPlayerY - 0) < Math.abs(opponentPlayerY - maxY) ? Math.abs(opponentPlayerY - 0) : Math.abs(opponentPlayerY - maxY));
@@ -646,6 +726,10 @@ public abstract class Environment implements EnvironmentInterface
         return result;
     }
 
+    /**
+     * A small inner class to store the free and unsafe directions to move to in.
+     * It is used to allow the agent to only choose from 'useful' actions. (Running against a wall is NOT useful.)
+     */
     protected class DirectionValues{
         public boolean upFree = false;
         public boolean rightFree = false;

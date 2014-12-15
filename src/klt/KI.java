@@ -115,7 +115,7 @@ public class KI extends User
     @Override
     public void resetMove()
     {
-        // TODO Auto-generated method stub        
+        //not needed here! the KI will NEVER reset and regret it's decision. It's a true brave warrior!
     }
 
     /* ************************************************************** */

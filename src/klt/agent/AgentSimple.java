@@ -44,7 +44,7 @@ public AgentSimple(String saveFilePath, DebugState debugState) throws IOExceptio
     @Override
     public void agent_end(double arg0)
     {
-        // TODO Auto-generated method stub
+        agentLogln("agent_end called!");
         
     }
 
@@ -56,7 +56,7 @@ public AgentSimple(String saveFilePath, DebugState debugState) throws IOExceptio
     @Override
     public void agent_init(String arg0)
     {
-        // TODO Auto-generated method stub
+        agentLogln("agent_init called!");
         
     }
 
@@ -68,7 +68,7 @@ public AgentSimple(String saveFilePath, DebugState debugState) throws IOExceptio
     @Override
     public String agent_message(String arg0)
     {
-        // TODO Auto-generated method stub
+        agentLogln("agent_message called!");
         return null;
     }
 

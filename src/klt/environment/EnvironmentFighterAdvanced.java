@@ -89,7 +89,7 @@ public class EnvironmentFighterAdvanced extends Environment
     @Override
     public String env_message(String arg0)
     {
-        // TODO Auto-generated method stub
+        environmentLogln("env_message called!", debugState);
         return null;
     }
 

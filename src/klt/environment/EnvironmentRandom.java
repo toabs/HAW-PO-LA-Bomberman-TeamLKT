@@ -5,6 +5,7 @@ package klt.environment;
 
 import Core.Playboard;
 import Core.Player;
+import klt.util.DebugState;
 import org.rlcommunity.rlglue.codec.taskspec.TaskSpec;
 import org.rlcommunity.rlglue.codec.taskspec.TaskSpecVRLGLUE3;
 import org.rlcommunity.rlglue.codec.taskspec.ranges.DoubleRange;
@@ -27,6 +28,12 @@ public class EnvironmentRandom extends Environment
     private Playboard board;
     private int boardX;
     private int boardY;
+    private DebugState debugState;
+
+    public EnvironmentRandom(DebugState debugState) {
+        this.debugState = debugState;
+    }
+
     /* ************************************************************** */
     /**
      * env_init
@@ -98,7 +105,7 @@ public class EnvironmentRandom extends Environment
     @Override
     public void env_cleanup()
     {
-        //todo      
+        environmentLogln("env_cleanup called!", debugState);
     }
 
     /* ************************************************************** */
@@ -109,7 +116,7 @@ public class EnvironmentRandom extends Environment
     @Override
     public String env_message(String arg0)
     {
-        // TODO Auto-generated method stub
+        environmentLogln("env_message called!", debugState);
         return null;
     }
 

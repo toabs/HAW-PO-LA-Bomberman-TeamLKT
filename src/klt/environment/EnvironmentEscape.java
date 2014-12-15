@@ -79,7 +79,7 @@ public class EnvironmentEscape extends Environment
 	@Override
 	public String env_message(String arg0)
 	{
-	    // TODO Auto-generated method stub
+	    environmentLogln("env_meassage called!", debugState);
 	    return null;
 	}
 

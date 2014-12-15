@@ -75,7 +75,6 @@ public AgentRandom(String saveFilePath) throws IOException,
     public void agent_cleanup()
     {
         System.out.println("agent cleanup");
-        // TODO Auto-generated method stub        
     }
 
     /* ************************************************************** */
@@ -108,7 +107,7 @@ public AgentRandom(String saveFilePath) throws IOException,
     @Override
     public String agent_message(String arg0)
     {
-        // TODO Auto-generated method stub
+        agentLogln("agent_message called!");
         return null;
     }
 }
