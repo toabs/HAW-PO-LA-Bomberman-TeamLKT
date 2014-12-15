@@ -37,7 +37,7 @@ public class EnvironmentFighterNewAdvanced extends Environment
     private double lastDistance;
     private int lastX;
     private int lastY;
-    private int distanceRadiusOffset;
+    private int distanceRadiusOffset = 2;
 
     public EnvironmentFighterNewAdvanced(DebugState debugState) {
         this.debugState = debugState;
@@ -136,7 +136,7 @@ public class EnvironmentFighterNewAdvanced extends Environment
         result.intArray[3] = freeDirection;
         result.intArray[4] = spacesToEdge;
         result.intArray[5] = freeEscapePath;
-        result.doubleArray[0] = distanceToOpponent;
+        result.doubleArray[0] = returnCappedDistance(distanceToOpponent, board.getExplosionRadius() + distanceRadiusOffset);;
         
         this.lastDistance = distanceToOpponent;
         this.lastX = currentPlayer.getX();
@@ -190,7 +190,7 @@ public class EnvironmentFighterNewAdvanced extends Environment
         result.intArray[3] = freeDirection;
         result.intArray[4] = spacesToEdge;
         result.intArray[5] = freeEscapePath;
-        result.doubleArray[0] = distanceToOpponent;
+        result.doubleArray[0] = returnCappedDistance(distanceToOpponent, board.getExplosionRadius() + distanceRadiusOffset);
         
         //this.environmentLogln("Distance: " + distanceToOpponent);
         if (distanceToOpponent <= lastDistance && lastBombSituation == 0 && lastDistance != 0.0)

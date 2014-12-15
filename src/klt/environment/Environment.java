@@ -162,14 +162,20 @@ public abstract class Environment implements EnvironmentInterface
         int diffy = currentPlayerY - opponentY;
     
         return Math.sqrt(Math.pow(diffx, 2) + Math.pow(diffy, 2));
-
-        //double result = Math.sqrt(Math.pow(diffx, 2) + Math.pow(diffy, 2));
-        /*
-        if (result < (this.board.getExplosionRadius() + this.distanceRadiusOffset)) {
-            return result;
+    }
+    
+    /* ************************************************************** */
+    /**
+     * returnCappedDistance
+     * @param distance
+     * @return
+    */ /************************************************************* */
+    protected static double returnCappedDistance(double distance, double cap) {
+          if (distance < (cap)) {
+            return distance;
         } else {
-            return (this.board.getExplosionRadius() + this.distanceRadiusOffset);
-        } */
+            return (cap);
+        }  
     }
 
     /**
