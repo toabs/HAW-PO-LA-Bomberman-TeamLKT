@@ -1,8 +1,10 @@
 package GUI;
 
-import javax.swing.*;
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Graphics;
 import java.awt.image.BufferedImage;
+
+import javax.swing.JPanel;
 
 public class ImagePanel extends JPanel {
 	private static final long serialVersionUID = 1L;

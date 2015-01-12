@@ -5,15 +5,16 @@ import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-
-import javax.imageio.ImageIO;
+import java.awt.event.WindowListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.Set;
 
+import javax.imageio.ImageIO;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import Core.Field;
@@ -29,8 +30,8 @@ public class GuiStart extends JPanel implements Runnable {
 	private static final String RESOURCE_FOLDER = File.separator + "resources";
 	private int boardsize;
 	private boolean end = false;
-	private boolean paintGUI = false;
-	
+	private boolean paintGUI = true;
+
 	private JFrame frame;
 	private ImagePanel[][] guiBoard;
 	private Game game;
@@ -119,13 +120,13 @@ public class GuiStart extends JPanel implements Runnable {
 	@Override
 	public void run() {
 		Playboard playboard = null;
-		while (!end) {	
+		while (!end) {
 			boolean notGameOver = true;
 			while (notGameOver && !end) {
 				notGameOver = !game.isGameOver();
-				if (paintGUI) {				
+				if (paintGUI) {
 					playboard = game.getPlayboard();
-					
+
 					for (Field[] row : playboard.getBoard()) {
 						for (Field field : row) {
 							if (field.isWall()) {
@@ -133,28 +134,28 @@ public class GuiStart extends JPanel implements Runnable {
 							} else {
 								guiBoard[field.getX()][field.getY()].setImage(emptyField);
 							}
-						}				
+						}
 					}
-					
+
 					for (Bomb bomb : playboard.getBombs()) {
 						guiBoard[bomb.getX()][bomb.getY()].setImage(bombImg);
 					}
-					
+
 					for (Player player : playboard.getPlayers()) {
 						guiBoard[player.getX()][player.getY()].setImage(imageForPlayer(player, playboard.getBombs()));
 					}
-					
+
 					for (Field field : game.getExplodedFields()) {
 						guiBoard[field.getX()][field.getY()].setImage(explosion);
 					}
 				}
-				
+
 				try {
 					game.doIteration();
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
-				if (paintGUI) {	
+				if (paintGUI) {
 					repaint();
 				}
 			}

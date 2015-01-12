@@ -1,6 +1,3 @@
-/**
- * 
- */
 package klt;
 
 import Core.Playboard;

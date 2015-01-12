@@ -14,8 +14,10 @@ public class GuiMain {
 
 		//users.add(new Human(1));
 		//users.add(new Human(2));
-		users.add(KIFactory.getKI_Q_FighterB(2, 0.0, true));
-		users.add(KIFactory.getBomberman(1, 0.0, true));
+		users.add(KIFactory.getFighterAdvSLA(1, 0.0, true, 0.95, 30));
+		users.add(KIFactory.getFighterAdvSLA(2, 0.0, true, 0.9, 30));
+		//users.add(KIFactory.getKI_Q_FighterB(2, 0.0, true));
+		//users.add(KIFactory.getBomberman(1, 0.0, true));
 		//users.add(KI_Factory.getKI_Avoidbomb_Zone(2));
 		int boardsize = 15;
 		int bombCounter = 8;
