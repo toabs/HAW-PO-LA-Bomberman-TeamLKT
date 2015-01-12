@@ -2,6 +2,9 @@ package klt.util;
 
 /**
  * Created by Tobi on 04.11.2014.
+ *
+ * This enum is used to be able to control which part of the KI is allowed to log anything.
+ * For this to work you must use the logging method for the component for which you want to controll whether it logs or not.
  */
 public enum DebugState {
     NO_DEBUG				(false, false, 	false),
