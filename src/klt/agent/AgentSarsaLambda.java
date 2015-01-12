@@ -53,6 +53,14 @@ public class AgentSarsaLambda extends Agent {
         queue.clear();
     }
 
+
+    /**
+     * This method is called at the start of a round.
+     * It returns an action with the highest reward for the given action.
+     *
+     * @param observation       The observation.
+     * @return      The action
+     */
     @Override
     public Action agent_start(Observation observation) {
         lastObservation = observation.toString();
@@ -132,6 +140,14 @@ public class AgentSarsaLambda extends Agent {
         }*/
     }
 
+    /**
+     * This method is called each step and returns an action with the highest reward for the current observation.
+     * Also it calculates a new reward for the action in the last step with the reward.
+     *
+     * @param v             The reward for the last action.
+     * @param observation   The current observation after the last action.
+     * @return              The next action.
+     */
     @Override
     public Action agent_step(double v, Observation observation) {
         beforeLastAction = lastAction;
@@ -153,6 +169,12 @@ public class AgentSarsaLambda extends Agent {
         return returnAction;
     }
 
+    /**
+     * This method is called at the end of a round.
+     * It is used to take the reward for the last action into account.
+     *
+     * @param v         The reward for the last action.
+     */
     @Override
     public void agent_end(double v) {
         beforeLastAction = lastAction;
@@ -171,6 +193,11 @@ public class AgentSarsaLambda extends Agent {
         }
     }
 
+    /**
+     * Not used.
+     * @param s
+     * @return
+     */
     @Override
     public String agent_message(String s) {
         return null;

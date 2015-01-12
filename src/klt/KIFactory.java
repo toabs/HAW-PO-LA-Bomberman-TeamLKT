@@ -9,6 +9,8 @@ import klt.agent.*;
 import klt.environment.*;
 import klt.util.DebugState;
 
+import java.io.IOException;
+
 /**
  * @author Lars
  * 19.10.2014
@@ -26,7 +28,7 @@ public class KIFactory
     {
         try
         {
-            return new KI(id, new AgentRandom(null), new EnvironmentRandom());
+            return new KI(id, new AgentRandom(null), new EnvironmentRandom(DebugState.NO_DEBUG));
         } catch (Exception e)
         {
             System.out.println("Exception at KI-Creation: " + e.getMessage());
@@ -215,7 +217,7 @@ public class KIFactory
         {   
             //return new KI(id, new AgentSarsaLambda("KI_FighterAdvB_Lambda.rgo", 0.95, 0.8, true, DebugState.NO_DEBUG, 15), new EnvironmentFighterAdvanced(DebugState.NO_DEBUG));
 
-            return new KI(id, new AgentSarsa("KI_FighterAdvB.rgo", explorationRate, trainMode, DebugState.NO_DEBUG), new EnvironmentFighterAdvanced(DebugState.NO_DEBUG));
+            return new KI(id, new AgentSarsa("KI_FighterAdvB2.rgo", explorationRate, trainMode, DebugState.NO_DEBUG), new EnvironmentFighterAdvanced(DebugState.NO_DEBUG));
         } catch (Exception e)
         {
             System.out.println("Exception at KI-Creation: " + e.getMessage());
@@ -279,6 +281,17 @@ public class KIFactory
             e.printStackTrace();
             return null;
         }
+    }
+
+    public static KI getBomberman(int id, double explorationRate, boolean trainMode){
+        try{
+            return new KI(id, new AgentSarsaLambda("KI_Bomberman" + id + ".rgo", explorationRate, 0.8, trainMode, DebugState.NO_DEBUG, 30), new EnvironmentFighterNewAdvanced(DebugState.NO_DEBUG));
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     public static KI getKI_SarsaAdv2A(int id, double explorationRate, boolean trainMode){

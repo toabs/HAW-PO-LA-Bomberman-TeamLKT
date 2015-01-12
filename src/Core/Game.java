@@ -43,8 +43,8 @@ public class Game {
 	}
 	
 	private void initializePlayers() {
-		initializeStartingFields();		
-		for (User user : usersList) {			
+		initializeStartingFields();
+		for (User user : usersList) {
 			this.users.put(user, new Player(user.getId(), starting_fields.pop()));
 		}
 		playboard.setPlayers(new HashSet<Player>(this.users.values()));

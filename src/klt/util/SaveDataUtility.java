@@ -156,12 +156,14 @@ public class SaveDataUtility {
 
             System.out.println("Successfully loaded File: " + filePath);
 
-            return storage;
         }
         else
         {
             System.err.println("There is no Data to read! Path:" + filePath);
-            return storage;
         }
+
+        System.out.println("Storage: " + storage.keySet().size());
+
+        return storage;
     }
 }

@@ -1,6 +1,3 @@
-/**
- * 
- */
 package klt.environment;
 
 import Core.Bomb;
@@ -17,7 +14,7 @@ import java.util.TreeMap;
  * @author LarsE
  * 13.10.2014
  *
- * This is the abstract main class for all environments.
+ * This is the abstract class for all environments.
  * Here we collected all methods we use more than once and frequent in all extending environments.
  * The methods are static so they are more easy to test with JUnit tests.
  */

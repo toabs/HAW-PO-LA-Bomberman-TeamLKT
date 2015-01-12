@@ -16,12 +16,12 @@ import org.rlcommunity.rlglue.codec.types.Action;
 import org.rlcommunity.rlglue.codec.types.Observation;
 import org.rlcommunity.rlglue.codec.types.Reward_observation_terminal;
 
-/* ************************************************************** */
 /**
  * @author LarsE
  * 19.10.2014
+ *
+ * An implementation of the environment which creates the observations in a way that the agent is able to fight an moving enemy.
  */
-/* *********************************************************** */
 public class EnvironmentFighter extends Environment
 {
     private int playerID;
@@ -37,29 +37,28 @@ public class EnvironmentFighter extends Environment
     public EnvironmentFighter(DebugState debugState) {
         this.debugState = debugState;
 	}
-	
-    /* ************************************************************** */
+
     /**
+     *
      * env_cleanup
      * @see org.rlcommunity.rlglue.codec.EnvironmentInterface#env_cleanup()
-    */ /************************************************************* */
+    */
     @Override
     public void env_cleanup()
     {
         this.environmentLogln("Env_cleanup called!", debugState);
     }
 
-    /* ************************************************************** */
     /**
      * env_init
      * @see org.rlcommunity.rlglue.codec.EnvironmentInterface#env_init()
-    */ /************************************************************* */
+    */
     @Override
     public String env_init()
     {
         maxDistanceToOpponent = Math.sqrt(Math.pow(board.getBoard().length, 2) + Math.pow(board.getBoard()[0].length, 2));
         this.environmentLogln("maxDistance is : " + maxDistanceToOpponent, debugState);
-        
+
         TaskSpecVRLGLUE3 theTaskSpecObject = new TaskSpecVRLGLUE3();
         theTaskSpecObject.addDiscreteAction(new IntRange(0, 5)); //five possible actions (without bomb-planting)
         theTaskSpecObject.addDiscreteObservation(new IntRange(1, freeDirections));

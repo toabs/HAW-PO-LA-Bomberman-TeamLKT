@@ -13,6 +13,8 @@ import java.io.IOException;
 /**
  * Created by Tobi on 26.10.2014.
  * Credit goes to "https://github.com/HAW-AI/PO-LA-2012-WS-Cliff" the general construction bases on their version
+ *
+ * This is an implementation which uses the Sarsa algorithm.
  */
 public class AgentSarsa extends Agent{
 
@@ -31,7 +33,7 @@ public class AgentSarsa extends Agent{
     private final double EPSILONMINIMUM = 0.005;
 
     /**
-     * With this contructor it will just run what the agent learned. The agent will not train or log anything.
+     * With this constructor it will just run what the agent learned. The agent will not train or log anything.
      * @param saveFilePath
      * @throws IOException
      * @throws ClassNotFoundException
@@ -40,17 +42,45 @@ public class AgentSarsa extends Agent{
         this(saveFilePath, 0.0, false, DebugState.NO_DEBUG);
     }
 
+    /**
+     * With this constructor the agent will run and learn normally.
+     *
+     * @param saveFilePath          Path to save the reults to.
+     * @param explorationRate       Exploration rate for this instance.
+     * @param trainingMode          Is this instance allowed to train?
+     * @param debugState            The debug state for this instances of environment, agent and KI.
+     * @throws IOException
+     * @throws ClassNotFoundException
+     */
     public AgentSarsa(String saveFilePath, double explorationRate, boolean trainingMode, DebugState debugState) throws IOException, ClassNotFoundException {
         super(saveFilePath, debugState);
         this.epsilon = explorationRate;
         this.trainingMode = trainingMode;
     }
 
+    /**
+     * With this constructor the agent will run normally but he will also log the last q value changes after each round.
+     *
+     * @param logLastN              Number of q value changes to log.
+     * @param saveFilePath          Path to save the training results to.
+     * @param explorationRate       Exploration rate for this instance.
+     * @param trainingMode          Is this instance allowed to train?
+     * @param debugState            The debug state for this instances of environment, agent and KI.
+     * @throws IOException
+     * @throws ClassNotFoundException
+     */
     public AgentSarsa(int logLastN, String saveFilePath, double explorationRate, boolean trainingMode, DebugState debugState) throws IOException, ClassNotFoundException {
         this(saveFilePath, explorationRate, trainingMode, debugState);
+        debugState.setqLoggingEnabled(true);
         this.agentLogUtil = new AgentLogUtil(logLastN);
     }
 
+    /**
+     * This method is called at the start of each round.
+     * Here it is used to clear the logging utility if it is used at all.
+     *
+     * @param s     Not used here.
+     */
     @Override
     public void agent_init(String s) {
         if(debugState.isqLoggingEnabled()) {
@@ -58,6 +88,12 @@ public class AgentSarsa extends Agent{
         }
     }
 
+    /**
+     * This method is called at the start and is used to determine the first action for a round.
+     *
+     * @param observation   The current observation.
+     * @return      An action with the highest reward for the given observation.
+     */
     @Override
     public Action agent_start(Observation observation) {
         lastObservation = (ObservationWithActions) observation;
@@ -68,6 +104,14 @@ public class AgentSarsa extends Agent{
         return returnAction;
     }
 
+    /**
+     * This method is called each step and returns an action with the highest reward for the current observation.
+     * Also it calculates a new reward for the action in the last step with the reward.
+     *
+     * @param v             The reward for the last action.
+     * @param observation   The current observation after the last action.
+     * @return              The next action.
+     */
     @Override
     public Action agent_step(double v, Observation observation) {
         beforeLastAction = lastAction;
@@ -98,6 +142,12 @@ public class AgentSarsa extends Agent{
         return returnAction;
     }
 
+    /**
+     * This method is called at the end of a round.
+     * It is used to take the reward for the last action into account.
+     *
+     * @param v         The reward for the last action.
+     */
     @Override
     public void agent_end(double v) {
         if(trainingMode) {
@@ -125,7 +175,7 @@ public class AgentSarsa extends Agent{
                 currentLogElem.setValueAfter(reward);
             }
 
-            setRewardForActionObservation(reward, lastObservation.toString(), lastAction, lastObservation.getActions());
+            setRewardForActionObservation(reward, lastObservation.toString(), lastAction);
 
                         //lower the explorationrate
             epsilon -= 0.0003;
@@ -140,6 +190,11 @@ public class AgentSarsa extends Agent{
         }
     }
 
+    /**
+     * Updates the reward according to the rules of the algorithm.
+     *
+     * @param r     Reward to take into account.
+     */
     private void updateValues(double r){
 
         SarsaLogElement currentElem = null;
@@ -169,9 +224,14 @@ public class AgentSarsa extends Agent{
             currentElem.setValueNextAction(qNext);
         }
 
-        setRewardForActionObservation(reward, beforeLastObservation.toString(), beforeLastAction, ((ObservationWithActions) beforeLastObservation).getActions());
+        setRewardForActionObservation(reward, beforeLastObservation.toString(), beforeLastAction);
     }
 
+    /**
+     * Not used.
+     * @param s
+     * @return
+     */
     @Override
     public String agent_message(String s) {
         return null;

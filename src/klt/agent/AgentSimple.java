@@ -1,6 +1,3 @@
-/**
- * 
- */
 package klt.agent;
 
 import klt.ObservationWithActions;
@@ -11,48 +8,47 @@ import org.rlcommunity.rlglue.codec.types.Observation;
 import java.io.IOException;
 import java.util.HashMap;
 
-/* ************************************************************** */
 /**
  * @author LarsE
  * 19.10.2014
+ *
+ * This is a very simple agent which is taking the way with highest reward (greedy).
  */
-/* *********************************************************** */
 public class AgentSimple extends Agent
 {    
     Integer lastAction;
     Observation lastObs;
     int NUMBEROFACTIONS = 5;
     
-    /* ************************************************************** */
     /**
      * Agent_Follower
      * @param saveFilePath
      * @throws IOException
      * @throws ClassNotFoundException
-    */ /************************************************************* */
+    */
 public AgentSimple(String saveFilePath, DebugState debugState) throws IOException,
             ClassNotFoundException
     {
         super(saveFilePath, debugState);
     }
 
-    /* ************************************************************** */
     /**
-     * agent_end
-     * @see org.rlcommunity.rlglue.codec.AgentInterface#agent_end(double)
-    */ /************************************************************* */
+     * This method is called at the end of a round.
+     * It is used to take the reward for the last action into account.
+     *
+     * @param v         The reward for the last action.
+     */
     @Override
-    public void agent_end(double arg0)
+    public void agent_end(double v)
     {
         agentLogln("agent_end called!");
         
     }
 
-    /* ************************************************************** */
     /**
-     * agent_init
-     * @see org.rlcommunity.rlglue.codec.AgentInterface#agent_init(java.lang.String)
-    */ /************************************************************* */
+     * agent_init is not used in this version.
+     * @param arg0
+     */
     @Override
     public void agent_init(String arg0)
     {
@@ -60,11 +56,11 @@ public AgentSimple(String saveFilePath, DebugState debugState) throws IOExceptio
         
     }
 
-    /* ************************************************************** */
     /**
-     * agent_message
-     * @see org.rlcommunity.rlglue.codec.AgentInterface#agent_message(java.lang.String)
-    */ /************************************************************* */
+     * Not used.
+     * @param arg0
+     * @return
+     */
     @Override
     public String agent_message(String arg0)
     {
@@ -72,11 +68,13 @@ public AgentSimple(String saveFilePath, DebugState debugState) throws IOExceptio
         return null;
     }
 
-    /* ************************************************************** */
     /**
-     * agent_start
-     * @see org.rlcommunity.rlglue.codec.AgentInterface#agent_start(org.rlcommunity.rlglue.codec.types.Observation)
-    */ /************************************************************* */
+     * This method is called at the start of a round.
+     * It returns an action with the highest reward for the given action.
+     *
+     * @param arg0       The observation.
+     * @return      The action
+     */
     @Override
     public Action agent_start(Observation arg0)
     {
@@ -90,11 +88,14 @@ public AgentSimple(String saveFilePath, DebugState debugState) throws IOExceptio
     }
 
 
-    /* ************************************************************** */
     /**
-     * agent_step
-     * @see org.rlcommunity.rlglue.codec.AgentInterface#agent_step(double, org.rlcommunity.rlglue.codec.types.Observation)
-    */ /************************************************************* */
+     * This method is called each step and returns an action with the highest reward for the current observation.
+     * Also it calculates a new reward for the action in the last step with the reward.
+     *
+     * @param arg0             The reward for the last action.
+     * @param arg1   The current observation after the last action.
+     * @return              The next action.
+     */
     @Override
     public Action agent_step(double arg0, Observation arg1)
     {

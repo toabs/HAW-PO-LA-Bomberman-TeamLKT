@@ -8,12 +8,12 @@ import org.rlcommunity.rlglue.codec.types.Observation;
 
 import java.io.IOException;
 
-/* ************************************************************** */
 /**
  * @author LarsE
  * 13.10.2014
+ *
+ * A small agent which chooses it's actions randomly.
  */
-/* *********************************************************** */
 public class AgentRandom extends Agent
 {
     Action lastAction;
@@ -31,14 +31,16 @@ public AgentRandom(String saveFilePath) throws IOException,
     {
         super(saveFilePath);
     }
-    
-    /* ************************************************************** */
+
     /**
-     * agent_start
-     * @see org.rlcommunity.rlglue.codec.AgentInterface#agent_start(org.rlcommunity.rlglue.codec.types.Observation)
-    */ /************************************************************* */
+     * This method is called at the start of a round.
+     * It returns an action with the highest reward for the given action.
+     *
+     * @param observation       The observation.
+     * @return      The action
+     */
     @Override
-    public Action agent_start(Observation arg0)
+    public Action agent_start(Observation observation)
     {
         //Random action
         int randomAction = randGenerator.nextInt(5);
@@ -49,13 +51,16 @@ public AgentRandom(String saveFilePath) throws IOException,
         return returnAction;
     }
 
-    /* ************************************************************** */
     /**
-     * agent_step
-     * @see org.rlcommunity.rlglue.codec.AgentInterface#agent_step(double, org.rlcommunity.rlglue.codec.types.Observation)
-    */ /************************************************************* */
+     * This method is called each step and returns an action with the highest reward for the current observation.
+     * Also it calculates a new reward for the action in the last step with the reward.
+     *
+     * @param v             The reward for the last action.
+     * @param observation   The current observation after the last action.
+     * @return              The next action.
+     */
     @Override
-    public Action agent_step(double arg0, Observation arg1)
+    public Action agent_step(double v, Observation observation)
     {
         //Random action
         int randomAction = randGenerator.nextInt(6);
@@ -77,33 +82,33 @@ public AgentRandom(String saveFilePath) throws IOException,
         System.out.println("agent cleanup");
     }
 
-    /* ************************************************************** */
     /**
-     * agent_end
-     * @see org.rlcommunity.rlglue.codec.AgentInterface#agent_end(double)
-    */ /************************************************************* */
+     * This method is called at the end of a round.
+     * It is used to take the reward for the last action into account.
+     *
+     * @param v         The reward for the last action.
+     */
     @Override
-    public void agent_end(double arg0)
+    public void agent_end(double v)
     {
         System.out.println("agent_end");
     }
 
-    /* ************************************************************** */
     /**
-     * agent_init
-     * @see org.rlcommunity.rlglue.codec.AgentInterface#agent_init(java.lang.String)
-    */ /************************************************************* */
+     * agent_init is not used in this algorithm.
+     * @param arg0
+     */
     @Override
     public void agent_init(String arg0)
     {
         System.out.println("agent_init");
     }
 
-    /* ************************************************************** */
     /**
-     * agent_message
-     * @see org.rlcommunity.rlglue.codec.AgentInterface#agent_message(java.lang.String)
-    */ /************************************************************* */
+     * Not used.
+     * @param arg0
+     * @return
+     */
     @Override
     public String agent_message(String arg0)
     {

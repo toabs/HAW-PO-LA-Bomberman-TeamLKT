@@ -1,6 +1,3 @@
-/**
- * 
- */
 package klt.agent;
 
 import klt.util.Actions_E;
@@ -12,12 +9,13 @@ import org.rlcommunity.rlglue.codec.types.Observation;
 import java.io.IOException;
 import java.util.*;
 
-/* ************************************************************** */
 /**
  * @author LarsE
  * 13.10.2014
+ *
+ * This is the abstract agent class all other agents base on. Here we implement the AgentInterface from RLGlue.
+ * Also this class provide the basic mathods all our agents are using including a way to handle the observationStorage.
  */
-/* *********************************************************** */
 public abstract class Agent implements AgentInterface
 {
     //The set of observation, saving a Map of Values indexed by the Action
@@ -30,40 +28,40 @@ public abstract class Agent implements AgentInterface
     protected int maxRandomAction = 5;
     protected int ActionsCount = 6;
 
+    /**
+     * Creates an observasionStorage, saves the location where to write it afterwards and saves the debugState for this instance of the agent.
+     *
+     * @param saveFilePath      The Path where to save the file.
+     * @param debugState        The debug state for this instance.
+     * @throws IOException
+     * @throws ClassNotFoundException
+     */
     Agent(String saveFilePath, DebugState debugState) throws IOException, ClassNotFoundException {
         this(saveFilePath);
         this.debugState = debugState;
     }
 
+    /**
+     * Creates an observationStorage and saves where to save it to.
+     * @param saveFilePath
+     * @throws IOException
+     * @throws ClassNotFoundException
+     */
     Agent(String saveFilePath) throws IOException, ClassNotFoundException
     {
         this.debugState = DebugState.NO_DEBUG;
         this.saveFilePath = saveFilePath;
-
-//        File f = new File(saveFilePath);
-//
-//        if (f.exists() && !f.isDirectory())
-//        {
-//            FileInputStream fin = new FileInputStream(saveFilePath);
-//            GZIPInputStream gzip = new GZIPInputStream(fin);
-//            ObjectInputStream ois = new ObjectInputStream(gzip);
-//            this.observationStorage = (HashMap<String, HashMap<Integer, Double>>) ois.readObject();
-//            ois.close();
-//        }
-//        else
-//        {
-//            this.observationStorage = new HashMap<String, HashMap<Integer, Double>>();
-//        }
         this.observationStorage = SaveDataUtility.loadCompressedStorage(saveFilePath);
-        System.out.println("Storage: " + this.observationStorage.size());
     }
 
-    /* ************************************************************** */
     /**
-     * getBestAction
-     * @param currentObs
-     * @return
-     */ /************************************************************* */
+     * Returns the best action for the current observation.
+     * If there is more than one observation with the highest value, the action to be returned is random.
+     *
+     * @param currentObs        The current observation.
+     * @param allowedActions    Allowed actions for this observation.
+     * @return  One of the allowed actions with the highest value.
+     */
     protected int getBestAction(Observation currentObs, Set<Actions_E> allowedActions)
     {
         Iterator<Actions_E> actions = null;
@@ -122,19 +120,37 @@ public abstract class Agent implements AgentInterface
         return currentAction;
     }
 
+    /**
+     * A logging method for the agents. It only prints on stdout when the debugState is turned true for agents!
+     *
+     * @param output        What to print.
+     */
     protected void agentLogln(String output){
         if (debugState.getAgentDebugState()){
             System.out.println(output);
         }
     }
 
+    /**
+     * A logging method for the agents. It only prints on stdout when the debugState is turned true for agents!
+     *
+     * @param output        What to print.
+     */
     protected void agentLog(String output){
         if (debugState.getAgentDebugState()){
             System.out.print(output);
         }
     }
 
-    protected void setRewardForActionObservation(double reward, String observation, int action, Set<Actions_E> allowedActions){
+    /**
+     * Sets the reward of a given action in a given observation.
+     * If the observation doesn't exist yet, it'll be created with the INITIALQVALUE.
+     *
+     * @param reward        The reward.
+     * @param observation   The observation.
+     * @param action        The action.
+     */
+    protected void setRewardForActionObservation(double reward, String observation, int action){
         if (observationStorage.containsKey(observation)) {
             observationStorage.get(observation).put(action, reward);
         } else {
@@ -146,22 +162,28 @@ public abstract class Agent implements AgentInterface
             }
         }
     }
-    
 
+    /**
+     * Adds an observation to the observationStorage.
+     *
+     * @param observation       The observation to add.
+     */
     protected void fillInUnknownObservations(String observation){
-        //add the unknown observation
-        observationStorage.put(observation, new HashMap<Integer, Double>());
-        
-        for(int i = 0; i < Actions_E.getActionCount(); i++) {
-            observationStorage.get(observation).put(i, INITIALQVALUE);
+        if(!observationStorage.containsKey(observation)) {
+            //add the unknown observation
+            observationStorage.put(observation, new HashMap<Integer, Double>());
+
+            for (int i = 0; i < Actions_E.getActionCount(); i++) {
+                observationStorage.get(observation).put(i, INITIALQVALUE);
+            }
         }
     }
 
-    /* ************************************************************** */
     /**
+     * This method is not used in our implementation.
      * agent_cleanup
      * @see org.rlcommunity.rlglue.codec.AgentInterface#agent_cleanup()
-    */ /************************************************************* */
+    */
     @Override
     public void agent_cleanup()
     {    	
@@ -169,13 +191,23 @@ public abstract class Agent implements AgentInterface
 
     }
 
+    /**
+     * This method is called at the end of the experiment to save all generated data.
+     * You need to call this if you want to save your progress!
+     */
 	public void agent_exit() {
         System.out.println("Exit Called");
         System.out.println("Storage contains: " + observationStorage.size() + " Observations");
         //save progress
         SaveDataUtility.writeCompressedStorage(observationStorage, saveFilePath);
 	}
-	
+
+    /**
+     * Returns the maximum reward for the given observation.
+     *
+     * @param observation       The observation to search for.
+     * @return          The maximum reward.
+     */
 	protected double getMaxRewardForObs(String observation) {
 	    double result = Double.MIN_VALUE;
 	    

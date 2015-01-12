@@ -8,15 +8,15 @@ import java.util.HashMap;
 public class StorageMerger {
 
     public static void merge(String first, String second, String output){
-        HashMap firstMap = SaveDataUtility.loadStorage(first);
-        HashMap secondMap = SaveDataUtility.loadStorage(second);
-        SaveDataUtility.writeStorage(SaveDataUtility.updateData(firstMap, secondMap), output);
+        HashMap firstMap = SaveDataUtility.loadCompressedStorage(first);
+        HashMap secondMap = SaveDataUtility.loadCompressedStorage(second);
+        SaveDataUtility.writeCompressedStorage(SaveDataUtility.updateData(firstMap, secondMap), output);
     }
 
     public static void main(String[] args) {
-        String FIRST = "KI_FighterAdvA.rgo";
-        String SECOND = "KI_FighterAdvB.rgo";
-        String OUTPUT = "KI_FighterAdv.rgo";
+        String FIRST = "KI_Bomberman1.rgo";
+        String SECOND = "KI_Bomberman2.rgo";
+        String OUTPUT = "KI_Bomberman.rgo";
 
 
         merge(FIRST,SECOND, OUTPUT);
