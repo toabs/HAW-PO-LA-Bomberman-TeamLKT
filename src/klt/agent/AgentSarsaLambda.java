@@ -189,7 +189,7 @@ public class AgentSarsaLambda extends Agent {
         }
 
         if(debugState.isqLoggingEnabled()) {
-            logUtil.logLastQValueUodates(observationStorage);
+            logUtil.logLastQValueUpdates(observationStorage);
         }
     }
 

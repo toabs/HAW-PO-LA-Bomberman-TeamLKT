@@ -14,18 +14,22 @@ public class GuiMain {
 
 		//users.add(new Human(1));
 		//users.add(new Human(2));
-		users.add(KIFactory.getFighterAdvSLA(1, 0.0, true, 0.95, 30));
-		users.add(KIFactory.getFighterAdvSLA(2, 0.0, true, 0.9, 30));
+		
+		users.add(KIFactory.getFighterAdvSLA(2, 0.01, true, 0.7, 15));
+		users.add(KIFactory.getKI_Q_FighterB(1, 0.01, true));
+		
+				
+		
 		//users.add(KIFactory.getKI_Q_FighterB(2, 0.0, true));
 		//users.add(KIFactory.getBomberman(1, 0.0, true));
 		//users.add(KI_Factory.getKI_Avoidbomb_Zone(2));
-		int boardsize = 15;
+		int boardsize = 11;
 		int bombCounter = 8;
 		int explosionArea = 4;
 		int maxSteps = 300;
 		long gameoverSleep = 0;
-		long stepSleep = 0l;
-		boolean paintGUI = false;
+		long stepSleep = 100;
+		boolean paintGUI = true;
 		
 		new GuiStart(new Game(users, boardsize, bombCounter, explosionArea, maxSteps, stepSleep), gameoverSleep, paintGUI);
 	}
